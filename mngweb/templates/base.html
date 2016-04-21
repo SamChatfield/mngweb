@@ -1,5 +1,4 @@
-{% load bootstrap3 %}
-{% load static wagtailuserbar %}
+{% load static wagtailuserbar bootstrap3 home_tags %}
 
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
@@ -49,6 +48,11 @@
         </nav>
 
         {% block content %}{% endblock %}
+
+        {% get_navigation_menu "top_menu" as top_menu_items %}
+        {% for item in top_menu_items %}
+            <li>{{ item }}</li>
+        {% endfor %}
 
         {# Global javascript #}
         {% bootstrap_javascript jquery=1 %}
