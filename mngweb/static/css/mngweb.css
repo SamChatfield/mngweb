@@ -1,0 +1,8 @@
+.navbar-brand {
+  padding: 5px 10px;
+}
+
+.navbar-brand .logo {
+  max-height: 100%;
+  width: auto;
+}
