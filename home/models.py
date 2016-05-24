@@ -8,10 +8,27 @@ from wagtail.wagtailadmin.edit_handlers import FieldPanel, PageChooserPanel, \
     MultiFieldPanel, InlinePanel
 from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
+from wagtail.contrib.settings.models import BaseSetting, register_setting
 from wagtail.wagtailsnippets.models import register_snippet
 
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
+
+
+# Administrator-editable settings
+
+@register_setting
+class ImportantLinks(BaseSetting):
+    terms_pdf = models.ForeignKey(
+        'wagtaildocs.Document',
+        null=True,
+        blank=True,
+        related_name='+'
+    )
+
+    panels = [
+        DocumentChooserPanel('terms_pdf'),
+    ]
 
 
 # A couple of abstract classes that contain commonly used fields
@@ -162,22 +179,85 @@ class NavigationMenu(ClusterableModel):
 
 NavigationMenu.panels = [
     FieldPanel('menu_name', classname='full title'),
-    InlinePanel('menu_items', label="Menu Items")
+    InlinePanel('menu_items', label="Menu Items"),
 ]
 
 
+# Service Price Snippet
+
+@register_snippet
+class ServicePrice(models.Model):
+    title = models.CharField(max_length=50)
+    body = models.TextField()
+    price = models.DecimalField(max_digits=5, decimal_places=2)
+
+    panels = [
+        FieldPanel('title'),
+        FieldPanel('body'),
+        FieldPanel('price'),
+    ]
+
+    def __str__(self):
+        return self.title
+
+
+# Testimonial Snippet
+
+@register_snippet
+class Testimonial(models.Model):
+    customer_name = models.CharField(max_length=100)
+    customer_organisation = models.CharField(max_length=100, blank=True)
+    customer_job_title = models.CharField(max_length=100, blank=True)
+    testimonial = models.TextField()
+
+    panels = [
+        FieldPanel('customer_name'),
+        FieldPanel('customer_job_title'),
+        FieldPanel('customer_organisation'),
+        FieldPanel('testimonial'),
+    ]
+
+    def __str__(self):
+        return self.customer_name
+
+
 # Home Page
+
+class HomePageFeaturePanel(Orderable):
+    page = ParentalKey('home.HomePage', related_name='feature_panels')
+    title = models.CharField(max_length=255)
+    text = models.CharField(max_length=255)
+    glyphicon_class = models.CharField(max_length=50)
+
+    panels = [
+        FieldPanel('title'),
+        FieldPanel('text'),
+        FieldPanel('glyphicon_class'),
+    ]
+
+    def __str__(self):
+        return self.title
+
 
 class HomePage(Page):
 
     # Database fields
 
+    subtitle = models.CharField(max_length=255, blank=True)
     body = RichTextField(blank=True)
+    pricing_title = models.CharField(max_length=255, blank=True)
+    pricing_subtitle = models.CharField(max_length=255, blank=True)
+    pricing_footer = RichTextField(blank=True)
 
     # Editor panels configuration
 
     content_panels = Page.content_panels + [
+        FieldPanel('subtitle'),
         FieldPanel('body', classname="full"),
+        FieldPanel('pricing_title'),
+        FieldPanel('pricing_subtitle'),
+        FieldPanel('pricing_footer'),
+        InlinePanel('feature_panels', label="Feature Panels"),
     ]
 
 
@@ -187,11 +267,13 @@ class StandardPage(Page):
 
     # Database fields
 
+    subtitle = models.CharField(max_length=255, blank=True)
     body = RichTextField()
 
     # Editor panels configuration
 
     content_panels = Page.content_panels + [
+        FieldPanel('subtitle'),
         FieldPanel('body', classname="full"),
     ]
 
@@ -221,4 +303,42 @@ class NewsPage(Page):
 
     promote_panels = [
         ImageChooserPanel('feed_image'),
+    ]
+
+
+# People Page
+
+PERSON_TEAM_CHOICES = (
+    ('technical_team', "Technical Team"),
+    ('management_team', "Management Team"),
+    ('management_group', "Management Group"),
+    ('external_advisory', "External Advisory Board"),
+)
+
+class PeoplePagePerson(Orderable):
+    page = ParentalKey('home.PeoplePage', related_name='people')
+    name = models.CharField(max_length=255)
+    short_bio = models.TextField()
+    team = models.CharField(max_length=255, choices=PERSON_TEAM_CHOICES)
+    photo = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+'
+    )
+
+    panels = [
+        FieldPanel('name'),
+        FieldPanel('short_bio'),
+        ImageChooserPanel('photo'),
+    ]
+
+    def __str__(self):
+        return self.name
+
+
+class PeoplePage(Page):
+    content_panels = Page.content_panels + [
+        InlinePanel('people', label="People"),
     ]

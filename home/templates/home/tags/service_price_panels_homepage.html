@@ -1,0 +1,18 @@
+{% load wagtailcore_tags %}
+{% for service_price in service_prices %}
+  <div class="col-sm-4">
+    <div class="panel panel-default text-center">
+      <div class="panel-heading">
+        <h3>{{ service_price.title }}</h3>
+      </div>
+      <div class="panel-body">
+        {{ service_price.body|richtext }}
+      </div>
+      <div class="panel-footer">
+        <h3>£{{ service_price.price|floatformat:"0" }}</h3>
+        <h4>per genome</h4>
+        <button class="btn btn-lg"><i class="fa fa-envelope"></i>Get a quote</button>
+      </div>
+    </div> 
+  </div>
+{% endfor %}

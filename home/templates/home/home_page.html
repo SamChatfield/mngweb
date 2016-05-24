@@ -1,6 +1,151 @@
 {% extends "home/base.html" %}
+{% load static home_tags wagtailcore_tags %}
 
 {% block body_class %}template-homepage{% endblock %}
 
+{% block full_jumbo %}
+  <div class="jumbotron bg-grey">
+    <div class="container">
+      <div class="flex-row row">
+        <div class="col-md-3 col-md-offset-1 hidden-sm hidden-xs">
+          <img src="{% static "images/mng-logo-500.png" %}" class="img-responsive">
+        </div>
+        <div class="col-md-6 col-sm-offset-1">
+          <h1>{{ page.title }}</h1>
+          {% if page.subtitle %}
+            <h2>{{ page.subtitle }}</h2>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
 {% block content %}
+
+  {# Service Stats #}
+  {% get_lims_sample_stats as sample_stats %}
+  {% get_lims_project_stats as project_stats %}
+  <div class="container-fluid stats-panels">
+    <div class="container-fixed">
+      <div class="row">
+        <div class="col-sm-4">
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <table>
+                <tbody>
+                  <tr>
+                    <th>Total samples processed:</th>
+                    <td>{{ sample_stats.total_count }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <table>
+                <tbody>
+                  <tr>
+                    <th>Median wait time weeks:</th>
+                    <td>{{ project_stats.median_wait_time_weeks }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <table>
+                <tbody>
+                  <tr>
+                    <th>Strains archived:</th>
+                    <td>{{ sample_stats.strain_count }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  {# Feture Panels #}
+  {% if self.feature_panels.all %}
+    <div class="container-fluid text-center">
+      <div class="container-fixed">
+        <div class="row">
+          {% for feature_panel in self.feature_panels.all %}
+            <div class="col-sm-4">
+              <div class="feature-grid-cell">
+                <i class="fa {{ feature_panel.glyphicon_class }} fa-3x" aria-hidden="true"></i>
+                <h4>{{ feature_panel.title }}</h4>
+                <p>{{ feature_panel.text }}</p>
+              </div>
+            </div>
+            {% if forloop.counter|divisibleby:"3" %}
+              </div>
+              <div class="row">
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+  {# Pricing #}
+  <div class="service-price-panels container-fluid bg-grey">
+    <div class="container-fixed">
+        <div class="text-center">
+          <h2>{{ self.pricing_title }}</h2>
+          <h4>{{ self.pricing_subtitle }}</h4>
+        </div>
+        <div class="row">
+          {% service_price_panels_homepage %}
+        </div>
+        <div class="row">
+          <div class="col-sm-12">
+            {{ self.pricing_footer|richtext }}
+          </div>
+        </div>
+    </div>
+  </div>
+
+  {# Testimonials #}
+  <div class="container-fluid text-center">
+    <h2>Testimonials</h2>
+    {% testimonial_carousel %}
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+  <script>
+    // Hide mini logo in navbar initially, fade in on scroll
+    $(".navbar-brand").hide();
+    $(window).scroll(function() {
+        if ($(window).scrollTop() > 200) {
+            $(".navbar-brand").fadeIn("slow");
+        }
+        else {
+            $(".navbar-brand").fadeOut("fast");
+        }
+    });
+
+    $(document).ready(function(){
+      $('.popper').popover({
+          container: 'body',
+          viewport: 'body',
+          html: true,
+          content: function () {
+              return $(this).next('.popper-content').html();
+          }
+      });
+    });
+  </script>
 {% endblock %}
