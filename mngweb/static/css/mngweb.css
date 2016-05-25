@@ -1,0 +1,116 @@
+/* --- NAV --- */
+
+.navbar, .navbar-collapse {
+  background-color: #00bbe3;
+  border: 0;
+}
+
+.navbar-default {
+  max-height: 50px;
+}
+
+.navbar-default .navbar-nav li a {
+  color: #fff;
+}
+
+.navbar-default .navbar-text {
+  color: #fff;
+}
+
+.navbar-brand {
+  padding: 5px 10px;
+}
+
+.navbar-brand .logo {
+  max-height: 100%;
+  width: auto;
+}
+
+.navbar-default .navbar-toggle {
+  border-color: #fff;
+}
+
+.navbar-default .navbar-toggle .icon-bar {
+  background-color: #fff;
+}
+
+/* --- TYPOGRAPHY --- */
+
+body {
+  padding-top: 50px;
+  font-family: 'Source Sans Pro', sans-serif;
+}
+
+h1 i.fa, h2 i.fa, h3 i.fa, h4 i.fa {
+  margin-right: 0.3em;
+}
+
+.container-fixed {
+  margin: 0 auto;
+  max-width: 970px;
+}
+
+.bg-grey {
+  background-color: #f6f6f6;
+}
+
+/* --- BUTTONS --- */
+
+.btn i.fa {
+  padding-right: 0.5em;
+}
+
+.btn-primary {
+  background-color: #00bbe3;
+  border-color: #00bbe3;
+}
+
+.btn-primary:hover {
+  background-color: #fff;
+  border-color: #00bbe3;
+  color: #00bbe3;
+}
+
+
+/* --- FOOTER --- */
+
+.footer {
+  color: #fff;
+  padding: 10px 0 10px 0;
+  background-color: #303131;
+}
+
+.footer address {
+  margin-top: 10px;
+}
+
+.footer .row {
+  padding-top: 20px;
+}
+
+.footer .row:first-child {
+  background: url('../images/footer-bacteria-panel-500.png') no-repeat;
+  background-position: right 100px bottom;
+  background-size: 250px;
+}
+
+.footer .row:nth-child(2) {
+  border-top: 1px solid #7dd2ec;
+}
+
+.footer ul.list-unstyled li {
+  padding: 5px 0;
+}
+
+.footer a {
+  color: #fff;
+}
+
+.footer a i.fa {
+  color: #7dd2ec;
+  margin-right: 10px;
+}
+
+.footer .logo {
+  max-height: 40px;
+}

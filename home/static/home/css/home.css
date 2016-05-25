@@ -1,110 +1,3 @@
-body {
-  padding-top: 50px;
-  font-family: 'Source Sans Pro', sans-serif;
-}
-
-h1 i.fa, h2 i.fa, h3 i.fa, h4 i.fa {
-  margin-right: 0.3em;
-}
-
-.container-fixed {
-  margin: 0 auto;
-  max-width: 970px;
-}
-
-.navbar, .navbar-collapse {
-  background-color: #00bbe3;
-  border: 0;
-}
-
-.navbar-default {
-  max-height: 50px;
-}
-
-.navbar-default .navbar-nav li a {
-  color: #fff;
-}
-
-.navbar-default .navbar-text {
-  color: #fff;
-}
-
-.navbar-brand {
-  padding: 5px 10px;
-}
-
-.navbar-brand .logo {
-  max-height: 100%;
-  width: auto;
-}
-
-.navbar-default .navbar-toggle {
-  border-color: #fff;
-}
-
-.navbar-default .navbar-toggle .icon-bar {
-  background-color: #fff;
-}
-
-.bg-grey {
-  background-color: #f6f6f6;
-}
-
-.btn i.fa {
-  padding-right: 0.5em;
-}
-
-.btn-primary {
-  background-color: #00bbe3;
-  border-color: #00bbe3;
-}
-
-.btn-primary:hover {
-  background-color: #fff;
-  border-color: #00bbe3;
-  color: #00bbe3;
-}
-
-.footer {
-  color: #fff;
-  padding: 10px 0 10px 0;
-  background-color: #303131; /* #006892; */
-}
-
-.footer address {
-  margin-top: 10px;
-}
-
-.footer .row {
-  padding-top: 20px;
-}
-
-.footer .divider {
-  border-top: 1px solid #7dd2ec;
-}
-
-.footer ul.list-unstyled li {
-  padding: 5px 0;
-}
-
-.footer ul.list-inline li {
-  float: left;
-  margin-right: 50px;
-}
-
-.footer a {
-  color: #fff;
-}
-
-.footer a i.fa {
-  color: #7dd2ec;
-  margin-right: 10px;
-}
-
-.footer .logo {
-  max-height: 40px;
-}
-
 .jumbotron { 
   padding: 20px 0;
 }
@@ -143,23 +36,29 @@ h1 i.fa, h2 i.fa, h3 i.fa, h4 i.fa {
   padding: 0;
 }
 
-.stats-panels table {
+.stats-panels .dl-horizontal {
   width: 100%;
+  height: 50px;
+  margin: 0;
+  padding: 0;
 }
 
-.stats-panels th {
+.stats-panels .dl-horizontal dt {
+  float: left;
   width: 70%;
   background-color: #00b3e1;
   color: #fff;
-  padding: 10px;
+  padding: 0 10px;
+  line-height: 50px;
   text-align: right;
 }
 
-.stats-panels td {
-  width: 30%;
-  padding: 10px;
-  text-align: center;
+.stats-panels .dl-horizontal dd {
+  margin-left: 70%;
   font-size: 1.3em;
+  text-align: center;
+  padding: 0 10px;
+  line-height: 50px;
 }
 
 .popover {

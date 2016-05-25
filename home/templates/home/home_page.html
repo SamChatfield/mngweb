@@ -32,42 +32,30 @@
         <div class="col-sm-4">
           <div class="panel panel-default">
             <div class="panel-body">
-              <table>
-                <tbody>
-                  <tr>
-                    <th>Total samples processed:</th>
-                    <td>{{ sample_stats.total_count }}</td>
-                  </tr>
-                </tbody>
-              </table>
+              <dl class="dl-horizontal">
+                <dt>Samples processed:</dt>
+                <dd>{{ sample_stats.total_count }}</dd>
+              </dl>
             </div>
           </div>
         </div>
         <div class="col-sm-4">
           <div class="panel panel-default">
             <div class="panel-body">
-              <table>
-                <tbody>
-                  <tr>
-                    <th>Median wait time weeks:</th>
-                    <td>{{ project_stats.median_wait_time_weeks }}</td>
-                  </tr>
-                </tbody>
-              </table>
+              <dl class="dl-horizontal">
+                <dt>Median wait time weeks:</dt>
+                <dd>{{ project_stats.median_wait_time_weeks }}</dd>
+              </dl>
             </div>
           </div>
         </div>
         <div class="col-sm-4">
           <div class="panel panel-default">
             <div class="panel-body">
-              <table>
-                <tbody>
-                  <tr>
-                    <th>Strains archived:</th>
-                    <td>{{ sample_stats.strain_count }}</td>
-                  </tr>
-                </tbody>
-              </table>
+              <dl class="dl-horizontal">
+                <dt>Strains archived:</dt>
+                <dd>{{ sample_stats.strain_count }}</dd>
+              </dl>
             </div>
           </div>
         </div>
