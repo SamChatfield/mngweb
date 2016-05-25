@@ -347,6 +347,7 @@ class PeoplePagePerson(Orderable):
     )
 
     panels = [
+        FieldPanel('team'),
         FieldPanel('name'),
         FieldPanel('short_bio'),
         ImageChooserPanel('photo'),
