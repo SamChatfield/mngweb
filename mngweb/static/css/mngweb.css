@@ -1,3 +1,33 @@
+/* --- BASE --- */
+
+body {
+  padding-top: 50px;
+  font-family: 'Source Sans Pro', sans-serif;
+}
+
+h1 i.fa, h2 i.fa, h3 i.fa, h4 i.fa {
+  margin-right: 0.3em;
+}
+
+.container-fixed {
+  margin: 0 auto;
+  max-width: 970px;
+}
+
+.bg-grey {
+  background-color: #f6f6f6;
+}
+
+.flex-row.row {
+ display: flex;
+ flex-wrap: wrap;
+}
+
+.flex-row.row > [class*='col-'] {
+ display: flex;
+ flex-direction: column;
+}
+
 /* --- NAV --- */
 
 .navbar, .navbar-collapse {
@@ -32,26 +62,6 @@
 
 .navbar-default .navbar-toggle .icon-bar {
   background-color: #fff;
-}
-
-/* --- TYPOGRAPHY --- */
-
-body {
-  padding-top: 50px;
-  font-family: 'Source Sans Pro', sans-serif;
-}
-
-h1 i.fa, h2 i.fa, h3 i.fa, h4 i.fa {
-  margin-right: 0.3em;
-}
-
-.container-fixed {
-  margin: 0 auto;
-  max-width: 970px;
-}
-
-.bg-grey {
-  background-color: #f6f6f6;
 }
 
 /* --- BUTTONS --- */

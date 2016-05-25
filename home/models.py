@@ -30,6 +30,24 @@ class ImportantLinks(BaseSetting):
         DocumentChooserPanel('terms_pdf'),
     ]
 
+@register_setting
+class ContactSettings(BaseSetting):
+    address = models.TextField()
+    phone_uri = models.CharField(max_length=20, blank=True)
+    phone_display = models.CharField(max_length=20, blank=True)
+    email = models.EmailField(blank=True)
+    github_username = models.CharField(max_length=255, blank=True)
+    twitter_username = models.CharField(max_length=15, blank=True)
+
+    panels = [
+        FieldPanel('address'),
+        FieldPanel('phone_uri'),
+        FieldPanel('phone_display'),
+        FieldPanel('email'),
+        FieldPanel('github_username'),
+        FieldPanel('twitter_username')
+    ]
+
 
 # A couple of abstract classes that contain commonly used fields
 

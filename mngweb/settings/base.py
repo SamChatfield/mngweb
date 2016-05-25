@@ -137,7 +137,7 @@ MEDIA_URL = '/media/'
 
 # Wagtail settings
 
-WAGTAIL_SITE_NAME = "mngweb"
+WAGTAIL_SITE_NAME = "MicrobesNG"
 
 
 # Cache settings

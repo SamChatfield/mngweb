@@ -1,3 +1,5 @@
+/* --- JUMBOTRON --- */
+
 .jumbotron { 
   padding: 20px 0;
 }
@@ -20,16 +22,7 @@
   margin-bottom: 20px;
 }
 
-@media only screen and (min-width : 768px) {
-   .flex-row.row {
-   display: flex;
-   flex-wrap: wrap;
-   }
-   .flex-row.row > [class*='col-'] {
-   display: flex;
-   flex-direction: column;
-   }
-}
+/* --- HOME STATS PANELS --- */
 
 .stats-panels .panel-body {
   font-size: 1.2em;
@@ -61,9 +54,7 @@
   line-height: 50px;
 }
 
-.popover {
-  max-width: 500px;
-}
+/* --- HOME FEATURE GRID --- */
 
 .feature-grid-cell {
   padding: 20px 50px;
@@ -77,6 +68,8 @@
   color: #006892;
   font-size: 40px;
 }
+
+/* --- PANELS --- */
 
 .panel {
   border: 1px solid #00bbe3; 
@@ -103,28 +96,37 @@
   border-bottom-right-radius: 0px;
 }
 
+/* --- SERVICE PRICE PANELS --- */
+
 .service-price-panels .panel-heading {
   padding: 25px;
 }
 
-.panel-footer {
+.service-price-panels .panel-footer {
   background-color: #fff !important;
 }
 
-.panel-footer h3 {
+.service-price-panels .panel-footer h3 {
   font-size: 32px;
 }
 
-.panel-footer h4 {
+.service-price-panels .panel-footer h4 {
   color: #aaa;
   font-size: 14px;
 }
 
-.panel-footer .btn {
+.service-price-panels .panel-footer .btn {
   margin: 15px 0;
   background-color: #00bbe3;
   color: #fff;
 }
+
+.service-price-panels ul li {
+  text-align: left;
+  padding: 0 0 10px 0;
+}
+
+/* --- CAROUSEL --- */
 
 .carousel-control.right, .carousel-control.left {
   background-image: none;
@@ -149,11 +151,6 @@
   margin: 70px 150px;
 }
 
-.item span {
+.carousel-inner .item span {
   font-style: normal;
-}
-
-.service-price-panels ul li {
-  text-align: left;
-  padding: 0 0 10px 0;
 }

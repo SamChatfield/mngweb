@@ -36,7 +36,7 @@ def update_lims_project_stats():
     if response.status_code == 200:
         wait_time_string = response.json()['data'][0]['summary_list_wait_time_weeks']
         wait_time_list = [int(i) for i in wait_time_string.splitlines()]
-    project_stats['median_wait_time_weeks'] = median_low(wait_time_list)
+        project_stats['median_wait_time_weeks'] = median_low(wait_time_list)
     return project_stats
 
 
