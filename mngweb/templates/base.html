@@ -27,13 +27,11 @@
 
     {% include "includes/top_menu.html" %}
 
-    <div class="clearfix"></div>
+    <header>{% block full_jumbo %}{% endblock %}</header>
+   
+    <main>{% block content %}{% endblock %}</main>
 
-    {% block full_jumbo %}{% endblock %}
- 
-    {% block content %}{% endblock %}
-
-    {% include "includes/footer.html" %}
+    <footer class="footer">{% include "includes/footer.html" %}</footer>
 
     {# Global javascript #}
     {% bootstrap_javascript jquery=1 %}

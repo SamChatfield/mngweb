@@ -1,63 +1,67 @@
 {% load static %}
 
-<footer class="footer">
-  <div class="container-fixed">
-    <div class="row">
-      <div class="col-sm-4">
-        <a href="{{ settings.home.ContactSettings.address_uri }}"
-           title="Find us on Google Maps"><i class="fa fa-map fa-lg"></i>{{ page.get_site.site_name }}</a>
-        <address class="small">{{ settings.home.ContactSettings.address|linebreaksbr }}</address>
-      </div>
-      <div class="col-sm-4">
-        {% with contact_settings=settings.home.ContactSettings %}
-          <ul class="list-unstyled">
-            {% if contact_settings.email %}
-              <li>
-                <a heaf="{{ contact_settings.email }}" title="Email us">
-                  <i class="fa fa-envelope fa-lg"></i>{{ contact_settings.email }}
-                </a>
-              </li>
-            {% endif %}
-            {% if contact_settings.phone_display %}
-              <li>
-                <a heaf="{{ contact_settings.phone_uri }}" title="Call us">
-                  <i class="fa fa-phone fa-lg"></i>{{ contact_settings.phone_display }}
-                </a>
-              </li>
-            {% endif %}
-            {% if contact_settings.twitter_username %}
-              <li>
-                <a href="https://twitter.com/{{ contact_settings.twitter_username }}" title="Follow us on twitter">
-                  <i class="fa fa-twitter fa-lg"></i>@{{ contact_settings.twitter_username }}
-                </a>
-              </li>
-            {% endif %}
-            {% if contact_settings.github_username %}
-              <li>
-                <a href="https://github.com/{{ contact_settings.github_username }}" title="Find us on GitHub">
-                  <i class="fa fa-github fa-lg"></i>https://github.com/{{ contact_settings.github_username }}
-                </a>
-              </li>
-            {% endif %}
-          </ul>
-        {% endwith %}
-      </div>
+<div class="container-fixed">
+
+  <div class="row">
+
+    <div class="col-sm-4">
+      <a href="{{ settings.home.ContactSettings.address_uri }}"
+         title="Find us on Google Maps"><i class="fa fa-map fa-lg"></i>{{ page.get_site.site_name }}</a>
+      <address class="small">{{ settings.home.ContactSettings.address|linebreaksbr }}</address>
     </div>
-    <div class="row">
-      <div class="col-sm-4 text-center">
-        <img src="{% static "images/mng-logo-white-300.png" %}" class="logo">
-      </div>
-      <div class="col-sm-4 text-center">
-        <img src="{% static "images/bham-logo-white-340.png" %}" class="logo">
-      </div>
-      <div class="col-sm-4 text-center">
-        <img src="{% static "images/bbsrc-logo-white-500.png" %}" class="logo">
-      </div>
+
+    <div class="col-sm-4">
+      {% with contact_settings=settings.home.ContactSettings %}
+        <ul class="list-unstyled">
+          {% if contact_settings.email %}
+            <li>
+              <a heaf="{{ contact_settings.email }}" title="Email us">
+                <i class="fa fa-envelope fa-lg"></i>{{ contact_settings.email }}
+              </a>
+            </li>
+          {% endif %}
+          {% if contact_settings.phone_display %}
+            <li>
+              <a heaf="{{ contact_settings.phone_uri }}" title="Call us">
+                <i class="fa fa-phone fa-lg"></i>{{ contact_settings.phone_display }}
+              </a>
+            </li>
+          {% endif %}
+          {% if contact_settings.twitter_username %}
+            <li>
+              <a href="https://twitter.com/{{ contact_settings.twitter_username }}" title="Follow us on twitter">
+                <i class="fa fa-twitter fa-lg"></i>@{{ contact_settings.twitter_username }}
+              </a>
+            </li>
+          {% endif %}
+          {% if contact_settings.github_username %}
+            <li>
+              <a href="https://github.com/{{ contact_settings.github_username }}" title="Find us on GitHub">
+                <i class="fa fa-github fa-lg"></i>https://github.com/{{ contact_settings.github_username }}
+              </a>
+            </li>
+          {% endif %}
+        </ul>
+      {% endwith %}
     </div>
-    <div class="row">
-      <div class="col-sm=12">
-        <p class="small">&copy; {{ page.get_site.site_name }} 2016</p>
-      </div>
+    
+  </div>
+
+  <div class="row">
+    <div class="col-sm-4 text-center">
+      <img src="{% static "images/mng-logo-white-300.png" %}" class="logo">
+    </div>
+    <div class="col-sm-4 text-center">
+      <img src="{% static "images/bham-logo-white-340.png" %}" class="logo">
+    </div>
+    <div class="col-sm-4 text-center">
+      <img src="{% static "images/bbsrc-logo-white-500.png" %}" class="logo">
     </div>
   </div>
-</footer>
+  <div class="row">
+    <div class="col-sm=12">
+      <p class="small">&copy; {{ page.get_site.site_name }} 2016</p>
+    </div>
+  </div>
+
+</div>
