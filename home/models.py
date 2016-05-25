@@ -33,7 +33,8 @@ class ImportantLinks(BaseSetting):
 @register_setting
 class ContactSettings(BaseSetting):
     address = models.TextField()
-    phone_uri = models.CharField(max_length=20, blank=True)
+    address_uri = models.URLField(blank=True)
+    phone_uri = models.URLField(blank=True)
     phone_display = models.CharField(max_length=20, blank=True)
     email = models.EmailField(blank=True)
     github_username = models.CharField(max_length=255, blank=True)
