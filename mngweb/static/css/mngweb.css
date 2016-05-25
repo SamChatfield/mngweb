@@ -98,10 +98,12 @@ h1 i.fa, h2 i.fa, h3 i.fa, h4 i.fa {
   padding-top: 20px;
 }
 
-.footer .row:first-child {
-  background: url('../images/footer-bacteria-panel-500.png') no-repeat;
-  background-position: right 100px bottom;
-  background-size: 250px;
+@media only screen and (min-width : 768px) {
+  .footer .row:first-child {
+    background: url('../images/footer-bacteria-panel-500.png') no-repeat;
+    background-position: right 50px bottom;
+    background-size: 250px;
+  }
 }
 
 .footer .row:nth-child(2) {
@@ -123,4 +125,5 @@ h1 i.fa, h2 i.fa, h3 i.fa, h4 i.fa {
 
 .footer .logo {
   max-height: 40px;
+  margin-bottom: 20px;
 }

@@ -1,17 +1,17 @@
 {% load static %}
 
-<div class="container-fixed">
+{% with contact_settings=settings.home.ContactSettings site_name=page.get_site.site_name %}
+<div class="container container-fixed">
 
   <div class="row">
-
+    {# Address #}
     <div class="col-sm-4">
       <a href="{{ settings.home.ContactSettings.address_uri }}"
-         title="Find us on Google Maps"><i class="fa fa-map fa-lg"></i>{{ page.get_site.site_name }}</a>
-      <address class="small">{{ settings.home.ContactSettings.address|linebreaksbr }}</address>
+         title="Find us on Google Maps"><i class="fa fa-map fa-lg"></i>{{ site_name }}</a>
+      <address class="small">{{ contact_settings.address|linebreaksbr }}</address>
     </div>
-
+    {# Contact and Social #}
     <div class="col-sm-4">
-      {% with contact_settings=settings.home.ContactSettings %}
         <ul class="list-unstyled">
           {% if contact_settings.email %}
             <li>
@@ -42,11 +42,10 @@
             </li>
           {% endif %}
         </ul>
-      {% endwith %}
     </div>
-    
   </div>
 
+  {# Logos #}
   <div class="row">
     <div class="col-sm-4 text-center">
       <img src="{% static "images/mng-logo-white-300.png" %}" class="logo">
@@ -58,10 +57,13 @@
       <img src="{% static "images/bbsrc-logo-white-500.png" %}" class="logo">
     </div>
   </div>
+
+  {# Copyright notice #}
   <div class="row">
     <div class="col-sm=12">
-      <p class="small">&copy; {{ page.get_site.site_name }} 2016</p>
+      <p class="small">&copy; {{ site_name }} {% now "Y" %}</p>
     </div>
   </div>
 
 </div>
+{% endwith %}
