@@ -1,37 +1,47 @@
 {% load static %}
 
-<footer class="container-fluid footer">
+<footer class="footer">
   <div class="container-fixed">
     <div class="row">
       <div class="col-sm-4">
         <a href="{{ settings.home.ContactSettings.address_uri }}"
-           title="Find us on Google Maps"><i class="fa fa-map fa-lg"></i>Contact us</a>
+           title="Find us on Google Maps"><i class="fa fa-map fa-lg"></i>{{ page.get_site.site_name }}</a>
         <address class="small">{{ settings.home.ContactSettings.address|linebreaksbr }}</address>
       </div>
       <div class="col-sm-4">
-        <ul class="list-unstyled">
-            <li>
-              <a heaf="{{ settings.home.ContactSettings.email }}" title="Email us">
-                <i class="fa fa-envelope fa-lg"></i>{{ settings.home.ContactSettings.email }}
-              </a>
-            </li>
-            <li>
-              <a heaf="{{ settings.home.ContactSettings.phone_uri }}" title="Call us">
-                <i class="fa fa-phone fa-lg"></i>{{ settings.home.ContactSettings.phone_display }}
-              </a>
-            </li>
-            <li>
-              <a href="https://twitter.com/{{ settings.home.ContactSettings.twitter_username }}" title="Follow us on twitter">
-                <i class="fa fa-twitter fa-lg"></i>@{{ settings.home.ContactSettings.twitter_username }}
-              </a>
-            </li>
-            <li>
-              <a href="https://github.com/{{ settings.home.ContactSettings.github_username }}" title="Find us on GitHub">
-                <i class="fa fa-github fa-lg"></i>https://github.com/{{ settings.home.ContactSettings.github_username }}
-              </a>
-            </li>
+        {% with contact_settings=settings.home.ContactSettings %}
+          <ul class="list-unstyled">
+            {% if contact_settings.email %}
+              <li>
+                <a heaf="{{ contact_settings.email }}" title="Email us">
+                  <i class="fa fa-envelope fa-lg"></i>{{ contact_settings.email }}
+                </a>
+              </li>
+            {% endif %}
+            {% if contact_settings.phone_display %}
+              <li>
+                <a heaf="{{ contact_settings.phone_uri }}" title="Call us">
+                  <i class="fa fa-phone fa-lg"></i>{{ contact_settings.phone_display }}
+                </a>
+              </li>
+            {% endif %}
+            {% if contact_settings.twitter_username %}
+              <li>
+                <a href="https://twitter.com/{{ contact_settings.twitter_username }}" title="Follow us on twitter">
+                  <i class="fa fa-twitter fa-lg"></i>@{{ contact_settings.twitter_username }}
+                </a>
+              </li>
+            {% endif %}
+            {% if contact_settings.github_username %}
+              <li>
+                <a href="https://github.com/{{ contact_settings.github_username }}" title="Find us on GitHub">
+                  <i class="fa fa-github fa-lg"></i>https://github.com/{{ contact_settings.github_username }}
+                </a>
+              </li>
+            {% endif %}
           </ul>
-        </div>
+        {% endwith %}
+      </div>
     </div>
     <div class="row">
       <div class="col-sm-4 text-center">
