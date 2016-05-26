@@ -26,42 +26,44 @@
   {# Service Stats #}
   {% get_lims_sample_stats as sample_stats %}
   {% get_lims_project_stats as project_stats %}
-  <div class="container-fluid stats-panels">
-    <div class="container-fixed">
-      <div class="row">
-        <div class="col-sm-4">
-          <div class="panel panel-default">
-            <div class="panel-body">
-              <dl class="dl-horizontal">
-                <dt>Samples processed:</dt>
-                <dd>{{ sample_stats.total_count }}</dd>
-              </dl>
+  {% if sample_stats and project_stats %}
+    <div class="container-fluid stats-panels">
+      <div class="container-fixed">
+        <div class="row">
+          <div class="col-sm-4">
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <dl class="dl-horizontal">
+                  <dt>Samples processed:</dt>
+                  <dd>{{ sample_stats.total_count }}</dd>
+                </dl>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="col-sm-4">
-          <div class="panel panel-default">
-            <div class="panel-body">
-              <dl class="dl-horizontal">
-                <dt>Median wait time weeks:</dt>
-                <dd>{{ project_stats.median_wait_time_weeks }}</dd>
-              </dl>
+          <div class="col-sm-4">
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <dl class="dl-horizontal">
+                  <dt>Median wait time weeks:</dt>
+                  <dd>{{ project_stats.median_wait_time_weeks }}</dd>
+                </dl>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="col-sm-4">
-          <div class="panel panel-default">
-            <div class="panel-body">
-              <dl class="dl-horizontal">
-                <dt>Strains archived:</dt>
-                <dd>{{ sample_stats.strain_count }}</dd>
-              </dl>
+          <div class="col-sm-4">
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <dl class="dl-horizontal">
+                  <dt>Strains archived:</dt>
+                  <dd>{{ sample_stats.strain_count }}</dd>
+                </dl>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  {% endif %}
 
 
   {# Feture Panels #}
