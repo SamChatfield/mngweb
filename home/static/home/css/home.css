@@ -154,3 +154,27 @@
 .carousel-inner .item span {
   font-style: normal;
 }
+
+/* --- PEOPLE PAGE --- */
+
+.template-peoplepage h2 {
+  width: 100%;
+  border-bottom: 1px solid;
+  color: #00bbe3;
+}
+
+.person {
+  margin: 10px 0 20px 0;
+  text-align: center;
+}
+
+.person dt {
+  font-size: 1.5em;
+  margin-bottom: 5px;
+}
+
+.person dd {
+  padding-left: 20px;
+  padding-right: 20px;
+  margin-bottom: 15px;
+}

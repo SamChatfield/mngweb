@@ -1,0 +1,50 @@
+{% extends "home/base.html" %}
+{% load home_tags wagtailimages_tags %}
+
+{% block body_class %}template-peoplepage{% endblock %}
+
+{% block full_jumbo %}
+  <div class="jumbotron bg-grey">
+    <div class="container-fixed">
+      <h1>{{ page.title }}</h1>
+    </div>
+  </div>
+{% endblock %}
+
+{% block content %}
+
+  {% people_feed_by_team as people_feed_by_team %}
+  {% for team in people_feed_by_team %}
+    <div class="container-fixed">
+      <div class="row">
+        <div class="col-md-12">
+          <h2>{{ team.name }}</h2>
+        </div>
+      </div>
+      <div class="row">
+        {% for person in team.people %}
+        <div class="col-md-6">
+          <dl class="person">
+            <dt>{{ person.name }}</dt>
+            {% if person.role %}<dd class="text-muted">{{ person.role }}</dd>{% endif %}
+            {% if person.organisation %}<dd class="text-muted">{{ person.organisation }}</dd>{% endif %}
+            {% if person.photo %}<dd>{% image person.photo fill-180x180 class="img-circle person-photo" %}</dd>{% endif %}
+            {% if person.short_bio %}
+              <dd>
+                <a data-toggle="collapse" data-target="#person-{{ person.id }}">Read bio</a></button>
+                <div id="person-{{ person.id }}" class="collapse">
+                  {{ person.short_bio }}
+                </div></dd>
+            {% endif %}
+          </dl>
+        </div>
+        {% if forloop.counter|divisibleby:"2" %}
+          </div>
+          <div class="row">
+        {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  {% endfor %}
+
+{% endblock %}

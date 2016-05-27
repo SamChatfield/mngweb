@@ -5,7 +5,9 @@ from django.conf import settings
 from django.core.cache import cache
 from statistics import median_low
 
-from home.models import NavigationMenu, ServicePrice, Testimonial
+from home.models import NavigationMenu, ServicePrice, Testimonial,\
+    PeoplePagePerson, PERSON_TEAM_CHOICES
+
 
 register = template.Library()
 
@@ -74,7 +76,7 @@ def get_lims_project_stats():
 
 # Navigation menus
 
-@register.assignment_tag(takes_context=False)
+@register.simple_tag(takes_context=False)
 def get_navigation_menu(menu_name):
     menu = NavigationMenu.objects.filter(menu_name=menu_name)
 
@@ -82,6 +84,22 @@ def get_navigation_menu(menu_name):
         return menu[0].menu_items.all()
     else:
         return None
+
+
+# Person feed by team
+
+@register.simple_tag(takes_context=False)
+def people_feed_by_team():
+    result = []
+    for t in PERSON_TEAM_CHOICES:
+        people = PeoplePagePerson.objects.filter(team=t[0])
+        if people:
+            team = {}
+            team['code'] = t[0]
+            team['name'] = t[1]
+            team['people'] = people
+            result.append(team)
+    return result
 
 
 # Service price panels for home page
@@ -104,4 +122,3 @@ def testimonial_carousel(context):
         'testimonials': Testimonial.objects.all(),
         'request': context['request'],
     }
-

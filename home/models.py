@@ -336,9 +336,11 @@ PERSON_TEAM_CHOICES = (
 
 class PeoplePagePerson(Orderable):
     page = ParentalKey('home.PeoplePage', related_name='people')
-    name = models.CharField(max_length=255)
-    short_bio = models.TextField()
     team = models.CharField(max_length=255, choices=PERSON_TEAM_CHOICES)
+    name = models.CharField(max_length=255)
+    role = models.CharField(max_length=255, blank=True)
+    organisation = models.CharField(max_length=255, blank=True)
+    short_bio = models.TextField(blank=True)
     photo = models.ForeignKey(
         'wagtailimages.Image',
         null=True,
@@ -350,6 +352,8 @@ class PeoplePagePerson(Orderable):
     panels = [
         FieldPanel('team'),
         FieldPanel('name'),
+        FieldPanel('role'),
+        FieldPanel('organisation'),
         FieldPanel('short_bio'),
         ImageChooserPanel('photo'),
     ]
