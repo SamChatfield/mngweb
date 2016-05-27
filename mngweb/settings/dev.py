@@ -10,6 +10,7 @@ for template_engine in TEMPLATES:
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+LIMS_STATS_CACHE_TIMEOUT = 500
 
 try:
     from .local import *

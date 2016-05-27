@@ -59,7 +59,7 @@ def get_lims_sample_stats():
     return cache.get_or_set(
         'lims_sample_stats',
         update_lims_sample_stats(),
-        86400  # 24 hours
+        settings.LIMS_STATS_CACHE_TIMEOUT
     )
 
 
@@ -68,7 +68,7 @@ def get_lims_project_stats():
     return cache.get_or_set(
         'lims_project_stats',
         update_lims_project_stats(),
-        86400  # 24 hours
+        settings.LIMS_STATS_CACHE_TIMEOUT
     )
 
 
