@@ -1,0 +1,12 @@
+{% load bootstrap3 wagtailcore_tags %}
+
+<form action="{% pageurl page %}" method="POST">
+  {% csrf_token %}
+  <input type="hidden" name="redirect_path" value="{{ request.path_info }}">
+  {% bootstrap_form form %}
+  {% buttons %}
+    <button type="submit" class="btn btn-success button-lg">
+        <i class="fa fa-comment"></i> Ask us
+    </button>
+  {% endbuttons %}
+</form>
