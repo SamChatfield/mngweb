@@ -12,36 +12,36 @@
     </div>
     {# Contact and Social #}
     <div class="col-sm-4">
-        <ul class="list-unstyled">
-          {% if contact_settings.email %}
-            <li>
-              <a heaf="{{ contact_settings.email }}" title="Email us">
-                <i class="fa fa-envelope fa-lg"></i>{{ contact_settings.email }}
-              </a>
-            </li>
-          {% endif %}
-          {% if contact_settings.phone_display %}
-            <li>
-              <a heaf="{{ contact_settings.phone_uri }}" title="Call us">
-                <i class="fa fa-phone fa-lg"></i>{{ contact_settings.phone_display }}
-              </a>
-            </li>
-          {% endif %}
-          {% if contact_settings.twitter_username %}
-            <li>
-              <a href="https://twitter.com/{{ contact_settings.twitter_username }}" title="Follow us on twitter">
-                <i class="fa fa-twitter fa-lg"></i>@{{ contact_settings.twitter_username }}
-              </a>
-            </li>
-          {% endif %}
-          {% if contact_settings.github_username %}
-            <li>
-              <a href="https://github.com/{{ contact_settings.github_username }}" title="Find us on GitHub">
-                <i class="fa fa-github fa-lg"></i>https://github.com/{{ contact_settings.github_username }}
-              </a>
-            </li>
-          {% endif %}
-        </ul>
+      <ul class="list-unstyled">
+        {% if contact_settings.email %}
+          <li>
+            <a heaf="{{ contact_settings.email }}" title="Email us">
+              <i class="fa fa-envelope fa-lg"></i>{{ contact_settings.email }}
+            </a>
+          </li>
+        {% endif %}
+        {% if contact_settings.phone_display %}
+          <li>
+            <a heaf="{{ contact_settings.phone_uri }}" title="Call us">
+              <i class="fa fa-phone fa-lg"></i>{{ contact_settings.phone_display }}
+            </a>
+          </li>
+        {% endif %}
+        {% if contact_settings.twitter_username %}
+          <li>
+            <a href="https://twitter.com/{{ contact_settings.twitter_username }}" title="Follow us on twitter">
+              <i class="fa fa-twitter fa-lg"></i>@{{ contact_settings.twitter_username }}
+            </a>
+          </li>
+        {% endif %}
+        {% if contact_settings.github_username %}
+          <li>
+            <a href="https://github.com/{{ contact_settings.github_username }}" title="Find us on GitHub">
+              <i class="fa fa-github fa-lg"></i>https://github.com/{{ contact_settings.github_username }}
+            </a>
+          </li>
+        {% endif %}
+      </ul>
     </div>
   </div>
 
