@@ -32,8 +32,10 @@ def update_lims_sample_stats():
                 response.json()['info']['tableRecordCount']
             )
             return sample_stats
+        else:
+            return {}
     except Exception:
-        return None
+        return {}
 
 
 def update_lims_project_stats():
@@ -52,8 +54,10 @@ def update_lims_project_stats():
                 wait_time_list
             )
             return project_stats
+        else:
+            return {}
     except Exception:
-        return None
+        return {}
 
 
 @register.assignment_tag(takes_context=False)
