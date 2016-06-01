@@ -1,0 +1,22 @@
+{% extends "home/base.html" %}
+{% load wagtailcore_tags %}
+
+{% block body_class %}template-formlandingpage{% endblock %}
+
+{% block full_jumbo %}
+  <div class="jumbotron bg-grey">
+  <div class="container">
+    <h1>{{ self.thank_you_title }}</h1>
+  </div>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <div class="container container-fixed">
+    <div class="row">
+      <div class="col-md-12">
+        {{ self.thank_you_text|richtext }}
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -2,11 +2,18 @@ from __future__ import unicode_literals
 
 from django.db import models
 
+from django.shortcuts import render
+from django.contrib import messages
+from django.http import HttpResponseRedirect
+from django.utils.six import text_type
+from django.core.mail import EmailMessage
+
 from wagtail.wagtailcore.models import Page, Orderable
 from wagtail.wagtailcore.fields import RichTextField
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, PageChooserPanel, \
     MultiFieldPanel, InlinePanel
 from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
+from wagtail.wagtailforms.models import AbstractEmailForm, AbstractFormField
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 from wagtail.contrib.settings.models import BaseSetting, register_setting
 from wagtail.wagtailsnippets.models import register_snippet
@@ -29,6 +36,7 @@ class ImportantLinks(BaseSetting):
     panels = [
         DocumentChooserPanel('terms_pdf'),
     ]
+
 
 @register_setting
 class ContactSettings(BaseSetting):
@@ -151,9 +159,8 @@ class RelatedLink(LinkFields):
 
 class NavigationMenuItem(Orderable, LinkFields):
     menu = ParentalKey(to='home.NavigationMenu', related_name='menu_items')
-    menu_title = models.CharField(max_length=255, blank=True,
-                                  help_text="Optional link title in this menu \
-                                  (defaults to page title if one exists)")
+    menu_title = models.CharField(max_length=255, blank=True, help_text="Optional link title \
+        in this menu (defaults to page title if one exists)")
     css_class = models.CharField(max_length=255, blank=True,
                                  verbose_name="CSS Class",
                                  help_text="Optional styling")
@@ -334,6 +341,7 @@ PERSON_TEAM_CHOICES = (
     ('external_advisory', "External Advisory Board"),
 )
 
+
 class PeoplePagePerson(Orderable):
     page = ParentalKey('home.PeoplePage', related_name='people')
     team = models.CharField(max_length=255, choices=PERSON_TEAM_CHOICES)
@@ -365,4 +373,66 @@ class PeoplePagePerson(Orderable):
 class PeoplePage(Page):
     content_panels = Page.content_panels + [
         InlinePanel('people', label="People"),
+    ]
+
+
+# Forms
+
+class FormField(AbstractFormField):
+    page = ParentalKey('FormPage', related_name='form_fields')
+
+
+class FormPage(AbstractEmailForm):
+    intro = RichTextField(blank=True)
+    thank_you_title = models.CharField(max_length=255)
+    thank_you_text = RichTextField(blank=True)
+
+    # Override process_form_submission method to add 'reply-to' header
+    def process_form_submission(self, form):
+        super(AbstractEmailForm, self).process_form_submission(form)
+
+        if self.to_address:
+            content = '\n'.join([x[1].label + ': ' +
+                                text_type(form.data.get(x[0]))
+                                for x in form.fields.items()])
+            reply_to = ([form.data['email']] if 'email' in form.data else None)
+            email = EmailMessage(self.subject, content, self.from_address,
+                                 [self.to_address], reply_to=reply_to)
+            email.send(fail_silently=False)
+
+    # Override serve method to respond with redirect and message
+    # rather than landing page
+    def serve(self, request):
+        if request.method == 'POST':
+            form = self.get_form(request.POST)
+
+            if form.is_valid():
+                self.process_form_submission(form)
+
+                redirect_path = request.POST.get(
+                    "redirect_path", request.path_info)
+                messages.success(request, self.thank_you_title)
+                return HttpResponseRedirect(redirect_path)
+        else:
+            form = self.get_form()
+
+        context = self.get_context(request)
+        context['form'] = form
+        return render(
+            request,
+            self.template,
+            context
+        )
+
+    content_panels = [
+        FieldPanel('title', classname="full title"),
+        FieldPanel('intro', classname="full"),
+        InlinePanel('form_fields', label="Form fields"),
+        FieldPanel('thank_you_title', classname="full"),
+        FieldPanel('thank_you_text', classname="full"),
+        MultiFieldPanel([
+            FieldPanel('to_address', classname="full"),
+            FieldPanel('from_address', classname="full"),
+            FieldPanel('subject', classname="full"),
+        ], "Email")
     ]
