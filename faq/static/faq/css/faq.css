@@ -1,0 +1,51 @@
+.faq-questions {
+    margin: 0 0 30px 25px;
+}
+
+.faq-questions dt {
+    font-size: 1.2em;
+    margin-top: 15px;
+}
+
+.faq-questions dd {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 20px;
+}
+
+.faq-questions dt a {
+    color: #333;
+}
+
+.faq-sidebar {
+    background-color: #00638e;
+    padding: 20px;
+    color: #fff;
+    margin-bottom: 20px;
+}
+
+@media screen and (min-width : 992px) {
+  .faq-sidebar {
+    width: 350px;
+    position: fixed;
+    top: 100px;
+    right: 0;   
+  }
+}
+
+.faq-sidebar ul.list-unstyled li {
+  padding: 5px 0;
+}
+
+.faq-sidebar a {
+  color: #fff;
+}
+
+.faq-sidebar a i.fa {
+  color: #7dd2ec;
+  margin-right: 10px;
+}
+
+.faq-sidebar form textarea {
+  height: 10em;
+}

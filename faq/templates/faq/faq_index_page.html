@@ -1,0 +1,72 @@
+{% extends "faq/base.html" %}
+{% load bootstrap3 wagtailcore_tags home_tags %}
+
+{% block body_class %}template-faqindexpage{% endblock %}
+
+{% block full_jumbo %}
+  <div class="jumbotron bg-grey">
+    <div class="container">
+      <h1>{{ self.title }}</h1>
+    </div>
+  </div>
+{% endblock %}
+
+{% block content %}
+
+  <div class="container">
+    <div class="row">
+
+      {# Questions by category #}
+      <div class="col-md-8">
+        {% for category in page.categories %}
+          <h2 class="section-header">{{ category.title }}</h2>
+          <dl class="faq-questions">
+            {% for question in category.questions.all %}
+              <dt>
+                <a data-toggle="collapse" data-target="#question-{{ question.id }}">{{ question.question }}</a>
+              </dt>
+              <dd id="question-{{ question.id }}" class="collapse">{{ question.answer|richtext }}</dd>
+            {% endfor %}
+          </dl>
+        {% endfor %}
+      </div>
+
+      {# FAQ sidebar #}
+      <div class="col-md-4 clearfix">
+        <aside class="faq-sidebar">
+          <h4>Couldn't find your answer?</h4>
+          
+          {% bootstrap_messages %}
+          {% contact_form %}
+
+          {% with contact_settings=settings.home.ContactSettings site_name=page.get_site.site_name %}
+            <ul class="list-unstyled">
+              {% if contact_settings.email %}
+                <li>
+                  <a heaf="{{ contact_settings.email }}" title="Email us">
+                    <i class="fa fa-envelope fa-lg"></i>{{ contact_settings.email }}
+                  </a>
+                </li>
+              {% endif %}
+              {% if contact_settings.phone_display %}
+                <li>
+                  <a heaf="{{ contact_settings.phone_uri }}" title="Call us">
+                    <i class="fa fa-phone fa-lg"></i>{{ contact_settings.phone_display }}
+                  </a>
+                </li>
+              {% endif %}
+              {% if contact_settings.twitter_username %}
+                <li>
+                  <a href="https://twitter.com/{{ contact_settings.twitter_username }}" title="Follow us on twitter">
+                    <i class="fa fa-twitter fa-lg"></i>@{{ contact_settings.twitter_username }}
+                  </a>
+                </li>
+              {% endif %}
+            </ul>
+          {% endwith %}
+        </aside>
+      </div>
+
+    </div>
+  </div>
+{% endblock %}

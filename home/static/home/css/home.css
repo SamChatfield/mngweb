@@ -157,12 +157,6 @@
 
 /* --- PEOPLE PAGE --- */
 
-.template-peoplepage h2 {
-  width: 100%;
-  border-bottom: 1px solid;
-  color: #00bbe3;
-}
-
 .person {
   margin: 10px 0 20px 0;
   text-align: center;

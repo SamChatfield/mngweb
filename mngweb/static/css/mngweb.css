@@ -29,6 +29,10 @@ body {
   font-family: 'Source Sans Pro', sans-serif;
 }
 
+main {
+  margin-bottom: 30px;
+}
+
 h1 i.fa, h2 i.fa, h3 i.fa, h4 i.fa {
   margin-right: 0.3em;
 }
@@ -40,6 +44,12 @@ h1 i.fa, h2 i.fa, h3 i.fa, h4 i.fa {
 
 .bg-grey {
   background-color: #f6f6f6;
+}
+
+.section-header {
+  width: 100%;
+  border-bottom: 1px solid;
+  color: #00bbe3;
 }
 
 
