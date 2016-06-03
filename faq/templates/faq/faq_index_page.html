@@ -32,40 +32,44 @@
       </div>
 
       {# FAQ sidebar #}
-      <div class="col-md-4 clearfix">
-        <aside class="faq-sidebar">
-          <h4>Couldn't find your answer?</h4>
-          
-          {% bootstrap_messages %}
-          {% contact_form %}
+      <aside class="col-md-3 col-md-offset-1 faq-sidebar">
+        <div class="panel panel-primary" data-spy="affix" data-offset-top="230" data-offset-bottom="370">
+          <div class="panel-heading">
+            <h4>Couldn't find your answer?</h4>
+          </div>
+          <div class="panel-body">
+            {% contact_form %}
+          </div>
+          <div class="panel-footer">
 
-          {% with contact_settings=settings.home.ContactSettings site_name=page.get_site.site_name %}
-            <ul class="list-unstyled">
-              {% if contact_settings.email %}
-                <li>
-                  <a heaf="{{ contact_settings.email }}" title="Email us">
-                    <i class="fa fa-envelope fa-lg"></i>{{ contact_settings.email }}
-                  </a>
-                </li>
-              {% endif %}
-              {% if contact_settings.phone_display %}
-                <li>
-                  <a heaf="{{ contact_settings.phone_uri }}" title="Call us">
-                    <i class="fa fa-phone fa-lg"></i>{{ contact_settings.phone_display }}
-                  </a>
-                </li>
-              {% endif %}
-              {% if contact_settings.twitter_username %}
-                <li>
-                  <a href="https://twitter.com/{{ contact_settings.twitter_username }}" title="Follow us on twitter">
-                    <i class="fa fa-twitter fa-lg"></i>@{{ contact_settings.twitter_username }}
-                  </a>
-                </li>
-              {% endif %}
-            </ul>
-          {% endwith %}
-        </aside>
-      </div>
+            {% with contact_settings=settings.home.ContactSettings site_name=page.get_site.site_name %}
+              <ul class="list-unstyled">
+                {% if contact_settings.email %}
+                  <li>
+                    <a heaf="{{ contact_settings.email }}" title="Email us">
+                      <i class="fa fa-envelope fa-lg"></i>{{ contact_settings.email }}
+                    </a>
+                  </li>
+                {% endif %}
+                {% if contact_settings.phone_display %}
+                  <li>
+                    <a heaf="{{ contact_settings.phone_uri }}" title="Call us">
+                      <i class="fa fa-phone fa-lg"></i>{{ contact_settings.phone_display }}
+                    </a>
+                  </li>
+                {% endif %}
+                {% if contact_settings.twitter_username %}
+                  <li>
+                    <a href="https://twitter.com/{{ contact_settings.twitter_username }}" title="Follow us on twitter">
+                      <i class="fa fa-twitter fa-lg"></i>@{{ contact_settings.twitter_username }}
+                    </a>
+                  </li>
+                {% endif %}
+              </ul>
+            {% endwith %}
+          </div>
+        </div>
+      </aside>
 
     </div>
   </div>
