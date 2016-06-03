@@ -4,7 +4,7 @@ from django.db import models
 
 from django.shortcuts import render
 from django.contrib import messages
-from django.http import HttpResponseRedirect
+from django.http import JsonResponse, HttpResponseRedirect
 from django.utils.six import text_type
 from django.core.mail import EmailMessage
 
@@ -409,10 +409,19 @@ class FormPage(AbstractEmailForm):
             if form.is_valid():
                 self.process_form_submission(form)
 
-                redirect_path = request.POST.get(
-                    "redirect_path", request.path_info)
-                messages.success(request, self.thank_you_title)
-                return HttpResponseRedirect(redirect_path)
+                if request.is_ajax():
+                    data = {
+                        'message': self.thank_you_title,
+                    }
+                    return JsonResponse(data)
+                else:
+                    redirect_path = request.POST.get(
+                        "redirect_path", request.path_info)
+                    messages.success(request, self.thank_you_title)
+                    return HttpResponseRedirect(redirect_path)
+            elif request.is_ajax():
+                return JsonResponse(form.errors, status=400)
+
         else:
             form = self.get_form()
 
