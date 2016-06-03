@@ -142,8 +142,38 @@ WAGTAIL_SITE_NAME = "MicrobesNG"
 
 
 # Cache settings
+
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     }
+}
+
+
+# django-bootstrap settings
+
+BOOTSTRAP3 = {
+
+    # The URL to the jQuery JavaScript file
+    'jquery_url': '//code.jquery.com/jquery.min.js',
+
+    # The Bootstrap base URL
+    'base_url': '//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/',
+
+    # Label class to use in horizontal forms
+    'horizontal_label_class': 'col-md-3',
+
+    # Field class to use in horizontal forms
+    'horizontal_field_class': 'col-md-9',
+
+    # Set HTML required attribute on required fields
+    'set_required': True,
+
+    # Set HTML disabled attribute on disabled fields
+    'set_disabled': False,
+
+    # Set placeholder attributes to label if no placeholder is provided
+    'set_placeholder': False,
+
+    # See the docs for other settings
 }
