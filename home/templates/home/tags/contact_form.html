@@ -1,12 +1,23 @@
 {% load bootstrap3 wagtailcore_tags %}
 
-<form action="{% pageurl page %}" method="POST">
+<form action="{% pageurl page %}" method="POST" id="contact-form">
   {% csrf_token %}
   <input type="hidden" name="redirect_path" value="{{ request.path_info }}">
   {% bootstrap_form form %}
   {% buttons %}
     <button type="submit" class="btn btn-success button-lg">
-        <i class="fa fa-comment"></i> Ask us
+      <i class="fa fa-comment"></i> Ask us
     </button>
   {% endbuttons %}
+
+  <div class="alert alert-success alert-dismissable collapse">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+    <span></span>
+  </div>
+  
+  {% bootstrap_messages %}
 </form>
+
+  
+
+  
