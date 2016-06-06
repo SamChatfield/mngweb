@@ -1,0 +1,36 @@
+{% extends "portal/base.html" %}
+{% load bootstrap3 wagtailcore_tags %}
+
+{% block full_jumbo %}
+  <div class="jumbotron bg-grey">
+  <div class="container">
+    <h1>Get your project links</h1>
+  </div>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-4 col-md-offset-1">
+        {% bootstrap_messages %}
+
+        <form action="{{ request.path }}" method="POST" id="email-link-form">
+          {% csrf_token %}
+          {% bootstrap_form form %}
+          {% buttons %}
+          <button type="submit" class="btn btn-success button-lg">
+            <i class="fa fa-comment"></i> Get your link
+          </button>
+          {% endbuttons %}
+
+          <div class="alert alert-success alert-dismissable collapse">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+          <span></span>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}
