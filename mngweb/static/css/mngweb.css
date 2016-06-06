@@ -40,6 +40,7 @@ h1 i.fa, h2 i.fa, h3 i.fa, h4 i.fa {
 .container-fixed {
   margin: 0 auto;
   max-width: 970px;
+  padding: 0 10px;
 }
 
 .bg-grey {
@@ -165,4 +166,24 @@ h1 i.fa, h2 i.fa, h3 i.fa, h4 i.fa {
 .footer .logo {
   max-height: 40px;
   margin-bottom: 20px;
+}
+
+
+/* --- JUMBOTRON --- */
+
+.jumbotron { 
+  padding: 20px 0;
+}
+
+.jumbotron img {
+  margin: auto;
+}
+
+.jumbotron h1 {
+  color: #006892;
+}
+
+.jumbotron h2 {
+  font-size: 1.5em;
+  color: #00bbe3;
 }
