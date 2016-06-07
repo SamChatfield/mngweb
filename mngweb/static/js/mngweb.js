@@ -1,5 +1,19 @@
+// Shortcut to DOM ready
 $(function() {
 
+  // Initialise popovers
+  $('[data-toggle="popover"]').popover({
+      container: 'body',
+      html : true,
+      content: function() {
+        var content = $(this).attr("data-popover-content");
+        return $(content).children(".popover-body").html();
+      },
+      title: function() {
+        var title = $(this).attr("data-popover-content");
+        return $(title).children(".popover-heading").html();
+      }
+    });
 
   // This function gets cookie with a given name
   function getCookie(name) {
@@ -52,46 +66,63 @@ $(function() {
     }
   });
 
-});
+  // AJAX post
+  function ajax_post(form) {
+    // Remove errors before new request
+    $('.has-error', form).removeClass('has-error');
+    $('.help-block', form).remove();
 
-// AJAX post
-function ajax_post(form) {
-  $.ajax({
-    url : $(form).attr('action'),
-    type : $(form).attr('method'),
-    data : $(form).serialize(),
+    // Update button to show in-progress spinner
+    $('button[type="submit"] i', form).addClass('fa-spin fa-spinner');
 
-    success : function(json) {
-      // Reset form, remove errors
-      $(form).trigger("reset");
-      $('.has-error', form).removeClass('has-error');
-      $('.help-block', form).remove();
+    // Make the ajax request
+    $.ajax({
+      url : $(form).attr('action'),
+      type : $(form).attr('method'),
+      data : $(form).serialize(),
 
-      // Display success message
-      $('.alert-success', form).children('span').text(json.message);
-      $('.alert-success', form).fadeIn(500).delay(4000).fadeOut(500);
-    },
+      success : function(json) {
+        $(form).trigger("reset");
+      },
 
-    error : function(xhr,errmsg,err) {
-      var errors = JSON.parse(xhr.responseText);
-      for (error in errors) {
-        var id = '#id_' + error;
-        var parent = $(id).parent('div');
-        parent.addClass('has-error');
-        if ($('.help-block', parent).length) {
-          $('.help-block', parent).text(errors[error]);
-        } else {
-          parent.append('<span class="help-block">' + errors[error] + '</span>');
+      error : function(xhr,errmsg,err) {
+        console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+        var json = JSON.parse(xhr.responseText);;
+        if ('errors' in json) {
+          for (error in json.errors) {
+            var id = '#id_' + error;
+            var parent = $(id, form).parent('div');
+            parent.addClass('has-error');
+            if ($('.help-block', parent).length) {
+              $('.help-block', parent).text(json.errors[error]);
+            } else {
+              parent.append('<span class="help-block">' + json.errors[error] + '</span>');
+            }
+          }
         }
+      },
+
+      complete : function(xhr, status) {
+        $('button[type="submit"] i', form).removeClass('fa-spin fa-spinner');
+        var json = JSON.parse(xhr.responseText);
+        $('.form-messages', form).empty(); // clear messages div
+        if ('messages_html' in json) {
+          $('.form-messages', form).html(json.messages_html);
+        }
+        $('.form-messages', form).children().hide().fadeIn(500).delay(4000).fadeOut(500);
       }
-      console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-    }
+    });
+  };
+
+  // AJAX post on submit
+  $('#contact-form').on('submit', function(event){
+    event.preventDefault();
+    ajax_post(this);
   });
-};
 
-// Submit post on submit
-$('#contact-form').on('submit', function(event){
-  event.preventDefault();
-  ajax_post(this);
+  $(document).on('submit', '#email-link-form', function(event){
+    event.preventDefault();
+    ajax_post(this);
+  });
+
 });
-

@@ -13,9 +13,23 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-md-4 col-md-offset-1">
-        {% bootstrap_messages %}
+        {% load bootstrap3 %}
 
-        {% email_link_form %}
+        <form action="{% url 'email_link' %}" method="POST" id="email-link-form">
+          {% csrf_token %}
+          {% bootstrap_form form %}
+
+          {% buttons %}
+          <button type="submit" class="btn btn-success button-lg">
+            <i class="fa fa-envelope"></i> Get your links
+          </button>
+
+          {% endbuttons %}
+
+          <div class="form-messages">
+            {% include 'includes/messages.html' %}
+          </div>
+        </form>
         
       </div>
     </div>

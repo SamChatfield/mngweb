@@ -1,4 +1,4 @@
-{% load home_tags %}
+{% load home_tags portal_tags %}
 {% load static %}
 
 {% get_navigation_menu "top_menu" as top_menu_items %}
@@ -18,6 +18,21 @@
         {% for item in top_menu_items %}
           <li><a href="{{ item.link }}">{{ item.title|upper }}</a></li>
         {% endfor %}
+        <li>
+          <a href="#" data-toggle="popover" data-popover-content="#project-tracker-popover-content" 
+             data-placement="bottom">PROJECT TRAKER</a>
+
+          <div id="project-tracker-popover-content" class="hidden">
+            <div class="popover-heading">
+              Get your project links emailed to you
+            </div>
+
+            <div class="popover-body">
+              {% email_link_form %}
+            </div>
+          </div>
+
+        </li>
       </ul>
     </div>
   </div>

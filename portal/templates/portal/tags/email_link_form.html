@@ -3,15 +3,15 @@
 <form action="{% url 'email_link' %}" method="POST" id="email-link-form">
   {% csrf_token %}
   {% bootstrap_form form %}
+
   {% buttons %}
   <button type="submit" class="btn btn-success button-lg">
-    <i class="fa fa-comment"></i> Get your link
+    <i class="fa fa-envelope"></i> Get your links
   </button>
+
   {% endbuttons %}
 
-  <div class="alert alert-success alert-dismissable collapse">
-  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-  <span></span>
+  <div class="form-messages">
+    {% include 'includes/messages.html' %}
   </div>
-
 </form>
