@@ -103,11 +103,15 @@ h1 i.fa, h2 i.fa, h3 i.fa, h4 i.fa {
   background-color: #fff;
 }
 
+.navbar-default .email-link-popover .popover {
+  width: 300px;
+}
+
 
 /* --- BUTTONS --- */
 
 .btn i.fa {
-  padding-right: 0.5em;
+  margin-right: 0.5em;
 }
 
 .btn-primary {
