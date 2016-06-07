@@ -159,8 +159,9 @@ class RelatedLink(LinkFields):
 
 class NavigationMenuItem(Orderable, LinkFields):
     menu = ParentalKey(to='home.NavigationMenu', related_name='menu_items')
-    menu_title = models.CharField(max_length=255, blank=True, help_text="Optional link title \
-        in this menu (defaults to page title if one exists)")
+    menu_title = models.CharField(max_length=255, blank=True,
+                                  help_text="Optional link titlein this menu "
+                                  "(defaults to page title if one exists)")
     css_class = models.CharField(max_length=255, blank=True,
                                  verbose_name="CSS Class",
                                  help_text="Optional styling")
