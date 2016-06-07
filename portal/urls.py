@@ -1,5 +1,6 @@
 from django.conf.urls import url
-from portal import views
+
+from . import views
 
 urlpatterns = [
     url(r'^email-link/$', views.email_link, name='email_link'),
