@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.http import JsonResponse, HttpResponseRedirect
 from django.utils.six import text_type
 from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
 
 from wagtail.wagtailcore.models import Page, Orderable
 from wagtail.wagtailcore.fields import RichTextField
@@ -401,29 +402,39 @@ class FormPage(AbstractEmailForm):
                                  [self.to_address], reply_to=reply_to)
             email.send(fail_silently=False)
 
-    # Override serve method to respond with redirect and message
-    # rather than landing page
+    # Override serve method to enable ajax
     def serve(self, request):
         if request.method == 'POST':
             form = self.get_form(request.POST)
 
             if form.is_valid():
                 self.process_form_submission(form)
+                messages.success(request, self.thank_you_title)
 
                 if request.is_ajax():
-                    data = {
-                        'message': self.thank_you_title,
-                    }
+                    # Valid ajax post
+                    data = {'messages': []}
+                    for message in messages.get_messages(request):
+                        data['messages'].append({
+                            "level": message.level,
+                            "level_tag": message.level_tag,
+                            "message": message.message,
+                        })
+                    data['messages_html'] = render_to_string(
+                        'includes/messages.html',
+                        {'messages': messages.get_messages(request)})
                     return JsonResponse(data)
                 else:
-                    redirect_path = request.POST.get(
-                        "redirect_path", request.path_info)
-                    messages.success(request, self.thank_you_title)
-                    return HttpResponseRedirect(redirect_path)
+                    # Valid (non-ajax) post
+                    return HttpResponseRedirect(request.path_info)
+
             elif request.is_ajax():
-                return JsonResponse(form.errors, status=400)
+                # Invalid ajax post
+                data = {'errors': form.errors}
+                return JsonResponse(data, status=400)
 
         else:
+            # GET request
             form = self.get_form()
 
         context = self.get_context(request)

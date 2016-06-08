@@ -12,20 +12,27 @@
 {% endblock %}
 
 {% block content %}
-  <div class="container container-fixed">
+  <div class="container-fluid">
     <div class="row">
-      <div class="col-md-12">
-        {% bootstrap_messages %}
+      <div class="col-md-4 col-md-offset-1">
+        
+        <div class="messages">
+          {% include 'includes/messages.html' %}
+        </div>
+
         {{ self.intro|richtext }}
+
         <form action="{% pageurl page %}" method="POST">
           {% csrf_token %}
           {% bootstrap_form form %}
+
           {% buttons %}   
             <button type="submit" class="btn btn-success button-lg">
               <i class="fa fa-comment"></i> Ask us
             </button>
           {% endbuttons %}
         </form>
+        
       </div>
     </div>
   </div>

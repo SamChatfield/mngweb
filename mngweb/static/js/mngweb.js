@@ -115,7 +115,7 @@ $(function() {
   };
 
   // AJAX post on submit
-  $('#contact-form').on('submit', function(event){
+  $(document).on('submit', '#contact-form', function(event){
     event.preventDefault();
     ajax_post(this);
   });
