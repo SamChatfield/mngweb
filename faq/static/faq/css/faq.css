@@ -17,14 +17,6 @@
   color: #333;
 }
 
-.faq-sidebar .affix {
-  top: 75px;
-}
-
-.faq-sidebar .affix-bottom {
-  position: relative
-}
-
 .faq-sidebar ul.list-unstyled {
   margin-bottom: 0;
 }
