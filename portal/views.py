@@ -3,8 +3,7 @@ import requests
 from django.conf import settings
 from django.contrib import messages
 from django.core.urlresolvers import reverse
-from django.shortcuts import render, render_to_response
-from django.template import RequestContext
+from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.http import HttpResponseRedirect, JsonResponse
 from django.utils.http import urlencode
