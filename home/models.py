@@ -405,6 +405,11 @@ class FormPage(AbstractEmailForm):
     # Override serve method to enable ajax
     def serve(self, request):
         if request.method == 'POST':
+            # honeypot
+            if len(request.POST.get('url_h', '')):
+                messages.success(request, self.thank_you_title)
+                return HttpResponseRedirect(request.path_info)
+
             form = self.get_form(request.POST)
 
             if form.is_valid():

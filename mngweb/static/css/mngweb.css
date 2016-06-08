@@ -53,6 +53,12 @@ h1 i.fa, h2 i.fa, h3 i.fa, h4 i.fa {
   color: #00bbe3;
 }
 
+/* --- FORMS --- */
+
+.url_h {
+  display: none;
+}
+
 
 /* --- FLEXBOX ROWS --- */
 

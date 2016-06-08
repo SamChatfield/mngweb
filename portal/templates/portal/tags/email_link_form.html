@@ -4,6 +4,8 @@
   {% csrf_token %}
   {% bootstrap_form form %}
 
+  {% include 'includes/honeypot_form_field.html' %}
+
   {% buttons %}
   <button type="submit" class="btn btn-success button-lg">
     <i class="fa fa-envelope"></i> Get your links

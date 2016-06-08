@@ -18,15 +18,21 @@ def email_link(request):
                       "please try again later."
 
     if request.method == 'POST':
+        # honeypot
+        if len(request.POST.get('url_h', '')):
+            messages.success(request, success_message)
+            return HttpResponseRedirect(reverse('email_link'))
+
         form = EmailLinkForm(request.POST)
+
         if form.is_valid():
             # make api request
             url = (settings.RESTFM_BASE_URL +
                    'script/contact_email_project_links/REST.json?' +
                    urlencode({
-                             'RFMkey': settings.RESTFM_KEY,
-                             'RFMscriptParam': form.cleaned_data.get('email'),
-                             })
+                       'RFMkey': settings.RESTFM_KEY,
+                       'RFMscriptParam': form.cleaned_data.get('email'),
+                   })
                    )
             try:
                 api_response = requests.get(url, timeout=5)
