@@ -41,6 +41,7 @@ class ImportantLinks(BaseSetting):
 
 @register_setting
 class ContactSettings(BaseSetting):
+    company_name = models.CharField(max_length=255)
     address = models.TextField()
     address_uri = models.URLField(blank=True)
     phone_uri = models.URLField(blank=True)
@@ -50,6 +51,7 @@ class ContactSettings(BaseSetting):
     twitter_username = models.CharField(max_length=15, blank=True)
 
     panels = [
+        FieldPanel('company_name'),
         FieldPanel('address'),
         FieldPanel('phone_uri'),
         FieldPanel('phone_display'),
