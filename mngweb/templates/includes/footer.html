@@ -1,13 +1,13 @@
 {% load static %}
 
-{% with contact_settings=settings.home.ContactSettings site_name=page.get_site.site_name %}
+{% with contact_settings=settings.home.ContactSettings %}
 <div class="container container-fixed">
 
   <div class="row">
     {# Address #}
     <div class="col-sm-4">
       <a href="{{ settings.home.ContactSettings.address_uri }}"
-         title="Find us on Google Maps"><i class="fa fa-map fa-lg"></i>{{ site_name }}</a>
+         title="Find us on Google Maps"><i class="fa fa-map fa-lg"></i>{{ contact_settings.company_name }}</a>
       <address class="small">{{ contact_settings.address|linebreaksbr }}</address>
     </div>
     {# Contact and Social #}
@@ -61,7 +61,7 @@
   {# Copyright notice #}
   <div class="row">
     <div class="col-sm=12">
-      <p class="small">&copy; {{ site_name }} {% now "Y" %}</p>
+      <p class="small">&copy; {{ contact_settings.company_name }} {% now "Y" %}</p>
     </div>
   </div>
 
