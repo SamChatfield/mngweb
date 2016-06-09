@@ -1,0 +1,98 @@
+{% extends "portal/base.html" %}
+{% load bootstrap3 portal_tags %}
+
+{% block full_jumbo %}
+  <div class="jumbotron bg-grey">
+    <div class="container">
+      <h1>Your project </h1>
+      <h2>{{ project.reference }}</h2>
+    </div>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        {% bootstrap_messages %}
+      </div>
+    </div>
+
+    {% if project %}
+      <div class="row">
+
+        <div class="col-md-6">
+          <div class="panel panel-info">
+            <div class="panel-heading">Project Summary</div>
+            <div class="panel-body">
+              <table class="table">
+                <tbody>
+                  <tr>
+                    {% if project.unstored_modal_queue_name %}
+                      <th>Overall status</th>
+                      <td>{{ project.unstored_modal_queue_name }}</td>
+                    {% endif %}
+                  </tr>
+                  <tr>
+                    {% if project.unstored_projectline_count %}
+                      <th>Number of samples</th>
+                      <td>{{ project.unstored_projectline_count }}</td>
+                    {% endif %}
+                  </tr>
+                  <tr>
+                    {% if project.all_content_received_date %}
+                      <th>Date all samples received</th>
+                      <td>{{ project.all_content_received_date }}</td>
+                    {% endif %}
+                  </tr>
+                  <tr>
+                    {% if project.unstored_wait_time_weeks %}
+                      <th>Waiting time</th>
+                      <td>{{ project.unstored_wait_time_weeks }} weeks</td>
+                    {% endif %}
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="row">
+
+        <div class="col-md-12">
+          <div class="panel panel-info">
+            <div class="panel-heading">Project Samples</div>
+            <div class="panel-body">
+              <table class="table">
+                <thead>
+                  {% if project.projectlines.0.container_ProjectContainer__compound_key %}
+                    <th>Well</th>
+                  {% endif %}
+                  <th>Barcode</th>
+                  <th>Type</th>
+                  <th>Customer's Ref</th>
+                  <th>Taxon</th>
+                  <th>Queue Name</th>
+                </thead>
+                <tbody>
+                  {% for projectline in project.projectlines %}
+                    <tr>
+                      {% if projectline.container_ProjectContainer__compound_key %}
+                        <td>{{ projectline.Aliquot__unstored_well_position_display }}</td>
+                      {% endif %}
+                      <td>{{ projectline.Sample__reference }}</td>
+                      <td>{{ projectline.Aliquot__unstored_aliquottype_name }}</td>
+                      <td>{{ projectline.Sample__customers_ref }}</td>
+                      <td>{{ projectline.Taxon__name }}</td>
+                      <td>{{ projectline.Queue__name }}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}
