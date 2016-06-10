@@ -3,12 +3,31 @@ import requests
 from django.conf import settings
 from django.contrib import messages
 from django.core.urlresolvers import reverse
+from django.forms import formset_factory
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.http import HttpResponseRedirect, JsonResponse
 from django.utils.http import urlencode
 
-from .forms import EmailLinkForm
+from .forms import EmailLinkForm, ProjectLineForm
+from .models import Taxon
+
+
+def taxon_search(request):
+    if request.is_ajax():
+        q = request.GET.get('term', '')
+        matches = Taxon.objects.filter(name__icontains=q)[:10]
+        data = []
+        for taxon in matches:
+            taxon_dct = {}
+            taxon_dct['id'] = taxon.fm_id
+            taxon_dct['label'] = taxon.name
+            taxon_dct['value'] = taxon.name
+            data.append(taxon_dct)
+        return JsonResponse(data, safe=False)
+    else:
+        data = {'error': 'Ajax only'}
+        return JsonResponse(data, status=400)
 
 
 def project_detail(request, uuid):
