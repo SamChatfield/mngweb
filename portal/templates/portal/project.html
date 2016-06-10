@@ -1,5 +1,20 @@
 {% extends "portal/base.html" %}
-{% load bootstrap3 portal_tags %}
+{% load bootstrap3 portal_tags static %}
+
+{% block extra_js %}
+  {{ block.super }}
+  <script type="text/javascript" src="{% static 'portal/js/project.js' %}"></script>
+  <script>
+    $(function() {
+      $("[data-mng-autocomplete='taxon'] input").autocomplete({
+        source: '{% url 'taxon_search' %}',
+        minLength: 1,
+      });
+    });
+  </script>
+{% endblock %}
+
+{% block title %}MicrobesNG Project {{ project.reference }}{% endblock %}
 
 {% block full_jumbo %}
   <div class="jumbotron bg-grey">
