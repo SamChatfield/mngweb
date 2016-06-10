@@ -57,41 +57,50 @@
           </div>
         </div>
 
+        <div class="col-md-6">
+          <div class="panel panel-info">
+            <div class="panel-heading">Sample Preparation</div>
+            <div class="panel-body">
+              <iframe src="https://www.youtube.com/embed/-kTcFZxP6kM" frameborder="0" allowfullscreen></iframe>
+            </div>
+          </div>
+        </div>
+
       </div>
       <div class="row">
 
         <div class="col-md-12">
           <div class="panel panel-info">
-            <div class="panel-heading">Project Samples</div>
+            <div class="panel-heading">Sample Data</div>
             <div class="panel-body">
-              <table class="table">
-                <thead>
-                  {% if project.projectlines.0.container_ProjectContainer__compound_key %}
-                    <th>Well</th>
-                  {% endif %}
-                  <th>Barcode</th>
-                  <th>Type</th>
-                  <th>Customer's Ref</th>
-                  <th>Taxon</th>
-                  <th>Queue Name</th>
-                </thead>
-                <tbody>
-                  {% for projectline in project.projectlines %}
-                    <tr>
-                      {% if projectline.container_ProjectContainer__compound_key %}
-                        <td>{{ projectline.Aliquot__unstored_well_position_display }}</td>
-                      {% endif %}
-                      <td>{{ projectline.Sample__reference }}</td>
-                      <td>{{ projectline.Aliquot__unstored_aliquottype_name }}</td>
-                      <td>{{ projectline.Sample__customers_ref }}</td>
-                      <td>{{ projectline.Taxon__name }}</td>
-                      <td>{{ projectline.Queue__name }}</td>
-                    </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
+
+              <form method="post" action="">
+                {{ formset.management_form }}
+                <table class="table">
+                  <thead>
+                    <th title="Our internal identifier for your sample">Barcode <i class="fa fa-question-circle"></i></th>
+                    <th>Type</th>
+                    <th>Customer's Ref</th>
+                    <th>Taxon</th>
+                    <th>Queue Name</th>
+                  </thead>
+                  <tbody>
+                    {% for form in project.pl_formset %}
+                      <tr>
+                        <td>{{ form.sample_ref.value }}</td>
+                        <td>{{ form.aliquottype_name.value  }}</td>
+                        <td>{% bootstrap_field form.customers_ref show_label=False %}</td>
+                        <td><span data-mng-autocomplete="taxon">{% bootstrap_field form.taxon_name show_label=False %}</span></td>
+                        <td>{{ form.queue_name.value  }}</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </form>
+
             </div>
-        </div>
+          </div>
+
       </div>
     {% endif %}
   </div>

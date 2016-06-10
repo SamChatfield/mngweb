@@ -34,6 +34,8 @@ def project_detail(request, uuid):
     failure_message = "We're experiencing some problems right now, " \
                       "please try again later."
 
+    ProjectLineFormSet = formset_factory(ProjectLineForm, extra=0)
+
     # make project api request
     project_url = (settings.RESTFM_BASE_URL +
                    'layout/project_api.json?' +
@@ -56,25 +58,34 @@ def project_detail(request, uuid):
                            })
                            )
         api_response = requests.get(projectline_url, timeout=5)
-        projectlines = api_response.json()['data']
+        pl_raw = api_response.json()['data']
     except Exception:
         messages.error(request, failure_message)
         return render(request, 'portal/project.html')
 
-    # Django templates can't handle '::' in keys
-    for pl in projectlines:
-        for key in pl:
-            if ':' in key:
-                pl[key.replace(':', '_')] = pl.pop(key)
-    projectlines.sort(key=lambda k:
-                      (
-                          k['Container__reference'],
-                          int(k['Aliquot__unstored_container_position']),
-                          k['Sample__reference'],
-                      )
-                      )
-    print(projectlines)
-    project['projectlines'] = projectlines
+    pl_raw.sort(key=lambda k:
+                (
+                    k['Container::reference'],
+                    int(k['Aliquot::unstored_container_position'])
+                    if len(k['Aliquot::unstored_container_position']) else 0,
+                    k['Sample::reference'],
+                )
+                )
+
+    projectlines = []
+    for pl in pl_raw:
+        projectlines.append({
+            'id': pl['projectline_id'],
+            'well_alpha': pl['Aliquot::unstored_well_position_display'],
+            'sample_ref': pl['Sample::reference'],
+            'aliquottype_name': pl['Aliquot::unstored_aliquottype_name'],
+            'customers_ref': pl['Sample::customers_ref'],
+            'taxon_name': pl['Taxon::name'],
+            'queue_name': pl['Queue::name'],
+        })
+
+    project['pl_formset'] = ProjectLineFormSet(initial=projectlines)
+    print(project['pl_formset'])
 
     return render(request, 'portal/project.html',
                   {
