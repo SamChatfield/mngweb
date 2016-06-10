@@ -22,6 +22,23 @@ footer {
 }
 
 
+/* --- FLEXBOX ROWS --- */
+
+.flex-row.row {
+ display: flex;
+ flex-wrap: wrap;
+}
+
+.flex-row.row > [class*='col-'] {
+ display: flex;
+ flex-direction: column;
+}
+
+.flex-row.row > [class*='col-'] .panel {
+  height: 100%;
+}
+
+
 /* --- BASE --- */
 
 body {
