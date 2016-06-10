@@ -11,7 +11,7 @@ from django.utils.http import urlencode
 from .forms import EmailLinkForm
 
 
-def project(request, uuid):
+def project_detail(request, uuid):
     failure_message = "We're experiencing some problems right now, " \
                       "please try again later."
 
@@ -64,7 +64,7 @@ def project(request, uuid):
                   )
 
 
-def email_link(request):
+def project_email_link(request):
     success_message = "Thanks! Your project links should arrive in " \
         "your inbox shortly."
     failure_message = "We're experiencing some problems right now, " \
@@ -74,7 +74,7 @@ def email_link(request):
         # honeypot
         if len(request.POST.get('url_h', '')):
             messages.success(request, success_message)
-            return HttpResponseRedirect(reverse('email_link'))
+            return HttpResponseRedirect(reverse('project_email_link'))
 
         form = EmailLinkForm(request.POST)
 
@@ -110,7 +110,7 @@ def email_link(request):
                 return JsonResponse(data, status=status)
             else:
                 # Valid (non-ajax) post
-                HttpResponseRedirect(reverse('email_link'))
+                HttpResponseRedirect(reverse('project_email_link'))
 
         elif request.is_ajax():
             # Invalid ajax post

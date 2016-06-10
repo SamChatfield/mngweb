@@ -1,6 +1,6 @@
 {% load bootstrap3 %}
 
-<form action="{% url 'email_link' %}" method="POST" id="email-link-form">
+<form action="{% url 'project_email_link' %}" method="POST" id="email-link-form">
   {% csrf_token %}
   {% bootstrap_form form %}
 
