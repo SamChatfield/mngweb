@@ -5,3 +5,4 @@ __pycache__
 *.sublime-*
 source/mngweb/settings/local.py
 media/
+bower_components/
