@@ -1,25 +1,14 @@
 {% extends "portal/base.html" %}
 {% load bootstrap3 portal_tags static %}
 
-{% block extra_js %}
-  {{ block.super }}
-  <script type="text/javascript" src="{% static 'portal/js/project.js' %}"></script>
-  <script>
-    $(function() {
-      $("[data-mng-autocomplete='taxon'] input").autocomplete({
-        source: '{% url 'taxon_search' %}',
-        minLength: 1,
-      });
-    });
-  </script>
-{% endblock %}
+{% block extra_js %}<script src="{% static 'portal/js/project.js' %}"></script>{% endblock %}
 
 {% block title %}MicrobesNG Project {{ project.reference }}{% endblock %}
 
 {% block full_jumbo %}
   <div class="jumbotron bg-grey">
     <div class="container">
-      <h1>Your project </h1>
+      <h1>Your project</h1>
       <h2>{{ project.reference }}</h2>
     </div>
   </div>
@@ -105,7 +94,7 @@
                         <td>{{ form.sample_ref.value }}</td>
                         <td>{{ form.aliquottype_name.value  }}</td>
                         <td>{% bootstrap_field form.customers_ref show_label=False %}</td>
-                        <td><span data-mng-autocomplete="taxon">{% bootstrap_field form.taxon_name show_label=False %}</span></td>
+                        <td>{% bootstrap_field form.taxon_name show_label=False field_class="taxon-typeahead" %}</td>
                         <td>{{ form.queue_name.value  }}</td>
                       </tr>
                     {% endfor %}

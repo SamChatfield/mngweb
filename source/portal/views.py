@@ -14,20 +14,15 @@ from .models import Taxon
 
 
 def taxon_search(request):
-    if request.is_ajax():
-        q = request.GET.get('term', '')
-        matches = Taxon.objects.filter(name__icontains=q)[:10]
-        data = []
-        for taxon in matches:
-            taxon_dct = {}
-            taxon_dct['id'] = taxon.fm_id
-            taxon_dct['label'] = taxon.name
-            taxon_dct['value'] = taxon.name
-            data.append(taxon_dct)
-        return JsonResponse(data, safe=False)
+    q = request.GET.get('q', '')
+    if q:
+        matches = Taxon.objects.filter(name__icontains=q)
+        values = matches.values_list('name', flat=True)[:10]
     else:
-        data = {'error': 'Ajax only'}
-        return JsonResponse(data, status=400)
+        matches = Taxon.objects.all()
+        values = matches.values_list('name', flat=True)
+    data = list(values)
+    return JsonResponse(data, safe=False)
 
 
 def project_detail(request, uuid):
