@@ -1,8 +1,9 @@
 {
-  "name": "typeahead.js",
-  "version": "0.11.1",
-  "main": "dist/typeahead.bundle.js",
+  "name": "mngweb",
+  "version": "0.1.0",
   "dependencies": {
-    "jquery": ">=1.7"
+    "bootstrap": "^3.3.6",
+    "typeahead.js": "^0.11.1",
+    "typeahead.js-bootstrap3.less": "typeahead.js-bootstrap-css#^1.2.1"
   }
 }
