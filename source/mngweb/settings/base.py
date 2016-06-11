@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'search',
 
     'bootstrap3',
+    'pipeline',
 
     'wagtail.contrib.settings',
     'wagtail.wagtailforms',
@@ -122,13 +123,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
+STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
+
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'pipeline.finders.PipelineFinder',
 ]
 
 STATICFILES_DIRS = [
-    os.path.join(PROJECT_DIR, 'static'),
     os.path.join(BASE_DIR, 'static'),
 ]
 
@@ -137,6 +140,28 @@ STATIC_URL = '/static/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+
+# Pipeline
+
+PIPELINE = {
+    'STYLESHEETS': {
+        'libraries': {
+            'source_filenames': (
+                'bower_components/typeahead.js-bootstrap3.less/typeaheadjs.css',
+            ),
+            'output_filename': 'css/libs.min.css',
+        },
+    },
+    'JAVASCRIPT': {
+        'libraries': {
+            'source_filenames': (
+                'bower_components/typeahead.js/dist/typeahead.bundle.js',
+            ),
+            'output_filename': 'js/libs.min.js'
+        }
+    }
+}
 
 
 # Wagtail settings
