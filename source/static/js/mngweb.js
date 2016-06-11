@@ -1,21 +1,41 @@
-// Shortcut to DOM ready
 $(function() {
 
-  // Initialise popovers
-  $('[data-toggle="popover"]').popover({
-      container: 'body',
-      html : true,
-      content: function() {
-        var content = $(this).attr("data-popover-content");
-        return $(content).children(".popover-body").html();
-      },
-      title: function() {
-        var title = $(this).attr("data-popover-content");
-        return $(title).children(".popover-heading").html();
-      }
-    });
+  /*
+  Popovers
+  */
 
-  // This function gets cookie with a given name
+  // Initialise popovers, take content from hidden child divs
+  $('[data-toggle="popover"]').popover({
+    container: 'body',
+    html : true,
+    content: function() {
+      var content = $(this).attr("data-popover-content");
+      return $(content).children(".popover-body").html();
+    },
+    title: function() {
+      var title = $(this).attr("data-popover-content");
+      return $(title).children(".popover-heading").html();
+    }
+  });
+
+  // Close popovers when clicking outside
+  $('body').on('click', function (e) {
+    $('[data-toggle="popover"]').each(function () {
+        //the 'is' for buttons that trigger popups
+        //the 'has' for icons within a button that triggers a popup
+        if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+            $(this).popover('hide');
+        }
+    });
+  });
+
+
+  /*
+  Ajax forms
+  */
+
+  // Create a header with csrftoken
+
   function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie != '') {
@@ -32,10 +52,6 @@ $(function() {
     return cookieValue;
   }
   var csrftoken = getCookie('csrftoken');
-
-  /*
-  The functions below will create a header with csrftoken
-  */
 
   function csrfSafeMethod(method) {
     // these HTTP methods do not require CSRF protection
@@ -124,16 +140,5 @@ $(function() {
     event.preventDefault();
     ajax_post(this);
   });
-
-  // Close popovers when clicking outside
-  $('body').on('click', function (e) {
-    $('[data-toggle="popover"]').each(function () {
-        //the 'is' for buttons that trigger popups
-        //the 'has' for icons within a button that triggers a popup
-        if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
-            $(this).popover('hide');
-        }
-    });
-});
 
 });
