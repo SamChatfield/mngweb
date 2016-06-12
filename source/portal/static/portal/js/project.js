@@ -1,17 +1,17 @@
 $(function() {
-  var taxon = new Bloodhound({
+  var taxonProkaryotes = new Bloodhound({
     datumTokenizer: Bloodhound.tokenizers.whitespace,
     queryTokenizer: Bloodhound.tokenizers.whitespace,
-    prefetch: '/portal/taxon/search/'
+    prefetch: '/portal/api/taxon/prokaryotes/'
   });
-  $('.taxon-typeahead input').typeahead({
+  $('.taxon-pk-typeahead input').typeahead({
     hint: true,
     highlight: true,
     minLength: 0
   },
   {
-    name: 'taxon',
-    source: taxon,
+    name: 'taxon-prokaryotes',
+    source: taxonProkaryotes,
     limit: 10,
     templates: {
       empty: '<div class="tt-suggestion">Start typing and choose the closest taxon</div>'

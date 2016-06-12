@@ -94,7 +94,7 @@
                         <td>{{ form.sample_ref.value }}</td>
                         <td>{{ form.aliquottype_name.value  }}</td>
                         <td>{% bootstrap_field form.customers_ref show_label=False %}</td>
-                        <td>{% bootstrap_field form.taxon_name show_label=False field_class="taxon-typeahead" %}</td>
+                        <td>{% bootstrap_field form.taxon_name show_label=False field_class="taxon-pk-typeahead" %}</td>
                         <td>{{ form.queue_name.value  }}</td>
                       </tr>
                     {% endfor %}

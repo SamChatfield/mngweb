@@ -13,15 +13,28 @@ from .forms import EmailLinkForm, ProjectLineForm
 from .models import Taxon
 
 
-def taxon_search(request):
+def taxon_api(request):
     q = request.GET.get('q', '')
     if q:
-        matches = Taxon.objects.filter(name__icontains=q)
-        values = matches.values_list('name', flat=True)[:10]
+        matches = (Taxon.objects
+                   .filter(name__icontains=q)
+                   .values_list('name', flat=True)[:10])
     else:
-        matches = Taxon.objects.all()
-        values = matches.values_list('name', flat=True)
-    data = list(values)
+        matches = Taxon.objects.all().values_list('name', flat=True)
+    data = list(matches)
+    return JsonResponse(data, safe=False)
+
+
+def taxon_api_prokaryotes(request):
+    q = request.GET.get('q', '')
+    matches = Taxon.objects.filter(data_set__in=['Prokaryotes', 'Other'])
+    if q:
+        matches = (matches
+                   .filter(name__icontains=q)
+                   .values_list('name', flat=True)[:10])
+    else:
+        matches = matches.values_list('name', flat=True)
+    data = list(matches)
     return JsonResponse(data, safe=False)
 
 
