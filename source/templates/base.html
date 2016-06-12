@@ -23,16 +23,16 @@
     {% endblock %}
   </head>
 
-  <body class="{% block body_class %}{% endblock %}">
+  <body class="site-body {% block body_class %}{% endblock %}">
     {% wagtailuserbar %}
 
     {% include "includes/top_menu.html" %}
 
-    <header>{% block full_jumbo %}{% endblock %}</header>
+    <header class="site-header">{% block full_jumbo %}{% endblock %}</header>
    
-    <main class="clearfix">{% block content %}{% endblock %}</main>
+    <main class="site-content clearfix">{% block content %}{% endblock %}</main>
 
-    <footer class="footer">{% include "includes/footer.html" %}</footer>
+    <footer class="site-footer">{% include "includes/footer.html" %}</footer>
 
     {# Global javascript #}
     {% bootstrap_javascript jquery=1 %}
