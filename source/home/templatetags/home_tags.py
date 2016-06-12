@@ -40,7 +40,7 @@ def update_lims_sample_stats():
 
 def update_lims_project_stats():
     url = (settings.RESTFM_BASE_URL +
-           'layout/Project.json?RFMkey=' +
+           'layout/project_api.json?RFMkey=' +
            settings.RESTFM_KEY +
            '&RFMmax=1')
     try:
