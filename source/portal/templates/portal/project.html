@@ -3,6 +3,7 @@
 
 {% block extra_js %}
   <script src="{% static 'taxon/js/typeahead.js' %}"></script>
+  <script src="{% static 'country/js/typeahead.js' %}"></script>
 {% endblock %}
 
 {% block title %}MicrobesNG Project {{ project.reference }}{% endblock %}
@@ -81,7 +82,6 @@
             <div class="panel-body">
 
               <form method="post" action="">
-                {{ formset.management_form }}
                 <table class="table">
                   <thead>
                     <th title="Our internal identifier for your sample">Barcode <i class="fa fa-question-circle"></i></th>
@@ -89,18 +89,66 @@
                     <th>Customer's Ref</th>
                     <th>Taxon</th>
                     <th>Queue Name</th>
+                    <th></th>
                   </thead>
+                  <tfoot>
+                    <tr>
+                      <td colspan="6">
+                        <button class="btn btn-success" type="Submit">Save Changes</button>
+                      </td>
+                    </tr>
+                  </tfoot>
                   <tbody>
-                    {% for form in project.pl_formset %}
-                      <tr>
-                        <td>{{ form.sample_ref.value }}</td>
-                        <td>{{ form.aliquottype_name.value  }}</td>
-                        <td>{% bootstrap_field form.customers_ref show_label=False %}</td>
-                        <td>{% bootstrap_field form.taxon_name show_label=False field_class="taxon-pk-typeahead" %}</td>
-                        <td>{{ form.queue_name.value  }}</td>
+                    {% for pl in project.projectlines %}
+                      <tr class="vert-middle">
+                        <td>{{ pl.sample_ref }}</td>
+                        <td>{{ pl.aliquottype_name  }}</td>
+                        <td>{{ pl.customers_ref  }}</td>
+                        <td>{{ pl.taxon_name  }}</td>
+                        <td>{{ pl.queue_name  }}</td>
+                        <td><button class="btn btn-warning pull-right" type="button" data-target="#edit-row-{{ forloop.counter0 }}" data-toggle="collapse">Provide data</button></td>
+                      </tr>
+                      <tr class="collapse bg-grey" id="edit-row-{{ forloop.counter0 }}">
+                        <td colspan="6">
+                          <div class="col-md-4">
+                            {% bootstrap_field pl.form.id %}
+                            <h3>Basic sample data</h3>
+                            {% bootstrap_field pl.form.customers_ref %}
+                            {% bootstrap_field pl.form.taxon_name field_class="taxon-pk-typeahead" %}
+                            {% if pl.aliquottype_name == "DNA" %}
+                              {% bootstrap_field pl.form.dna_concentration_ng_ul %}
+                              {% bootstrap_field pl.form.volume_ul %}
+                            {% endif %}
+                          </div>
+                          <div class="col-md-4">
+                            <h3>Core meta data</h3>
+                            {% bootstrap_field pl.form.geo_country_name field_class="country-typeahead" %}
+                            {% bootstrap_field pl.form.geo_specific_location %}
+                            <label>Sample Collection Date (DD/MMM/YYYY)</label>
+                            <div class="row">
+                              <div class="col-md-4">{% bootstrap_field pl.form.collection_day show_label=False %}</div>
+                              <div class="col-md-4">{% bootstrap_field pl.form.collection_month show_label=False %}</div>
+                              <div class="col-md-4">{% bootstrap_field pl.form.collection_year show_label=False %}</div>
+                            </div>
+                          </div>
+                          <div class="col-md-4">
+                            <h3>Extended meta data</h3>
+                            {% bootstrap_field pl.form.isolate_type %}
+                            {% bootstrap_field pl.form.host_taxon_name field_class="taxon-typeahead" %}
+
+                            {% buttons %}
+                            <button type="submit" class="btn btn-success button-lg pull-right">
+                              <i class="fa fa-floppy-o"></i> Save
+                            </button>
+                            {% endbuttons %}
+                          </div>
+                        </td>
                       </tr>
                     {% endfor %}
                   </tbody>
+                  <tfoot>
+
+                  </tfoot>
                 </table>
               </form>
 

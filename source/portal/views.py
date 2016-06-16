@@ -16,8 +16,6 @@ def project_detail(request, uuid):
     failure_message = "We're experiencing some problems right now, " \
                       "please try again later."
 
-    ProjectLineFormSet = formset_factory(ProjectLineForm, extra=0)
-
     # make project api request
     project_url = (settings.RESTFM_BASE_URL +
                    'layout/project_api.json?' +
@@ -56,7 +54,7 @@ def project_detail(request, uuid):
 
     projectlines = []
     for pl in pl_raw:
-        projectlines.append({
+        data = {
             'id': pl['projectline_id'],
             'well_alpha': pl['Aliquot::unstored_well_position_display'],
             'sample_ref': pl['Sample::reference'],
@@ -64,10 +62,21 @@ def project_detail(request, uuid):
             'customers_ref': pl['Sample::customers_ref'],
             'taxon_name': pl['Taxon::name'],
             'queue_name': pl['Queue::name'],
-        })
+            'volume_ul': pl['Aliquot::volume_ul'],
+            'dna_concentration_ng_ul': pl['Aliquot::dna_concentration_ng_ul'],
+            'country_name': pl['sample_Country::name'],
+            'geo_specific_location': pl['Sample::geo_specific_location'],
+            'collection_day': pl['Sample::collection_day'],
+            'collection_month': pl['Sample::collection_month'],
+            'collection_year': pl['Sample::collection_year'],
+        }
+        if data['customers_ref']:
+            data['form'] = ProjectLineForm(data)
+        else:
+            data['form'] = ProjectLineForm()
+        projectlines.append(data)
 
-    project['pl_formset'] = ProjectLineFormSet(initial=projectlines)
-    print(project['pl_formset'])
+    project['projectlines'] = projectlines
 
     return render(request, 'portal/project.html',
                   {
@@ -101,7 +110,7 @@ def project_email_link(request):
                    )
             try:
                 api_response = requests.get(url, timeout=5)
-                status = api_response.status
+                status = api_response.status_code
                 messages.success(request, success_message)
             except requests.exceptions.RequestException:
                 status = 408

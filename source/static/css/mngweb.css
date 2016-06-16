@@ -75,14 +75,10 @@ h1 i.fa, h2 i.fa, h3 i.fa, h4 i.fa {
   display: none;
 }
 
-td .form-group {
-  margin: 0;
-}
-
 
 /* --- TABLES --- */
 
-.table tbody tr td {
+.table tbody tr.vert-middle td {
   vertical-align: middle;
 }
 
