@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'portal',
     'search',
     'taxon',
+    'quote',
 
     'bootstrap3',
     'pipeline',
