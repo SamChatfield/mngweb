@@ -108,4 +108,11 @@ class QuoteRequestForm(forms.Form):
                     code='required')
             )
 
+        if (self.cleaned_data.get('num_strain_samples') < 1 and
+                self.cleaned_data.get('num_dna_samples') < 1):
+
+            raise ValidationError(
+                _("A total sample quantity of at least one (strain or DNA) is required"),
+                code='required')
+
         return self.cleaned_data
