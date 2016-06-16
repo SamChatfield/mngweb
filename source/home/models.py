@@ -1,7 +1,6 @@
 from __future__ import unicode_literals
 
 from django.db import models
-
 from django.shortcuts import render
 from django.contrib import messages
 from django.http import JsonResponse, HttpResponseRedirect
@@ -386,10 +385,29 @@ class FormField(AbstractFormField):
     page = ParentalKey('FormPage', related_name='form_fields')
 
 
+class FormThankYouPage(Page):
+    message = RichTextField(blank=True)
+    parent_page_types = ['home.FormPage']
+
+    content_panels = Page.content_panels + [
+        FieldPanel('message', classname="full")
+    ]
+
+
 class FormPage(AbstractEmailForm):
     intro = RichTextField(blank=True)
-    thank_you_title = models.CharField(max_length=255)
-    thank_you_text = RichTextField(blank=True)
+    side_panel_title = models.CharField(max_length=255, blank=True)
+    side_panel_content = RichTextField(blank=True)
+    success_message = models.CharField(max_length=255)
+    thank_you_page = models.ForeignKey(
+        'home.FormThankYouPage',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+'
+    )
+
+    subpage_types = ['home.FormThankYouPage']
 
     # Override process_form_submission method to add 'reply-to' header
     def process_form_submission(self, form):
@@ -409,14 +427,14 @@ class FormPage(AbstractEmailForm):
         if request.method == 'POST':
             # honeypot
             if len(request.POST.get('url_h', '')):
-                messages.success(request, self.thank_you_title)
+                messages.success(request, self.success_message)
                 return HttpResponseRedirect(request.path_info)
 
             form = self.get_form(request.POST)
 
             if form.is_valid():
                 self.process_form_submission(form)
-                messages.success(request, self.thank_you_title)
+                messages.success(request, self.success_message)
 
                 if request.is_ajax():
                     # Valid ajax post
@@ -433,7 +451,7 @@ class FormPage(AbstractEmailForm):
                     return JsonResponse(data)
                 else:
                     # Valid (non-ajax) post
-                    return HttpResponseRedirect(request.path_info)
+                    return HttpResponseRedirect(self.thank_you_page.url)
 
             elif request.is_ajax():
                 # Invalid ajax post
@@ -455,9 +473,13 @@ class FormPage(AbstractEmailForm):
     content_panels = [
         FieldPanel('title', classname="full title"),
         FieldPanel('intro', classname="full"),
+        MultiFieldPanel([
+            FieldPanel('side_panel_title'),
+            FieldPanel('side_panel_content', classname="full"),
+        ], "Side Panel"),
         InlinePanel('form_fields', label="Form fields"),
-        FieldPanel('thank_you_title', classname="full"),
-        FieldPanel('thank_you_text', classname="full"),
+        FieldPanel('success_message', classname="full"),
+        PageChooserPanel('thank_you_page'),
         MultiFieldPanel([
             FieldPanel('to_address', classname="full"),
             FieldPanel('from_address', classname="full"),

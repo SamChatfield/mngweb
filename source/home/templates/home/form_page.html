@@ -13,15 +13,14 @@
 
 {% block content %}
   <div class="container">
+
     <div class="row">
-      <div class="col-md-4">
-        
+
+      <div class="col-md-8">
         <div class="messages">
           {% include 'includes/messages.html' %}
         </div>
-
         {{ self.intro|richtext }}
-
         <form action="{% pageurl page %}" method="POST">
           {% csrf_token %}
           {% bootstrap_form form %}
@@ -34,8 +33,25 @@
             </button>
           {% endbuttons %}
         </form>
-        
       </div>
+
+      {# Sidebar #}
+      {% if page.side_panel_content %}
+        <aside class="col-md-4">
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h4>Aside</h4>
+            </div>
+            <div class="panel-body">
+              Aside
+            </div>
+          </div>
+        </aside>
+      {% endif %}
+
+
+
     </div>
+
   </div>
 {% endblock %}
