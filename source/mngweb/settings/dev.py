@@ -11,7 +11,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-LIMS_STATS_CACHE_TIMEOUT = 500
+LIMS_STATS_CACHE_TIMEOUT = 10
 
 try:
     from .local import *
