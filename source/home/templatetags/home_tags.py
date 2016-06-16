@@ -17,7 +17,7 @@ register = template.Library()
 def update_lims_sample_stats():
     # find samples with related strain aliquot
     url = (settings.RESTFM_BASE_URL +
-           'layout/Sample.json?RFMkey=' +
+           'layout/sample_api.json?RFMkey=' +
            settings.RESTFM_KEY +
            '&RFMsF1=Aliquot%3A%3Aaliquottype_id&RFMsV1=%3D%3D2' +
            '&RFMmax=1')

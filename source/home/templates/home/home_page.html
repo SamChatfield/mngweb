@@ -7,7 +7,7 @@
   <div class="jumbotron bg-grey">
     <div class="container">
       <div class="flex-row row">
-        <div class="col-md-3 col-md-offset-1 hidden-sm-down">
+        <div class="col-md-3 col-md-offset-1 hidden-sm hidden-xs">
           <img src="{% static "images/mng-logo-500.png" %}" class="img-responsive">
         </div>
         <div class="col-md-6 col-sm-offset-1">
@@ -19,53 +19,30 @@
       </div>
     </div>
   </div>
-{% endblock %}
-
-{% block content %}
 
   {# Service Stats #}
   {% get_lims_sample_stats as sample_stats %}
   {% get_lims_project_stats as project_stats %}
   {% if sample_stats and project_stats %}
-    <div class="container-fluid stats-panels">
-      <div class="container-fixed">
-        <div class="row">
-          <div class="col-sm-4">
-            <div class="panel panel-default">
-              <div class="panel-body">
-                <dl class="dl-horizontal">
-                  <dt>Samples processed:</dt>
-                  <dd>{{ sample_stats.total_count }}</dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-          <div class="col-sm-4">
-            <div class="panel panel-default">
-              <div class="panel-body">
-                <dl class="dl-horizontal">
-                  <dt>Median wait time weeks:</dt>
-                  <dd>{{ project_stats.median_wait_time_weeks }}</dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-          <div class="col-sm-4">
-            <div class="panel panel-default">
-              <div class="panel-body">
-                <dl class="dl-horizontal">
-                  <dt>Strains archived:</dt>
-                  <dd>{{ sample_stats.strain_count }}</dd>
-                </dl>
-              </div>
-            </div>
-          </div>
+  <div class="container-fluid stats-jumbo hidden-sm hidden-xs">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 stats-jumbo-block">
+          <dl><dt>Samples processed</dt><dd>{{ sample_stats.total_count }}</dd>
+        </div>
+        <div class="col-md-4 stats-jumbo-block">
+          <dl><dt>Median waiting time</dt><dd>{{ project_stats.median_wait_time_weeks }} weeks</dd>
+        </div>
+        <div class="col-md-4 stats-jumbo-block">
+          <dl><dt>Strains archived</dt><dd>{{ sample_stats.strain_count }}</dd>
         </div>
       </div>
     </div>
+  </div>
   {% endif %}
+{% endblock %}
 
-
+{% block content %}
   {# Feture Panels #}
   {% if self.feature_panels.all %}
     <div class="container-fluid text-center">
@@ -90,7 +67,7 @@
   {% endif %}
 
   {# Pricing #}
-  <div class="service-price-panels container-fluid bg-grey">
+  <div class="container-fluid bg-grey">
     <div class="container-fixed">
         <div class="text-center">
           <h2>{{ self.pricing_title }}</h2>

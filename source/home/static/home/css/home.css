@@ -1,4 +1,36 @@
-/* --- HOME STATS PANELS --- */
+/* --- HOME STATS PANELS (Block design) --- */
+
+.template-homepage .jumbotron {
+  margin-bottom: 0;
+}
+
+.stats-jumbo {
+  border: 1px solid #fff;
+  background-color: #575757;
+  color: #fff;
+  margin-bottom: 20px;
+}
+
+.stats-jumbo-block {
+  padding: 10px;
+  text-align: center;
+}
+
+.stats-jumbo-block:nth-child(2) {
+  border: 1px solid #fff;
+  border-width: 0 1px;
+}
+
+.stats-jumbo-block dl {
+  margin-bottom: 0;
+}
+
+.stats-jumbo-block dd {
+  font-size: 2em;
+}
+
+
+/* --- HOME STATS PANELS (Old design) --- */
 
 .stats-panels .panel-body {
   font-size: 1.2em;
@@ -45,26 +77,16 @@
   font-size: 40px;
 }
 
-/* --- PANELS --- */
 
-.panel {
+/* --- SERVICE PRICE PANELS --- */
+
+.panel-prices {
   border: 1px solid #00bbe3; 
-  transition: box-shadow 0.5s;
 }
 
-.panel:hover {
-  box-shadow: 5px 0px 40px rgba(0,0,0, .2);
-}
-
-.panel-footer .btn:hover {
-  border: 1px solid #00bbe3;
-  background-color: #fff !important;
-  color: #00bbe3;
-}
-
-.panel-heading {
-  color: #fff !important;
-  background-color: #00bbe3 !important;
+.panel-prices .panel-heading {
+  color: #fff;
+  background-color: #00bbe3;
   border-bottom: 1px solid transparent;
   border-top-left-radius: 0px;
   border-top-right-radius: 0px;
@@ -72,32 +94,38 @@
   border-bottom-right-radius: 0px;
 }
 
-/* --- SERVICE PRICE PANELS --- */
+.panel-prices {
+  transition: box-shadow 0.5s;
+}
 
-.service-price-panels .panel-heading {
+.panel-prices:hover {
+  box-shadow: 5px 0px 40px rgba(0,0,0, .2);
+}
+
+.panel-prices .panel-heading {
   padding: 25px;
 }
 
-.service-price-panels .panel-footer {
-  background-color: #fff !important;
+.panel-prices .panel-footer {
+  background-color: #fff;
 }
 
-.service-price-panels .panel-footer h3 {
+.panel-prices .panel-footer h3 {
   font-size: 32px;
 }
 
-.service-price-panels .panel-footer h4 {
+.panel-prices .panel-footer h4 {
   color: #aaa;
   font-size: 14px;
 }
 
-.service-price-panels .panel-footer .btn {
+.panel-prices .panel-footer .btn {
   margin: 15px 0;
   background-color: #00bbe3;
   color: #fff;
 }
 
-.service-price-panels ul li {
+.panel-prices ul li {
   text-align: left;
   padding: 0 0 10px 0;
 }
