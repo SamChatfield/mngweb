@@ -26,6 +26,8 @@ class FaqIndexPage(Page):
 
 
 class FaqCategoryPage(Page):
+    parent_page_types = ['faq.FaqIndexPage']
+
     content_panels = Page.content_panels + [
         InlinePanel('questions', label="Questions"),
     ]
