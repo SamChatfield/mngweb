@@ -5,5 +5,5 @@ __pycache__
 *.sublime-*
 source/mngweb/settings/local.py
 media/
-static/
+/static/
 bower_components/
