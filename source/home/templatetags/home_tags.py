@@ -5,8 +5,8 @@ from django.conf import settings
 from django.core.cache import cache
 from statistics import median_low
 
-from home.models import NavigationMenu, ServicePrice, Testimonial,\
-    PeoplePagePerson, FormPage, PERSON_TEAM_CHOICES
+from ..models import NavigationMenu, ServicePrice, Testimonial,\
+    PeoplePagePerson, PERSON_TEAM_CHOICES
 
 
 register = template.Library()
@@ -125,16 +125,4 @@ def testimonial_carousel(context):
     return {
         'testimonials': Testimonial.objects.all(),
         'request': context['request'],
-    }
-
-
-# Contact form
-
-@register.inclusion_tag('home/tags/contact_form.html', takes_context=True)
-def contact_form(context):
-    page = FormPage.objects.get(slug='contact')
-    return {
-        'request': context['request'],
-        'page': page,
-        'form': page.get_form(),
     }

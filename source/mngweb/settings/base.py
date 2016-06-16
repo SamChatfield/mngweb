@@ -26,11 +26,12 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 INSTALLED_APPS = [
     'country',
     'faq',
+    'formbuilder',
     'home',
     'portal',
+    'quote',
     'search',
     'taxon',
-    'quote',
 
     'bootstrap3',
     'pipeline',
