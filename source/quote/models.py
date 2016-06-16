@@ -1,17 +1,15 @@
 from __future__ import unicode_literals
 
-import json
-
 from django.db import models
+from django.contrib import messages
 from django.core.mail import EmailMessage
-from django.core.serializers.json import DjangoJSONEncoder
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.utils.six import text_type
 
 from wagtail.wagtailcore.models import Page
 from wagtail.wagtailcore.fields import RichTextField
-from wagtail.wagtailadmin.edit_handlers import FieldPanel, MultiFieldPanel
-from wagtail.wagtailforms.models import FormSubmission
+from wagtail.wagtailadmin.edit_handlers import FieldPanel, MultiFieldPanel,\
+    PageChooserPanel
 
 from .forms import QuoteRequestForm
 
@@ -25,12 +23,24 @@ class QuoteRequestFormPage(Page):
     intro = RichTextField(blank=True)
     side_panel_title = models.CharField(max_length=255)
     side_panel_content = RichTextField(blank=True)
-
-    to_address = models.EmailField(
-        max_length=255, blank=True,
-        help_text="Form submissions will be emailed to this address"
+    success_message = models.CharField(max_length=255)
+    thank_you_page = models.ForeignKey(
+        'formbuilder.FormThankYouPage',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+'
     )
+    to_address = models.EmailField(
+        max_length=255,
+        help_text="Form submissions will be emailed to this address")
+    from_address = models.EmailField(
+        max_length=255,
+        help_text="Form submissions will show as having come from this"
+        " address")
     subject = models.CharField(max_length=255, blank=True)
+
+    subpage_types = ['formbuilder.FormThankYouPage']
 
     content_panels = Page.content_panels + [
         FieldPanel('intro', classname='full'),
@@ -40,19 +50,18 @@ class QuoteRequestFormPage(Page):
         ], "Side Panel"),
         MultiFieldPanel([
             FieldPanel('to_address'),
+            FieldPanel('from_address'),
             FieldPanel('subject', classname="full"),
-        ], "Email")
+        ], "Email"),
+        PageChooserPanel('thank_you_page'),
     ]
 
     def process_form_submission(self, form):
-        FormSubmission.objects.create(
-            form_data=json.dumps(form.cleaned_data, cls=DjangoJSONEncoder),
-            page=self,
-        )
         if self.to_address:
-            content = '\n'.join([x[1].label + ': ' +
-                                text_type(form.data.get(x[0]))
-                                for x in form.fields.items()])
+            content = '\n'.join(
+                [(o.label if o.label else f) + ': ' + str(form.cleaned_data[f])
+                    for f, o in form.fields.items()]
+            )
             reply_to = ([form.data['email']] if 'email' in form.data else None)
             email = EmailMessage(self.subject, content, self.from_address,
                                  [self.to_address], reply_to=reply_to)
@@ -60,13 +69,22 @@ class QuoteRequestFormPage(Page):
 
     def serve(self, request):
         if request.method == 'POST':
+            # honeypot
+            if len(request.POST.get('url_h', '')):
+                messages.success(request, self.success_message)
+                return HttpResponseRedirect(self.url)
+
             form = QuoteRequestForm(request.POST)
+
             if form.is_valid():
-                self.process_form_submission()
-                return render(request, 'quote/quote_request_form.html', {
-                    'page': self,
-                    'form': form,
-                })
+                self.process_form_submission(form)
+                if self.thank_you_page:
+                    return HttpResponseRedirect(self.thank_you_page.url)
+                else:
+                    messages.success(request, self.success_message)
+                    return HttpResponseRedirect(self.url)
+            else:
+                print(form.errors)
         else:
             form = QuoteRequestForm()
 

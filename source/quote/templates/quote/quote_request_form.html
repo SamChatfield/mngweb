@@ -26,6 +26,7 @@
       <div class="col-md-8">
         <div class="messages">
           {% include 'includes/messages.html' %}
+          {% bootstrap_form_errors form %}
         </div>
 
         {{ self.intro|richtext }}
@@ -92,7 +93,7 @@
               {% bootstrap_field form.is_confidential %}
             </div>
             <div class="col-md-6">
-              {% bootstrap_field form.batch_type %}
+              {% bootstrap_field form.bbsrc_code %}
             </div>
           </div>
           <div class="row">
@@ -128,6 +129,7 @@
           </div>
 
           <h3 class="section-header">Further details</h3>
+          {% bootstrap_field form.batch_type %}
           {% bootstrap_field form.referral_type %}
           {% bootstrap_field form.comments %}
 

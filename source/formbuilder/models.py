@@ -22,7 +22,10 @@ class FormField(AbstractFormField):
 
 class FormThankYouPage(Page):
     message = RichTextField(blank=True)
-    parent_page_types = ['formbuilder.FormPage']
+    parent_page_types = [
+        'formbuilder.FormPage',
+        'quote.QuoteRequestFormPage',
+    ]
 
     content_panels = Page.content_panels + [
         FieldPanel('message', classname="full")
@@ -63,7 +66,7 @@ class FormPage(AbstractEmailForm):
             # honeypot
             if len(request.POST.get('url_h', '')):
                 messages.success(request, self.success_message)
-                return HttpResponseRedirect(request.path_info)
+                return HttpResponseRedirect(self.url)
 
             form = self.get_form(request.POST)
 

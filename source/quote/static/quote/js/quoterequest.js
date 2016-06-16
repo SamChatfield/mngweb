@@ -25,7 +25,20 @@ $(function() {
     $("#quote-total-price").text('£' + totalPrice);
   }
   setQuoteEstimate();
-  $('#id_funding_type,#id_is_confidential,#id_num_dna_samples,#id_num_strain_samples').change(function() {
+  $('#id_is_confidential,#id_num_dna_samples,#id_num_strain_samples').change(function() {
     setQuoteEstimate();
   });
+
+  $('#id_funding_type').change(function() {
+      if ($(this).val() == 'BBSRC funded') {
+        $('#id_bbsrc_code').parent().show();
+      } else {
+        $('#id_bbsrc_code').parent().hide();
+      }
+      setQuoteEstimate();
+  });
+
+  // scroll to first error
+  document.getElementsByClassName("has-error")[0].scrollIntoView()
+
 });
