@@ -4,7 +4,7 @@ from .models import Taxon
 
 
 def load_taxon_data(file_path):
-    """clear and reload taxon data from filemaker"""
+    """clear and reload Taxon data from csv"""
     Taxon.objects.all().delete()
     reader = csv.DictReader(open(file_path))
     for row in reader:

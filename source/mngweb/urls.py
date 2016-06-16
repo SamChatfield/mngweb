@@ -8,6 +8,7 @@ from wagtail.wagtailcore import urls as wagtail_urls
 
 from country import urls as country_urls
 from portal import urls as portal_urls
+from taxon import urls as taxon_urls
 
 from search import views as search_views
 
@@ -22,6 +23,7 @@ urlpatterns = [
 
     url(r'country/', include(country_urls)),
     url(r'portal/', include(portal_urls)),
+    url(r'taxon/', include(taxon_urls)),
 
     url(r'', include(wagtail_urls)),
 ]

@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'home',
     'portal',
     'search',
+    'taxon',
 
     'bootstrap3',
     'pipeline',
