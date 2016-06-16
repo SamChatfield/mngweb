@@ -1,0 +1,156 @@
+{% extends "quote/base.html" %}
+{% load bootstrap3 wagtailcore_tags static %}
+
+{% block title %}Quote Request Form{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'country/js/typeahead.js' %}"></script>
+  <script src="{% static 'quote/js/quoterequest.js' %}"></script>
+{% endblock %}
+
+{% block body_class %}template-quoterequestformpage{% endblock %}
+
+{% block full_jumbo %}
+  <div class="jumbotron bg-grey">
+    <div class="container">
+      <h1>{{ page.title }}</h1>
+    </div>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+
+    <div class="row">
+
+      <div class="col-md-8">
+        <div class="messages">
+          {% include 'includes/messages.html' %}
+        </div>
+
+        {{ self.intro|richtext }}
+
+        <form action="{% pageurl page %}" method="POST">
+          {% csrf_token %}
+          {% include 'includes/honeypot_form_field.html' %}
+
+          <h3 class="section-header">Contact details</h3>
+
+          <div class="row">
+            <div class="col-md-2">
+              {% bootstrap_field form.name_title %}
+            </div>
+            <div class="col-md-5">
+              {% bootstrap_field form.name_first %}
+            </div>
+            <div class="col-md-5">
+              {% bootstrap_field form.name_last %}
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-7">
+              {% bootstrap_field form.email %}
+            </div>
+            <div class="col-md-5">
+              {% bootstrap_field form.phone %}
+            </div>
+          </div>
+
+          <h3 class="section-header">Postal address</h3>
+          <p>Please make sure to include the building or relevant department.</p>
+
+          {% bootstrap_field form.organisation %}
+          {% bootstrap_field form.department %}
+          {% bootstrap_field form.street_line_1 label="Address lines" %}
+          {% bootstrap_field form.street_line_2 show_label=False %}
+          {% bootstrap_field form.street_line_3 show_label=False %}
+          <div class="row">
+            <div class="col-md-6">
+              {% bootstrap_field form.city %}
+            </div>
+            <div class="col-md-6">
+              {% bootstrap_field form.region %}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-3">
+              {% bootstrap_field form.postcode %}
+            </div>
+            <div class="col-md-9">
+              {% bootstrap_field form.country field_class="country-typeahead" %}
+            </div>
+          </div>
+
+          <h3 class="section-header">Sample information</h3>
+          <p>Please note: the confidential service costs £100 regardless of funding type.
+              Otherwise, your data will be embargoed for 1 year, which can be extended by written
+              request (see terms).</p>
+          <div class="row">
+            <div class="col-md-6">
+              {% bootstrap_field form.funding_type %}
+              {% bootstrap_field form.is_confidential %}
+            </div>
+            <div class="col-md-6">
+              {% bootstrap_field form.batch_type %}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-3">
+              {% bootstrap_field form.num_dna_samples %}
+            </div>
+            <div class="col-md-3">
+              {% bootstrap_field form.num_strain_samples %}
+              {% bootstrap_field form.confirm_strain_bsl2 %}
+            </div>
+            <div class="col-md-6">
+              <div class="panel panel-default">
+                <div class="panel-body">
+                  <table class="table">
+                    <tbody>
+                      <tr>
+                        <th>Total number of samples:</th>
+                        <td id="quote-total-qty"></td>
+                      </tr>
+                      <tr>
+                        <th>Price per sample:</th>
+                        <td id="quote-unit-price"></td>
+                      </tr>
+                      <tr>
+                        <th>Estimated total (ex. VAT):</th>
+                        <td id="quote-total-price"></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="section-header">Further details</h3>
+          {% bootstrap_field form.referral_type %}
+          {% bootstrap_field form.comments %}
+
+          {% buttons %}   
+            <button type="submit" class="btn btn-success button-lg">
+              <i class="fa fa-envelope"></i> Request quote
+            </button>
+          {% endbuttons %}
+        </form>
+      </div>
+
+      {# Sidebar #}
+      <aside class="col-md-4">
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            <h4>{{ page.side_panel_title }}</h4>
+          </div>
+          <div class="panel-body">
+            {{ page.side_panel_content|richtext }}
+          </div>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+{% endblock %}
