@@ -69,6 +69,12 @@ def project_detail(request, uuid):
             'collection_day': pl['Sample::collection_day'],
             'collection_month': pl['Sample::collection_month'],
             'collection_year': pl['Sample::collection_year'],
+            'study_type': pl['Sample::study_type'],
+            'lab_experiment_type': pl['Sample::lab_experiment_type'],
+            'environmental_sample_type': pl['Sample::environmental_sample_type'],
+            'host_taxon_name': pl['sample_Taxon#host::name'],
+            'host_sample_type': pl['Sample::host_sample_type'],
+            'further_details': pl['Sample::further_details'],
         }
         if data['customers_ref']:
             data['form'] = ProjectLineForm(data)

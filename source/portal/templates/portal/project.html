@@ -2,6 +2,7 @@
 {% load bootstrap3 portal_tags static %}
 
 {% block extra_js %}
+  <script src="{% static 'portal/js/project.js' %}"></script>
   <script src="{% static 'taxon/js/typeahead.js' %}"></script>
   <script src="{% static 'country/js/typeahead.js' %}"></script>
 {% endblock %}
@@ -133,8 +134,21 @@
                           </div>
                           <div class="col-md-4">
                             <h3>Extended meta data</h3>
-                            {% bootstrap_field pl.form.isolate_type %}
-                            {% bootstrap_field pl.form.host_taxon_name field_class="taxon-typeahead" %}
+                            {% bootstrap_field pl.form.study_type %}
+                            <div class="meta-data-host">
+                              {% bootstrap_field pl.form.host_taxon_name field_class="taxon-typeahead" %}
+                              {% bootstrap_field pl.form.host_sample_type %}
+                            </div>
+                            <div class="meta-data-environmental">
+                              {% bootstrap_field pl.form.environmental_sample_type %}
+                            </div>
+                            <div class="meta-data-lab">
+                              {% bootstrap_field pl.form.lab_experiment_type %}
+                            </div>
+                            <div class="meta-data-further-details">
+                              {% bootstrap_field pl.form.further_details %}
+
+                            </div>
 
                             {% buttons %}
                             <button type="submit" class="btn btn-success button-lg pull-right">
@@ -158,4 +172,9 @@
       </div>
     {% endif %}
   </div>
+
+<div class="hidden" id="env-fd-placeholder">Extracted from soil sample collected in Central Park</div>
+<div class="hidden" id="lab-fd-placeholder">SecA</div>
+<div class="hidden" id="host-fd-placeholder">Bloody diarrhoea</div>
+
 {% endblock %}
