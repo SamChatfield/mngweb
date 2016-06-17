@@ -1,4 +1,5 @@
 $(function() {
+
   function hideMetaFields(context) {
     $('.meta-data-lab', context).hide();
     $('.meta-data-host', context).hide();
@@ -39,5 +40,12 @@ $(function() {
           $('.meta-data-further-details', context).show();
           break;
       }
+  });
+
+  // AJAX post on submit
+  $(document).on('submit', '.projectline-form', function(event){
+    event.preventDefault();
+    console.log('Submit');
+    ajaxPost(this, false);
   });
 });

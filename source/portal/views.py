@@ -3,7 +3,6 @@ import requests
 from django.conf import settings
 from django.contrib import messages
 from django.core.urlresolvers import reverse
-from django.forms import formset_factory
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.http import HttpResponseRedirect, JsonResponse
@@ -16,7 +15,6 @@ def project_detail(request, uuid):
     failure_message = "We're experiencing some problems right now, " \
                       "please try again later."
 
-    # make project api request
     project_url = (settings.RESTFM_BASE_URL +
                    'layout/project_api.json?' +
                    urlencode({
@@ -77,7 +75,7 @@ def project_detail(request, uuid):
             'further_details': pl['Sample::further_details'],
         }
         if data['customers_ref']:
-            data['form'] = ProjectLineForm(data)
+            data['form'] = ProjectLineForm(initial=data)
         else:
             data['form'] = ProjectLineForm()
         projectlines.append(data)
@@ -89,6 +87,89 @@ def project_detail(request, uuid):
                       'project': project,
                   }
                   )
+
+
+def projectline_update(request, uuid):
+    success_message = "Saved"
+    failure_message = "An unexpected error occurred"
+
+    if request.method == 'POST' and request.is_ajax():
+        form = ProjectLineForm(request.POST)
+
+        if form.is_valid():
+            url = (settings.RESTFM_BASE_URL +
+                   'layout/projectline_api/' +
+                   'projectline_id%3D%3D%3D' +
+                   str(form.cleaned_data['id']) + '.json?' +
+                   urlencode({
+                       'RFMkey': settings.RESTFM_KEY,
+                   })
+                   )
+            payload = {
+                'data': [
+                    {
+                        'Sample::customers_ref':
+                            form.cleaned_data['customers_ref'],
+                        'Sample::taxon_id':
+                            form.cleaned_data['taxon_name'].fm_id,
+                        'Aliquot::volume_ul':
+                            str(form.cleaned_data['volume_ul']),
+                        'Aliquot::dna_concentration_ng_ul':
+                            str(form.cleaned_data['dna_concentration_ng_ul']),
+                        'Sample::geo_country_iso2_id':
+                            form.cleaned_data['geo_country_name'].iso2,
+                        'Sample::geo_specific_location':
+                            form.cleaned_data['geo_specific_location'],
+                        'Sample::collection_day':
+                            form.cleaned_data['collection_day'],
+                        'Sample::collection_month':
+                            form.cleaned_data['collection_month'],
+                        'Sample::collection_year':
+                            form.cleaned_data['collection_year'],
+                        'Sample::study_type':
+                            form.cleaned_data['study_type'],
+                        'Sample::lab_experiment_type':
+                            form.cleaned_data['lab_experiment_type'],
+                        'Sample::host_taxon_id':
+                            (form.cleaned_data['host_taxon_name'].fm_id
+                                if form.cleaned_data['host_taxon_name'] else ''),
+                        'Sample::host_sample_type':
+                            form.cleaned_data['host_sample_type'],
+                        'Sample::environmental_sample_type':
+                            form.cleaned_data['environmental_sample_type'],
+                        'Sample::further_details':
+                            form.cleaned_data['further_details'],
+                    }
+                ]
+            }
+            try:
+                api_response = requests.put(url, json=payload, timeout=5)
+                # print(api_response.text)
+                status = api_response.status_code
+            except requests.exceptions.RequestException:
+                status = 408
+
+            if status == 200:
+                messages.success(request, success_message)
+            else:
+                messages.error(request, failure_message)
+
+            response_data = {'messages': []}
+            for message in messages.get_messages(request):
+                response_data['messages'].append({
+                    "level": message.level,
+                    "level_tag": message.level_tag,
+                    "message": message.message,
+                })
+            response_data['messages_html'] = render_to_string(
+                'includes/messages.html',
+                {'messages': messages.get_messages(request)})
+            return JsonResponse(response_data, status=status)
+        else:
+            response_data = {'errors': form.errors}
+            return JsonResponse(response_data, status=400)
+    else:
+        return JsonResponse({'error': 'Bad request'}, status=400)
 
 
 def project_email_link(request):
@@ -106,7 +187,6 @@ def project_email_link(request):
         form = EmailLinkForm(request.POST)
 
         if form.is_valid():
-            # make api request
             url = (settings.RESTFM_BASE_URL +
                    'script/contact_email_project_links/REST.json?' +
                    urlencode({

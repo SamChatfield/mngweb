@@ -1,3 +1,58 @@
+// AJAX post
+function ajaxPost(form, resetOnSuccess) {
+  // optional resetOnSuccess=true
+  if (resetOnSuccess === undefined) {
+        var resetOnSuccess = true;
+  }
+
+  // Remove errors before new request
+  $('.has-error', form).removeClass('has-error');
+  $('.help-block', form).remove();
+
+  // Update button to show in-progress spinner
+  $('button[type="submit"] i', form).addClass('fa-spin fa-spinner');
+
+  // Make the ajax request
+  $.ajax({
+    url : $(form).attr('action'),
+    type : $(form).attr('method'),
+    data : $(form).serialize(),
+
+    success : function(json) {
+      if (resetOnSuccess) {
+        $(form).trigger("reset");
+      }
+    },
+
+    error : function(xhr,errmsg,err) {
+      console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+      var json = JSON.parse(xhr.responseText);
+      if ('errors' in json) {
+        for (var error in json.errors) {
+          var id = '#id_' + error;
+          var parent = $(id, form).parents('.form-group');
+          parent.addClass('has-error');
+          if ($('.help-block', parent).length) {
+            $('.help-block', parent).text(json.errors[error]);
+          } else {
+            parent.append('<span class="help-block">' + json.errors[error] + '</span>');
+          }
+        }
+      }
+    },
+
+    complete : function(xhr, status) {
+      $('button[type="submit"] i', form).removeClass('fa-spin fa-spinner');
+      var json = JSON.parse(xhr.responseText);
+      $('.form-messages', form).empty(); // clear messages div
+      if ('messages_html' in json) {
+        $('.form-messages', form).html(json.messages_html);
+      }
+      $('.form-messages', form).children().hide().fadeIn(500).delay(4000).fadeOut(500);
+    }
+  });
+}
+
 $(function() {
 
   /*
@@ -31,7 +86,7 @@ $(function() {
 
 
   /*
-  Ajax forms
+  Ajax CSRF
   */
 
   // Create a header with csrftoken
@@ -82,63 +137,14 @@ $(function() {
     }
   });
 
-  // AJAX post
-  function ajax_post(form) {
-    // Remove errors before new request
-    $('.has-error', form).removeClass('has-error');
-    $('.help-block', form).remove();
-
-    // Update button to show in-progress spinner
-    $('button[type="submit"] i', form).addClass('fa-spin fa-spinner');
-
-    // Make the ajax request
-    $.ajax({
-      url : $(form).attr('action'),
-      type : $(form).attr('method'),
-      data : $(form).serialize(),
-
-      success : function(json) {
-        $(form).trigger("reset");
-      },
-
-      error : function(xhr,errmsg,err) {
-        console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-        var json = JSON.parse(xhr.responseText);;
-        if ('errors' in json) {
-          for (error in json.errors) {
-            var id = '#id_' + error;
-            var parent = $(id, form).parent('div');
-            parent.addClass('has-error');
-            if ($('.help-block', parent).length) {
-              $('.help-block', parent).text(json.errors[error]);
-            } else {
-              parent.append('<span class="help-block">' + json.errors[error] + '</span>');
-            }
-          }
-        }
-      },
-
-      complete : function(xhr, status) {
-        $('button[type="submit"] i', form).removeClass('fa-spin fa-spinner');
-        var json = JSON.parse(xhr.responseText);
-        $('.form-messages', form).empty(); // clear messages div
-        if ('messages_html' in json) {
-          $('.form-messages', form).html(json.messages_html);
-        }
-        $('.form-messages', form).children().hide().fadeIn(500).delay(4000).fadeOut(500);
-      }
-    });
-  };
-
   // AJAX post on submit
   $(document).on('submit', '#contact-form', function(event){
     event.preventDefault();
-    ajax_post(this);
+    ajaxPost(this);
   });
 
   $(document).on('submit', '#email-link-form', function(event){
     event.preventDefault();
-    ajax_post(this);
+    ajaxPost(this);
   });
-
 });

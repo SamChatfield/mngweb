@@ -6,4 +6,5 @@ from . import views
 urlpatterns = [
     url(r'^projects/email-link/$', views.project_email_link, name='project_email_link'),
     url(r'^projects/(?P<uuid>[-\w]{36})/$', views.project_detail, name='project_detail'),
+    url(r'^projects/(?P<uuid>[-\w]{36})/projectlines/update/$', views.projectline_update, name='projectline_update'),
 ]

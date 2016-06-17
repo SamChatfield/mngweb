@@ -82,37 +82,43 @@
             <div class="panel-heading">Sample Data</div>
             <div class="panel-body">
 
-              <form method="post" action="">
-                <table class="table">
-                  <thead>
-                    <th title="Our internal identifier for your sample">Barcode <i class="fa fa-question-circle"></i></th>
-                    <th>Type</th>
-                    <th>Customer's Ref</th>
-                    <th>Taxon</th>
-                    <th>Queue Name</th>
-                    <th></th>
-                  </thead>
-                  <tfoot>
-                    <tr>
-                      <td colspan="6">
-                        <button class="btn btn-success" type="Submit">Save Changes</button>
+              <table class="table">
+                <thead>
+                  <th title="Our internal identifier for your sample">Barcode <i class="fa fa-question-circle"></i></th>
+                  <th>Type</th>
+                  <th>Customer's Ref</th>
+                  <th>Taxon</th>
+                  <th>Queue Name</th>
+                  <th></th>
+                </thead>
+                <tfoot>
+                  <tr>
+                    <td colspan="6">
+                      <button class="btn btn-success" type="Submit">Save Changes</button>
+                    </td>
+                  </tr>
+                </tfoot>
+                <tbody>
+                  {% for pl in project.projectlines %}
+                    <tr class="vert-middle">
+                      <td>{{ pl.sample_ref }}</td>
+                      <td>{{ pl.aliquottype_name  }}</td>
+                      <td>{{ pl.customers_ref  }}</td>
+                      <td>{{ pl.taxon_name  }}</td>
+                      <td>{{ pl.queue_name  }}</td>
+                      <td>
+                        {% if pl.customers_ref %}
+                          <button class="btn pull-right" type="button" data-target="#edit-row-{{ forloop.counter0 }}" data-toggle="collapse">Edit sample data</button>
+                        {% else %}
+                          <button class="btn btn-warning pull-right" type="button" data-target="#edit-row-{{ forloop.counter0 }}" data-toggle="collapse">Provide sample data</button>
+                        {% endif %}
                       </td>
                     </tr>
-                  </tfoot>
-                  <tbody>
-                    {% for pl in project.projectlines %}
-                      <tr class="vert-middle">
-                        <td>{{ pl.sample_ref }}</td>
-                        <td>{{ pl.aliquottype_name  }}</td>
-                        <td>{{ pl.customers_ref  }}</td>
-                        <td>{{ pl.taxon_name  }}</td>
-                        <td>{{ pl.queue_name  }}</td>
-                        <td><button class="btn btn-warning pull-right" type="button" data-target="#edit-row-{{ forloop.counter0 }}" data-toggle="collapse">Provide data</button></td>
-                      </tr>
-                      <tr class="collapse bg-grey" id="edit-row-{{ forloop.counter0 }}">
-                        <td colspan="6">
+                    <tr class="collapse bg-grey" id="edit-row-{{ forloop.counter0 }}">
+                      <td colspan="6">
+                        <form method="post" action="{% url 'projectline_update' project.uuid %}" class="projectline-form">
                           <div class="col-md-4">
-                            {% bootstrap_field pl.form.id %}
+                            <input id="id_id" name="id" type="hidden" value="{{ pl.id }}" />
                             <h3>Basic sample data</h3>
                             {% bootstrap_field pl.form.customers_ref %}
                             {% bootstrap_field pl.form.taxon_name field_class="taxon-pk-typeahead" %}
@@ -151,20 +157,24 @@
                             </div>
 
                             {% buttons %}
-                            <button type="submit" class="btn btn-success button-lg pull-right">
+                            <button type="submit" class="btn btn-success button-lg">
                               <i class="fa fa-floppy-o"></i> Save
                             </button>
                             {% endbuttons %}
+
+                            <div class="form-messages">
+                              {# placeholder for ajax messages #}
+                            </div>
                           </div>
                         </td>
-                      </tr>
-                    {% endfor %}
-                  </tbody>
-                  <tfoot>
+                      </form>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+                <tfoot>
 
-                  </tfoot>
-                </table>
-              </form>
+                </tfoot>
+              </table>
 
             </div>
           </div>

@@ -2,6 +2,9 @@ from datetime import datetime
 
 from django import forms
 
+from country.models import Country
+from taxon.models import Taxon
+
 
 ISOLATE_TYPE_CHOICES = [
     ('', ''),
@@ -42,18 +45,21 @@ class EmailLinkForm(forms.Form):
 
 
 class ProjectLineForm(forms.Form):
-    id = forms.CharField(disabled=True, widget=forms.HiddenInput())
+    id = forms.CharField(widget=forms.HiddenInput())
     customers_ref = forms.CharField(
         max_length=100, label="Your Reference",
         widget=forms.TextInput(attrs={'placeholder': 'MySample123'}))
-    taxon_name = forms.CharField(
+    taxon_name = forms.ModelChoiceField(
+        queryset=Taxon.objects.filter(data_set__in=['Prokaryotes', 'Other']),
+        to_field_name='name',
         widget=forms.TextInput(attrs={'placeholder': 'Escherichia coli'}))
     volume_ul = forms.DecimalField(
         min_value=0, decimal_places=2, label="Volume (µl)")
     dna_concentration_ng_ul = forms.DecimalField(
         min_value=0, decimal_places=2, label="DNA concentration (ng/µl)")
-    geo_country_name = forms.CharField(
-        max_length=100, label="Country of sample collection",
+    geo_country_name = forms.ModelChoiceField(
+        queryset=Country.objects.all(),
+        to_field_name='name',
         widget=forms.TextInput(attrs={'placeholder': 'United Kingdom'}))
     geo_specific_location = forms.CharField(
         max_length=100, label="Specific location",
@@ -70,9 +76,13 @@ class ProjectLineForm(forms.Form):
     study_type = forms.ChoiceField(
         label="Study type", choices=ISOLATE_TYPE_CHOICES,)
     lab_experiment_type = forms.ChoiceField(
+        required=False,
         label="Experiment type", choices=LAB_EXPERIMENT_TYPE)
-    host_taxon_name = forms.CharField(
+    host_taxon_name = forms.ModelChoiceField(
+        required=False,
+        queryset=Taxon.objects.filter(data_set__in=['Prokaryotes', 'Other']),
+        to_field_name='name',
         widget=forms.TextInput(attrs={'placeholder': 'Homo sapiens'}))
-    host_sample_type = forms.CharField()
-    environmental_sample_type = forms.CharField()
-    further_details = forms.CharField()
+    host_sample_type = forms.CharField(required=False)
+    environmental_sample_type = forms.CharField(required=False)
+    further_details = forms.CharField(required=False)
