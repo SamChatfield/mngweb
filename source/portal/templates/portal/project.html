@@ -108,7 +108,7 @@
                       <td>{{ pl.queue_name  }}</td>
                       <td>
                         {% if pl.customers_ref %}
-                          <button class="btn pull-right" type="button" data-target="#edit-row-{{ forloop.counter0 }}" data-toggle="collapse">Edit sample data</button>
+                          <button class="btn btn-default pull-right" type="button" data-target="#edit-row-{{ forloop.counter0 }}" data-toggle="collapse">Edit sample data</button>
                         {% else %}
                           <button class="btn btn-warning pull-right" type="button" data-target="#edit-row-{{ forloop.counter0 }}" data-toggle="collapse">Provide sample data</button>
                         {% endif %}
@@ -121,7 +121,7 @@
                             <input id="id_id" name="id" type="hidden" value="{{ pl.id }}" />
                             <h3>Basic sample data</h3>
                             {% bootstrap_field pl.form.customers_ref %}
-                            {% bootstrap_field pl.form.taxon_name field_class="taxon-pk-typeahead" %}
+                            {% bootstrap_field pl.form.taxon field_class="taxon-pk-typeahead" %}
                             {% if pl.aliquottype_name == "DNA" %}
                               {% bootstrap_field pl.form.dna_concentration_ng_ul %}
                               {% bootstrap_field pl.form.volume_ul %}
@@ -129,7 +129,7 @@
                           </div>
                           <div class="col-md-4">
                             <h3>Core meta data</h3>
-                            {% bootstrap_field pl.form.geo_country_name field_class="country-typeahead" %}
+                            {% bootstrap_field pl.form.geo_country field_class="country-typeahead" %}
                             {% bootstrap_field pl.form.geo_specific_location %}
                             <label>Sample Collection Date (DD/MMM/YYYY)</label>
                             <div class="row">
@@ -142,7 +142,7 @@
                             <h3>Extended meta data</h3>
                             {% bootstrap_field pl.form.study_type %}
                             <div class="meta-data-host">
-                              {% bootstrap_field pl.form.host_taxon_name field_class="taxon-typeahead" %}
+                              {% bootstrap_field pl.form.host_taxon field_class="taxon-typeahead" %}
                               {% bootstrap_field pl.form.host_sample_type field_class="hostsampletype-typeahead" %}
                             </div>
                             <div class="meta-data-environmental">

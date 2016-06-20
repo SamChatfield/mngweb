@@ -9,9 +9,9 @@ from taxon.models import Taxon
 
 ISOLATE_TYPE_CHOICES = [
     ('', ''),
-    ('lab', 'Lab'),
-    ('host', 'Host'),
-    ('environmental', 'Environmental')
+    ('Lab', 'Lab'),
+    ('Host', 'Host'),
+    ('Environmental', 'Environmental')
 ]
 
 MONTH_CHOICES = (
@@ -47,10 +47,8 @@ class EmailLinkForm(forms.Form):
 
 class ProjectLineForm(forms.Form):
     id = forms.CharField(widget=forms.HiddenInput())
-    customers_ref = forms.CharField(
-        max_length=100, label="Your Reference",
-        widget=forms.TextInput(attrs={'placeholder': 'MySample123'}))
-    taxon_name = forms.ModelChoiceField(
+    customers_ref = forms.CharField(max_length=100, label="Your Reference")
+    taxon = forms.ModelChoiceField(
         queryset=Taxon.objects.filter(data_set__in=['Prokaryotes', 'Other']),
         to_field_name='name',
         widget=forms.TextInput(attrs={'placeholder': 'Escherichia coli'}))
@@ -58,7 +56,7 @@ class ProjectLineForm(forms.Form):
         min_value=0, decimal_places=2, label="Volume (µl)")
     dna_concentration_ng_ul = forms.DecimalField(
         min_value=0, decimal_places=2, label="DNA concentration (ng/µl)")
-    geo_country_name = forms.ModelChoiceField(
+    geo_country = forms.ModelChoiceField(
         queryset=Country.objects.all(),
         to_field_name='name',
         widget=forms.TextInput(attrs={'placeholder': 'United Kingdom'}))
@@ -79,9 +77,9 @@ class ProjectLineForm(forms.Form):
     lab_experiment_type = forms.ChoiceField(
         required=False,
         label="Experiment type", choices=LAB_EXPERIMENT_TYPE)
-    host_taxon_name = forms.ModelChoiceField(
+    host_taxon = forms.ModelChoiceField(
         required=False,
-        queryset=Taxon.objects.filter(data_set__in=['Prokaryotes', 'Other']),
+        queryset=Taxon.objects.all(),
         to_field_name='name',
         widget=forms.TextInput(attrs={'placeholder': 'Homo sapiens'}))
     host_sample_type = forms.ModelChoiceField(

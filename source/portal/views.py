@@ -59,11 +59,11 @@ def project_detail(request, uuid):
             'sample_ref': pl['Sample::reference'],
             'aliquottype_name': pl['Aliquot::unstored_aliquottype_name'],
             'customers_ref': pl['Sample::customers_ref'],
-            'taxon_name': pl['Taxon::name'],
+            'taxon': pl['Taxon::name'],
             'queue_name': pl['Queue::name'],
             'volume_ul': pl['Aliquot::volume_ul'],
             'dna_concentration_ng_ul': pl['Aliquot::dna_concentration_ng_ul'],
-            'country_name': pl['sample_Country::name'],
+            'geo_country': pl['sample_Country::name'],
             'geo_specific_location': pl['Sample::geo_specific_location'],
             'collection_day': pl['Sample::collection_day'],
             'collection_month': pl['Sample::collection_month'],
@@ -71,10 +71,11 @@ def project_detail(request, uuid):
             'study_type': pl['Sample::study_type'],
             'lab_experiment_type': pl['Sample::lab_experiment_type'],
             'environmental_sample_type': pl['Sample::environmental_sample_type'],
-            'host_taxon_name': pl['sample_Taxon#host::name'],
+            'host_taxon': pl['sample_Taxon#host::name'],
             'host_sample_type': pl['Sample::host_sample_type'],
             'further_details': pl['Sample::further_details'],
         }
+        print(data['host_sample_type'])
         if data['customers_ref']:
             data['form'] = ProjectLineForm(initial=data)
         else:
@@ -112,13 +113,13 @@ def projectline_update(request, uuid):
                         'Sample::customers_ref':
                             form.cleaned_data['customers_ref'],
                         'Sample::taxon_id':
-                            form.cleaned_data['taxon_name'].fm_id,
+                            form.cleaned_data['taxon'].fm_id,
                         'Aliquot::volume_ul':
                             str(form.cleaned_data['volume_ul']),
                         'Aliquot::dna_concentration_ng_ul':
                             str(form.cleaned_data['dna_concentration_ng_ul']),
                         'Sample::geo_country_iso2_id':
-                            form.cleaned_data['geo_country_name'].iso2,
+                            form.cleaned_data['geo_country'].iso2,
                         'Sample::geo_specific_location':
                             form.cleaned_data['geo_specific_location'],
                         'Sample::collection_day':
@@ -132,12 +133,14 @@ def projectline_update(request, uuid):
                         'Sample::lab_experiment_type':
                             form.cleaned_data['lab_experiment_type'],
                         'Sample::host_taxon_id':
-                            (form.cleaned_data['host_taxon_name'].fm_id
-                                if form.cleaned_data['host_taxon_name'] else ''),
+                            (form.cleaned_data['host_taxon'].fm_id
+                                if form.cleaned_data['host_taxon'] else ''),
                         'Sample::host_sample_type':
-                            form.cleaned_data['host_sample_type'],
+                            (form.cleaned_data['host_sample_type'].name
+                                if form.cleaned_data['host_sample_type'] else ''),
                         'Sample::environmental_sample_type':
-                            form.cleaned_data['environmental_sample_type'],
+                            (form.cleaned_data['environmental_sample_type'].name
+                                if form.cleaned_data['environmental_sample_type'] else ''),
                         'Sample::further_details':
                             form.cleaned_data['further_details'],
                     }
