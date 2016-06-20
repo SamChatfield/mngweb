@@ -2,6 +2,7 @@ from datetime import datetime
 
 from django import forms
 
+from .models import EnvironmentalSampleType, HostSampleType
 from country.models import Country
 from taxon.models import Taxon
 
@@ -83,6 +84,14 @@ class ProjectLineForm(forms.Form):
         queryset=Taxon.objects.filter(data_set__in=['Prokaryotes', 'Other']),
         to_field_name='name',
         widget=forms.TextInput(attrs={'placeholder': 'Homo sapiens'}))
-    host_sample_type = forms.CharField(required=False)
-    environmental_sample_type = forms.CharField(required=False)
+    host_sample_type = forms.ModelChoiceField(
+        required=False,
+        queryset=HostSampleType.objects.all(),
+        to_field_name='name',
+        widget=forms.TextInput(attrs={'placeholder': 'Stool'}))
+    environmental_sample_type = forms.ModelChoiceField(
+        required=False,
+        queryset=EnvironmentalSampleType.objects.all(),
+        to_field_name='name',
+        widget=forms.TextInput(attrs={'placeholder': 'Soil'}))
     further_details = forms.CharField(required=False)

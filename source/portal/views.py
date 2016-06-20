@@ -9,6 +9,7 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.utils.http import urlencode
 
 from .forms import EmailLinkForm, ProjectLineForm
+from .models import EnvironmentalSampleType, HostSampleType
 
 
 def project_detail(request, uuid):
@@ -229,3 +230,28 @@ def project_email_link(request):
         form = EmailLinkForm()
 
     return render(request, 'portal/email_link.html', {'form': form})
+
+
+def hostsampletype_typeahead(request):
+    q = request.GET.get('q', '')
+    if q:
+        matches = (HostSampleType.objects
+                   .filter(name__icontains=q)
+                   .values_list('name', flat=True)[:10])
+    else:
+        matches = HostSampleType.objects.all().values_list('name', flat=True)
+    data = list(matches)
+    return JsonResponse(data, safe=False)
+
+
+def environmentalsampletype_typeahead(request):
+    q = request.GET.get('q', '')
+    if q:
+        matches = (EnvironmentalSampleType.objects
+                   .filter(name__icontains=q)
+                   .values_list('name', flat=True)[:10])
+    else:
+        matches = EnvironmentalSampleType.objects.all().\
+            values_list('name', flat=True)
+    data = list(matches)
+    return JsonResponse(data, safe=False)

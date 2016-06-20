@@ -1,5 +1,6 @@
 $(function() {
 
+  // Show/hide appropriate meta-data fields
   function hideMetaFields(context) {
     $('.meta-data-lab', context).hide();
     $('.meta-data-host', context).hide();
@@ -48,4 +49,57 @@ $(function() {
     console.log('Submit');
     ajaxPost(this, false);
   });
+
+  // EnvironmentalSampleType typeahead
+  var envSampleTypes = new Bloodhound({
+    datumTokenizer: Bloodhound.tokenizers.whitespace,
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    prefetch: '/portal/environmentalsampletype/typeahead/'
+  });
+  function envSampleTypesWithDefaults(q, sync) {
+    if (q === '') {
+      sync(envSampleTypes.index.all());
+    }
+
+    else {
+      envSampleTypes.search(q, sync);
+    }
+  }
+  $('.environmentalsampletype-typeahead input').typeahead({
+    hint: true,
+    highlight: true,
+    minLength: 0
+  },
+  {
+    name: 'envSampleTypes',
+    limit: Infinity,
+    source: envSampleTypesWithDefaults,
+  });
+
+  // EnvironmentalSampleType typeahead
+  var hostSampleTypes = new Bloodhound({
+    datumTokenizer: Bloodhound.tokenizers.whitespace,
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    prefetch: '/portal/hostsampletype/typeahead/'
+  });
+  function hostSampleTypesWithDefaults(q, sync) {
+    if (q === '') {
+      sync(hostSampleTypes.index.all());
+    }
+
+    else {
+      hostSampleTypes.search(q, sync);
+    }
+  }
+  $('.hostsampletype-typeahead input').typeahead({
+    hint: true,
+    highlight: true,
+    minLength: 0
+  },
+  {
+    name: 'hostSampleTypes',
+    limit: Infinity,
+    source: hostSampleTypesWithDefaults,
+  });
+
 });

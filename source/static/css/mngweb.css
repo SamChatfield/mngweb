@@ -207,3 +207,11 @@ h1 i.fa, h2 i.fa, h3 i.fa, h4 i.fa {
   font-size: 1.5em;
   color: #00bbe3;
 }
+
+
+/* --- TWITTER TYPEAHEAD --- */
+
+.tt-menu {
+  max-height: 150px;
+  overflow-y: auto;
+}
