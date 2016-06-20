@@ -15,7 +15,7 @@ $(function() {
 
   hideMetaFields(this);
 
-  $('#id_study_type').change(function() {
+  $('select[name="study_type"]').change(function() {
       var context = $(this).parent().parent();
       var studyType = $(this).val();
       clearMetaFields(context);
