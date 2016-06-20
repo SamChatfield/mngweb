@@ -1,5 +1,5 @@
 // AJAX post
-function ajaxPost(form, resetOnSuccess) {
+function ajaxPost(form, resetOnSuccess, afterSuccess) {
   // optional resetOnSuccess=true
   if (resetOnSuccess === undefined) {
         var resetOnSuccess = true;
@@ -21,6 +21,9 @@ function ajaxPost(form, resetOnSuccess) {
     success : function(json) {
       if (resetOnSuccess) {
         $(form).trigger("reset");
+      }
+      if (afterSuccess !== undefined) {
+        afterSuccess(form);
       }
     },
 
