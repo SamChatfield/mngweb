@@ -20,23 +20,21 @@ $(function() {
     switch (studyType) {
       case 'Lab':
         $('.meta-data-lab', context).show();
-        var fdPlaceholder = $('#lab-fd-placeholder').text();
-        $('#id_further_details', context).attr("placeholder", fdPlaceholder);
-        $('.meta-data-further-details', context).attr("placeholder", fdPlaceholder).show();
+        $('.meta-data-further-details', context).show();
+        var fdHelpText = $('#lab-fd-help-text').text();
         break;
       case 'Host':
         $('.meta-data-host', context).show();
-        var fdPlaceholder = $('#host-fd-placeholder').text();
-        $('#id_further_details', context).attr("placeholder", fdPlaceholder);
         $('.meta-data-further-details', context).show();
+        var fdHelpText = $('#host-fd-help-text').text();
         break;
       case 'Environmental':
         $('.meta-data-environmental', context).show();
-        var fdPlaceholder = $('#env-fd-placeholder').text();
-        $('#id_further_details', context).attr("placeholder", fdPlaceholder);
         $('.meta-data-further-details', context).show();
+        var fdHelpText = $('#env-fd-help-text').text();
         break;
     }
+    $('#id_further_details', context).siblings('.help-block').text(fdHelpText);
   }
 
   showMetaFields(this);
