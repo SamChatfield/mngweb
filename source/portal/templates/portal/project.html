@@ -91,24 +91,17 @@
                   <th>Current Queue (Status)</th>
                   <th></th>
                 </thead>
-                <tfoot>
-                  <tr>
-                    <td colspan="6">
-                      <button class="btn btn-success" type="Submit">Save Changes</button>
-                    </td>
-                  </tr>
-                </tfoot>
                 <tbody>
                   {% for pl in project.projectlines %}
                     <tr class="vert-middle">
                       <td>{{ pl.sample_ref }}</td>
                       <td>{{ pl.aliquottype_name  }}</td>
-                      <td>{{ pl.customers_ref  }}</td>
-                      <td>{{ pl.taxon_name  }}</td>
+                      <td class="pl-customers-ref">{{ pl.customers_ref  }}</td>
+                      <td class="pl-taxon">{{ pl.taxon  }}</td>
                       <td>{{ pl.queue_name  }}</td>
                       <td>
                         {% if pl.customers_ref %}
-                          <button class="btn btn-default pull-right" type="button" data-target="#edit-row-{{ forloop.counter0 }}" data-toggle="collapse">Edit sample data</button>
+                          <button class="btn btn-default pull-right pl-edit-button" type="button" data-target="#edit-row-{{ forloop.counter0 }}" data-toggle="collapse">Edit sample data</button>
                         {% else %}
                           <button class="btn btn-warning pull-right" type="button" data-target="#edit-row-{{ forloop.counter0 }}" data-toggle="collapse">Provide sample data</button>
                         {% endif %}
@@ -132,7 +125,7 @@
                             {% bootstrap_field pl.form.geo_country field_class="country-typeahead" %}
                             {% bootstrap_field pl.form.geo_specific_location %}
                             <label>Sample Collection Date (DD/MMM/YYYY)</label>
-                            <span class="help-block">Day/Month can be left blank if unknown</span>
+                            <span class="help-block">Day or Month can be omitted if unknown</span>
                             <div class="row">
                               <div class="col-md-4">{% bootstrap_field pl.form.collection_day show_label=False %}</div>
                               <div class="col-md-4">{% bootstrap_field pl.form.collection_month show_label=False %}</div>
@@ -154,7 +147,6 @@
                             </div>
                             <div class="meta-data-further-details">
                               {% bootstrap_field pl.form.further_details %}
-
                             </div>
 
                             {% buttons %}

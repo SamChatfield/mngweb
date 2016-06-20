@@ -75,7 +75,6 @@ def project_detail(request, uuid):
             'host_sample_type': pl['Sample::host_sample_type'],
             'further_details': pl['Sample::further_details'],
         }
-        print(data['host_sample_type'])
         if data['customers_ref']:
             data['form'] = ProjectLineForm(initial=data)
         else:

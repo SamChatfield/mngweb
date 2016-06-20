@@ -37,7 +37,10 @@ $(function() {
     $('#id_further_details', context).siblings('.help-block').text(fdHelpText);
   }
 
-  showMetaFields(this);
+  $('select[name="study_type"]').each(function() {
+      var context = $(this).parent().parent();
+      showMetaFields(context);
+  });
 
   $('select[name="study_type"]').change(function() {
       var context = $(this).parent().parent();
@@ -49,7 +52,17 @@ $(function() {
   $(document).on('submit', '.projectline-form', function(event){
     event.preventDefault();
     console.log('Submit');
-    ajaxPost(this, false);
+    ajaxPost(this, false, function(form) {
+      var editRow = $(form).closest('tr');
+      var dataRow = $(form).closest('tr').prev('tr');
+      editRow.collapse('hide');
+      $('td.pl-taxon', dataRow).text($('#id_taxon', form).val());
+      $('td.pl-customers-ref', dataRow).text($('#id_customers_ref', form).val());
+      $('button.pl-edit-button', dataRow)
+        .removeClass('btn-warning')
+        .addClass('btn-success')
+        .html('<i class="fa fa-check"></i> Saved');
+    });
   });
 
   // EnvironmentalSampleType typeahead
