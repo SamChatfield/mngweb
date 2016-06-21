@@ -62,6 +62,13 @@ h1 i.fa, h2 i.fa, h3 i.fa, h4 i.fa {
   background-color: #f6f6f6;
 }
 
+
+/* --- HEADERS --- */
+
+h2, .h2 {
+  color: #00bbe3;
+}
+
 .section-header {
   width: 100%;
   border-bottom: 1px solid;

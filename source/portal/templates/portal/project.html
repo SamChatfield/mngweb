@@ -19,6 +19,7 @@
 {% endblock %}
 
 {% block content %}
+
   <div class="container">
     <div class="row">
       <div class="col-md-12">
@@ -27,151 +28,167 @@
     </div>
 
     {% if project %}
+
       <div class="flex-row row">
-
         <div class="col-md-6">
-          <div class="panel panel-info">
-            <div class="panel-heading">Project Summary</div>
-            <div class="panel-body">
-              <table class="table">
-                <tbody>
-                  <tr>
-                    {% if project.unstored_modal_queue_name %}
-                      <th>Overall status</th>
-                      <td>{{ project.unstored_modal_queue_name }}</td>
-                    {% endif %}
-                  </tr>
-                  <tr>
-                    {% if project.unstored_projectline_count %}
-                      <th>Number of samples</th>
-                      <td>{{ project.unstored_projectline_count }}</td>
-                    {% endif %}
-                  </tr>
-                  <tr>
-                    {% if project.all_content_received_date %}
-                      <th>Date all samples received</th>
-                      <td>{{ project.all_content_received_date }}</td>
-                    {% endif %}
-                  </tr>
-                  <tr>
-                    {% if project.unstored_wait_time_weeks %}
-                      <th>Waiting time</th>
-                      <td>{{ project.unstored_wait_time_weeks }} weeks</td>
-                    {% endif %}
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <h2>Project Summary</h2>
+          <table class="table">
+            <tbody>
+              <tr>
+                {% if project.unstored_modal_queue_name %}
+                  <th>Reference</th>
+                  <td>{{ project.reference }}</td>
+                {% endif %}
+              </tr>
+              <tr>
+                {% if project.unstored_modal_queue_name %}
+                  <th>Overall status</th>
+                  <td>{{ project.unstored_modal_queue_name }}</td>
+                {% endif %}
+              </tr>
+              <tr>
+                {% if project.unstored_projectline_count %}
+                  <th>Primary contact</th>
+                  <td>{{ project.Contact__name_full }}</td>
+                {% endif %}
+              </tr>
+              <tr>
+                {% if project.unstored_projectline_count %}
+                  <th>Number of samples</th>
+                  <td>{{ project.unstored_projectline_count }}</td>
+                {% endif %}
+              </tr>
+              <tr>
+                {% if project.all_content_received_date %}
+                  <th>Date all samples received</th>
+                  <td>{{ project.all_content_received_date }}</td>
+                {% endif %}
+              </tr>
+              <tr>
+                {% if project.unstored_wait_time_weeks %}
+                  <th>Waiting time</th>
+                  <td>{{ project.unstored_wait_time_weeks }} weeks</td>
+                {% endif %}
+              </tr>
+            </tbody>
+          </table>
+
         </div>
-
         <div class="col-md-6">
+
           <div class="panel panel-info">
             <div class="panel-heading">Sample Preparation</div>
             <div class="panel-body">
-              <iframe src="https://www.youtube.com/embed/-kTcFZxP6kM" frameborder="0" allowfullscreen></iframe>
+              <p>Proper preparation of samples is essential to achieve the best possible results. Please read our sample preparation instructions before sending your samples.</p>
+              {# <iframe src="https://www.youtube.com/embed/-kTcFZxP6kM" frameborder="0" allowfullscreen></iframe> #}
+              <h4><a href="/documents/3/MicrobesNG_preparing_your_bead_tubes.pdf"><i class="fa fa-file-pdf-o"></i> Preparing strain samples (bead tubes)</a></h4>
+              <h4><a href="/documents/3/MicrobesNG_preparing_your_DNA_samples.pdf"><i class="fa fa-file-pdf-o"></i> Preparing DNA samples</a></h4>
             </div>
           </div>
-        </div>
 
+          {% if project.sample_sheet_url %}
+            <div class="panel panel-default">
+              <div class="panel-body">
+              <div class="col-md-6">
+                <strong>Prefer to edit in Google Sheets?</strong> We recommend using our web form below for small numbers of samples, but you can also <a href="{{ project.sample_sheet_url }}">edit your sample sheet here.</a>
+              </div>
+              <div class="col-md-6">
+                <button class="btn btn-primary pull-right">Fetch data from Google Sheet</button>
+              </div>
+              </div>
+            </div>
+          {% endif %}
+
+        </div>
       </div>
       <div class="row">
-
         <div class="col-md-12">
-          <div class="panel panel-info">
-            <div class="panel-heading">Sample Data</div>
-            <div class="panel-body">
 
-              <table class="table">
-                <thead>
-                  <th title="Our internal identifier for your sample">Barcode <i class="fa fa-question-circle"></i></th>
-                  <th>Type</th>
-                  <th>Customer's Ref</th>
-                  <th>Taxon</th>
-                  <th>Current Queue (Status)</th>
-                  <th></th>
-                </thead>
-                <tbody>
-                  {% for pl in project.projectlines %}
-                    <tr class="vert-middle">
-                      <td>{{ pl.sample_ref }}</td>
-                      <td>{{ pl.aliquottype_name  }}</td>
-                      <td class="pl-customers-ref">{{ pl.customers_ref  }}</td>
-                      <td class="pl-taxon">{{ pl.taxon  }}</td>
-                      <td>{{ pl.queue_name  }}</td>
-                      <td>
-                        {% if pl.customers_ref %}
-                          <button class="btn btn-default pull-right pl-edit-button" type="button" data-target="#edit-row-{{ forloop.counter0 }}" data-toggle="collapse">Edit sample data</button>
-                        {% else %}
-                          <button class="btn btn-warning pull-right" type="button" data-target="#edit-row-{{ forloop.counter0 }}" data-toggle="collapse">Provide sample data</button>
+          <h2>Sample Data</h2>
+          <table class="table">
+            <thead>
+              <th>Barcode <span data-toggle="tooltip" title="Our internal identifier for your sample"><i class="fa fa-question-circle"></i></span></th>
+              <th>Type</th>
+              <th>Customer's Ref</th>
+              <th>Taxon</th>
+              <th>Current Queue (Status)</th>
+              <th></th>
+            </thead>
+            <tbody>
+              {% for pl in project.projectlines %}
+                <tr class="vert-middle">
+                  <td>{{ pl.sample_ref }}</td>
+                  <td>{{ pl.aliquottype_name  }}</td>
+                  <td class="pl-customers-ref">{{ pl.customers_ref  }}</td>
+                  <td class="pl-taxon">{{ pl.taxon  }}</td>
+                  <td>{{ pl.queue_name  }}</td>
+                  <td>
+                    {% if pl.customers_ref %}
+                      <button class="btn btn-default pull-right pl-edit-button" type="button" data-target="#edit-row-{{ forloop.counter0 }}" data-toggle="collapse">Edit sample data</button>
+                    {% else %}
+                      <button class="btn btn-warning pull-right" type="button" data-target="#edit-row-{{ forloop.counter0 }}" data-toggle="collapse">Provide sample data</button>
+                    {% endif %}
+                  </td>
+                </tr>
+                <tr class="collapse bg-grey" id="edit-row-{{ forloop.counter0 }}">
+                  <td colspan="6">
+                    <form method="post" action="{% url 'projectline_update' project.uuid %}" class="projectline-form">
+                      <div class="col-md-4">
+                        <input id="id_id" name="id" type="hidden" value="{{ pl.id }}" />
+                        <h3>Basic sample data</h3>
+                        {% bootstrap_field pl.form.customers_ref %}
+                        {% bootstrap_field pl.form.taxon field_class="taxon-pk-typeahead" %}
+                        {% if pl.aliquottype_name == "DNA" %}
+                          {% bootstrap_field pl.form.dna_concentration_ng_ul %}
+                          {% bootstrap_field pl.form.volume_ul %}
                         {% endif %}
-                      </td>
-                    </tr>
-                    <tr class="collapse bg-grey" id="edit-row-{{ forloop.counter0 }}">
-                      <td colspan="6">
-                        <form method="post" action="{% url 'projectline_update' project.uuid %}" class="projectline-form">
-                          <div class="col-md-4">
-                            <input id="id_id" name="id" type="hidden" value="{{ pl.id }}" />
-                            <h3>Basic sample data</h3>
-                            {% bootstrap_field pl.form.customers_ref %}
-                            {% bootstrap_field pl.form.taxon field_class="taxon-pk-typeahead" %}
-                            {% if pl.aliquottype_name == "DNA" %}
-                              {% bootstrap_field pl.form.dna_concentration_ng_ul %}
-                              {% bootstrap_field pl.form.volume_ul %}
-                            {% endif %}
-                          </div>
-                          <div class="col-md-4">
-                            <h3>Core meta data</h3>
-                            {% bootstrap_field pl.form.geo_country field_class="country-typeahead" %}
-                            {% bootstrap_field pl.form.geo_specific_location %}
-                            <label>Sample Collection Date (DD/MMM/YYYY)</label>
-                            <span class="help-block">Day or Month can be omitted if unknown</span>
-                            <div class="row">
-                              <div class="col-md-4">{% bootstrap_field pl.form.collection_day show_label=False %}</div>
-                              <div class="col-md-4">{% bootstrap_field pl.form.collection_month show_label=False %}</div>
-                              <div class="col-md-4">{% bootstrap_field pl.form.collection_year show_label=False %}</div>
-                            </div>
-                          </div>
-                          <div class="col-md-4">
-                            <h3>Extended meta data</h3>
-                            {% bootstrap_field pl.form.study_type %}
-                            <div class="meta-data-host">
-                              {% bootstrap_field pl.form.host_taxon field_class="taxon-typeahead" %}
-                              {% bootstrap_field pl.form.host_sample_type field_class="hostsampletype-typeahead" %}
-                            </div>
-                            <div class="meta-data-environmental">
-                              {% bootstrap_field pl.form.environmental_sample_type field_class="environmentalsampletype-typeahead" %}
-                            </div>
-                            <div class="meta-data-lab">
-                              {% bootstrap_field pl.form.lab_experiment_type %}
-                            </div>
-                            <div class="meta-data-further-details">
-                              {% bootstrap_field pl.form.further_details %}
-                            </div>
+                      </div>
+                      <div class="col-md-4">
+                        <h3>Core meta data</h3>
+                        {% bootstrap_field pl.form.geo_country field_class="country-typeahead" %}
+                        {% bootstrap_field pl.form.geo_specific_location %}
+                        <label>Sample Collection Date (DD/MMM/YYYY)</label>
+                        <span class="help-block">Day or Month can be omitted if unknown</span>
+                        <div class="row">
+                          <div class="col-md-4">{% bootstrap_field pl.form.collection_day show_label=False %}</div>
+                          <div class="col-md-4">{% bootstrap_field pl.form.collection_month show_label=False %}</div>
+                          <div class="col-md-4">{% bootstrap_field pl.form.collection_year show_label=False %}</div>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <h3>Extended meta data</h3>
+                        {% bootstrap_field pl.form.study_type %}
+                        <div class="meta-data-host">
+                          {% bootstrap_field pl.form.host_taxon field_class="taxon-typeahead" %}
+                          {% bootstrap_field pl.form.host_sample_type field_class="hostsampletype-typeahead" %}
+                        </div>
+                        <div class="meta-data-environmental">
+                          {% bootstrap_field pl.form.environmental_sample_type field_class="environmentalsampletype-typeahead" %}
+                        </div>
+                        <div class="meta-data-lab">
+                          {% bootstrap_field pl.form.lab_experiment_type %}
+                        </div>
+                        <div class="meta-data-further-details">
+                          {% bootstrap_field pl.form.further_details %}
+                        </div>
 
-                            {% buttons %}
-                            <button type="submit" class="btn btn-success button-lg">
-                              <i class="fa fa-floppy-o"></i> Save
-                            </button>
-                            {% endbuttons %}
+                        {% buttons %}
+                        <button type="submit" class="btn btn-success button-lg">
+                          <i class="fa fa-floppy-o"></i> Save
+                        </button>
+                        {% endbuttons %}
 
-                            <div class="form-messages">
-                              {# placeholder for ajax messages #}
-                            </div>
-                          </div>
-                        </td>
-                      </form>
-                    </tr>
-                  {% endfor %}
-                </tbody>
-                <tfoot>
-
-                </tfoot>
-              </table>
-
-            </div>
-          </div>
-
+                        <div class="form-messages">
+                          {# placeholder for ajax messages #}
+                        </div>
+                      </div>
+                    </form>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
       </div>
     {% endif %}
   </div>

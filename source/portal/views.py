@@ -42,6 +42,10 @@ def project_detail(request, uuid):
         messages.error(request, failure_message)
         return render(request, 'portal/project.html')
 
+    for k in project:
+        if '::' in k:
+            project[k.replace('::', '__')] = project.pop(k)
+
     pl_raw.sort(key=lambda k:
                 (
                     k['Container::reference'],
