@@ -92,7 +92,9 @@ class ProjectLineForm(forms.Form):
         help_text="Year")
     study_type = forms.ChoiceField(
         choices=ISOLATE_TYPE_CHOICES,
-        label="Study type")
+        label="Study type",
+        help_text="Is your strain lab derived, sampled from a host or sampled"
+        " from the environment?")
     lab_experiment_type = forms.ChoiceField(
         choices=LAB_EXPERIMENT_TYPE,
         required=False,
