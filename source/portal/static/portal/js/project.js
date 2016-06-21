@@ -18,7 +18,7 @@ $(function() {
   }
 
   function showMetaFields(context) {
-    var studyType = $('#id_study_type', context).val();
+    var studyType = $('select[name="study_type"]', context).val();
     hideMetaFields(context);
     switch (studyType) {
       case 'Lab':
@@ -37,7 +37,7 @@ $(function() {
         var fdHelpText = $('#env-fd-help-text').text();
         break;
     }
-    $('#id_further_details', context).siblings('.help-block').text(fdHelpText);
+    $('input[name="further_details"]', context).siblings('.help-block').text(fdHelpText);
   }
 
   $('select[name="study_type"]').each(function() {
@@ -59,8 +59,8 @@ $(function() {
       var editRow = $(form).closest('tr');
       var dataRow = $(form).closest('tr').prev('tr');
       editRow.collapse('hide');
-      $('td.pl-taxon', dataRow).text($('#id_taxon', form).val());
-      $('td.pl-customers-ref', dataRow).text($('#id_customers_ref', form).val());
+      $('td.pl-taxon', dataRow).text($('input[name="taxon"]', form).val());
+      $('td.pl-customers-ref', dataRow).text($('input[name="customers_ref"]', form).val());
       $('button.pl-edit-button', dataRow)
         .removeClass('btn-warning')
         .addClass('btn-success')
