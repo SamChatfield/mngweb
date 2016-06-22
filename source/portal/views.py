@@ -1,16 +1,15 @@
 import requests
 
-from django.conf import settings
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.http import HttpResponseRedirect, JsonResponse
-from django.utils.http import urlencode
 
 from .forms import EmailLinkForm, ProjectLineForm
 from .models import EnvironmentalSampleType, HostSampleType
-from .services import limsfm_get_project, limsfm_update_projectline
+from .services import limsfm_email_project_links, limsfm_get_project,\
+    limsfm_update_projectline
 
 
 def project_detail(request, uuid):
@@ -36,10 +35,9 @@ def projectline_update(request, uuid):
         if form.is_valid():
             try:
                 api_response = limsfm_update_projectline(form.cleaned_data)
-                # print(api_response.text)
                 status = api_response.status_code
             except requests.exceptions.RequestException:
-                status = 408
+                status = 500
 
             if status == 200:
                 messages.success(request, SUCCESS_MESSAGE)
@@ -65,34 +63,28 @@ def projectline_update(request, uuid):
 
 
 def project_email_link(request):
-    success_message = "Thanks! Your project links should arrive in " \
+    SUCCESS_MESSAGE = "Thanks! Your project links should arrive in " \
         "your inbox shortly."
-    failure_message = "We're experiencing some problems right now, " \
+    FAILURE_MESSAGE = "We're experiencing some problems right now, " \
         "please try again later."
 
     if request.method == 'POST':
         # honeypot
         if len(request.POST.get('url_h', '')):
-            messages.success(request, success_message)
+            messages.success(request, SUCCESS_MESSAGE)
             return HttpResponseRedirect(reverse('project_email_link'))
 
         form = EmailLinkForm(request.POST)
 
         if form.is_valid():
-            url = (settings.RESTFM_BASE_URL +
-                   'script/contact_email_project_links/REST.json?' +
-                   urlencode({
-                       'RFMkey': settings.RESTFM_KEY,
-                       'RFMscriptParam': form.cleaned_data.get('email'),
-                   })
-                   )
             try:
-                api_response = requests.get(url, timeout=5)
+                api_response = limsfm_email_project_links(
+                    form.cleaned_data['email'])
                 status = api_response.status_code
-                messages.success(request, success_message)
+                messages.success(request, SUCCESS_MESSAGE)
             except requests.exceptions.RequestException:
                 status = 408
-                messages.error(request, failure_message)
+                messages.error(request, FAILURE_MESSAGE)
 
             if request.is_ajax():
                 # Valid ajax POST

@@ -46,7 +46,7 @@ class EmailLinkForm(forms.Form):
 
 
 class ProjectLineForm(forms.Form):
-    id = forms.CharField(widget=forms.HiddenInput())
+    uuid = forms.CharField(widget=forms.HiddenInput())
     customers_ref = forms.CharField(
         max_length=100,
         label="Your sample reference")

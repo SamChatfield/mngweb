@@ -21,7 +21,7 @@ PROJECT_LIMSFM_TO_DJANGO_MAP = {
     v: k for k, v in PROJECT_DJANGO_TO_LIMSFM_MAP.items()}
 
 PROJECTLINE_DJANGO_TO_LIMSFM_MAP = {
-    'id': 'projectline_id',
+    'uuid': 'uuid',
     'aliquottype_name': 'Aliquot::unstored_aliquottype_name',
     'collection_day': 'Sample::collection_day',
     'collection_month': 'Sample::collection_month',
@@ -119,8 +119,8 @@ def limsfm_update_projectline(projectline):
     url = (
         settings.RESTFM_BASE_URL +
         'layout/projectline_api/' +
-        urlquote('projectline_id===') +
-        urlquote(projectline.pop('id')) + '.json?' +
+        urlquote('uuid===') +
+        urlquote(projectline.pop('uuid')) + '.json?' +
         urlencode({
             'RFMkey': settings.RESTFM_KEY,
         })
@@ -147,5 +147,20 @@ def limsfm_update_projectline(projectline):
     payload = {'data': [data]}
 
     response = requests.put(url, json=payload, timeout=5)
+
+    return response
+
+
+def limsfm_email_project_links(email_address):
+    url = (
+        settings.RESTFM_BASE_URL +
+        'script/contact_email_project_links/REST.json?' +
+        urlencode({
+            'RFMkey': settings.RESTFM_KEY,
+            'RFMscriptParam': email_address,
+        })
+    )
+
+    response = requests.get(url, timeout=5)
 
     return response

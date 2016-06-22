@@ -131,7 +131,7 @@
                   <td colspan="6">
                     <form method="post" action="{% url 'projectline_update' project.uuid %}" class="projectline-form">
                       <div class="col-md-4">
-                        <input id="id_id" name="id" type="hidden" value="{{ pl.id }}" />
+                        <input id="id_uuid" name="uuid" type="hidden" value="{{ pl.uuid }}" />
                         <h3>Basic sample data</h3>
                         {% bootstrap_field pl.form.customers_ref %}
                         {% bootstrap_field pl.form.taxon_name field_class="taxon-pk-typeahead" %}
