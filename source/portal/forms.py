@@ -50,7 +50,7 @@ class ProjectLineForm(forms.Form):
     customers_ref = forms.CharField(
         max_length=100,
         label="Your sample reference")
-    taxon = forms.ModelChoiceField(
+    taxon_name = forms.ModelChoiceField(
         queryset=Taxon.objects.filter(data_set__in=['Prokaryotes', 'Other']),
         to_field_name='name',
         widget=forms.TextInput(),
@@ -64,7 +64,7 @@ class ProjectLineForm(forms.Form):
         min_value=0,
         decimal_places=2,
         label="DNA concentration (ng/µl)")
-    geo_country = forms.ModelChoiceField(
+    geo_country_name = forms.ModelChoiceField(
         queryset=Country.objects.all(),
         to_field_name='name',
         label="Sample collection country",
@@ -99,7 +99,7 @@ class ProjectLineForm(forms.Form):
         choices=LAB_EXPERIMENT_TYPE,
         required=False,
         label="Experiment type")
-    host_taxon = forms.ModelChoiceField(
+    host_taxon_name = forms.ModelChoiceField(
         required=False,
         queryset=Taxon.objects.all(),
         to_field_name='name',

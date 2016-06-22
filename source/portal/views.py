@@ -10,156 +10,41 @@ from django.utils.http import urlencode
 
 from .forms import EmailLinkForm, ProjectLineForm
 from .models import EnvironmentalSampleType, HostSampleType
+from .services import limsfm_get_project, limsfm_update_projectline
 
 
 def project_detail(request, uuid):
-    failure_message = "We're experiencing some problems right now, " \
-                      "please try again later."
+    FAILURE_MESSAGE = ("We're experiencing some problems right now, "
+                       "please try again later.")
 
-    project_url = (settings.RESTFM_BASE_URL +
-                   'layout/project_api.json?' +
-                   urlencode({
-                       'RFMkey': settings.RESTFM_KEY,
-                       'RFMsF1': 'uuid',
-                       'RFMsV1': '==' + uuid,
-                   })
-                   )
     try:
-        api_response = requests.get(project_url, timeout=5)
-        project = api_response.json()['data'][0]
-        projectline_url = (settings.RESTFM_BASE_URL +
-                           'layout/projectline_api.json?' +
-                           urlencode({
-                               'RFMkey': settings.RESTFM_KEY,
-                               'RFMsF1': 'project_id',
-                               'RFMsV1': project['project_id'],
-                               'RFMmax': 0,
-                           })
-                           )
-        api_response = requests.get(projectline_url, timeout=5)
-        pl_raw = api_response.json()['data']
+        project = limsfm_get_project(uuid)
     except Exception:
-        messages.error(request, failure_message)
+        messages.error(request, FAILURE_MESSAGE)
         return render(request, 'portal/project.html')
 
-    for k in project:
-        if '::' in k:
-            project[k.replace('::', '__')] = project.pop(k)
-
-    pl_raw.sort(key=lambda k:
-                (
-                    k['Container::reference'],
-                    int(k['Aliquot::unstored_container_position'])
-                    if len(k['Aliquot::unstored_container_position']) else 0,
-                    k['Sample::reference'],
-                )
-                )
-
-    projectlines = []
-    for pl in pl_raw:
-        data = {
-            'id': pl['projectline_id'],
-            'well_alpha': pl['Aliquot::unstored_well_position_display'],
-            'sample_ref': pl['Sample::reference'],
-            'aliquottype_name': pl['Aliquot::unstored_aliquottype_name'],
-            'customers_ref': pl['Sample::customers_ref'],
-            'taxon': pl['Taxon::name'],
-            'queue_name': pl['Queue::name'],
-            'volume_ul': pl['Aliquot::volume_ul'],
-            'dna_concentration_ng_ul': pl['Aliquot::dna_concentration_ng_ul'],
-            'geo_country': pl['sample_Country::name'],
-            'geo_specific_location': pl['Sample::geo_specific_location'],
-            'collection_day': pl['Sample::collection_day'],
-            'collection_month': pl['Sample::collection_month'],
-            'collection_year': pl['Sample::collection_year'],
-            'study_type': pl['Sample::study_type'],
-            'lab_experiment_type': pl['Sample::lab_experiment_type'],
-            'environmental_sample_type': pl['Sample::environmental_sample_type'],
-            'host_taxon': pl['sample_Taxon#host::name'],
-            'host_sample_type': pl['Sample::host_sample_type'],
-            'further_details': pl['Sample::further_details'],
-        }
-        if data['customers_ref']:
-            data['form'] = ProjectLineForm(initial=data)
-        else:
-            data['form'] = ProjectLineForm()
-        projectlines.append(data)
-
-    project['projectlines'] = projectlines
-
-    return render(request, 'portal/project.html',
-                  {
-                      'project': project,
-                  }
-                  )
+    return render(request, 'portal/project.html', {'project': project})
 
 
 def projectline_update(request, uuid):
-    success_message = "Saved"
-    failure_message = "An unexpected error occurred"
+    SUCCESS_MESSAGE = "Saved"
+    FAILURE_MESSAGE = "An unexpected error occurred"
 
     if request.method == 'POST' and request.is_ajax():
         form = ProjectLineForm(request.POST)
 
         if form.is_valid():
-            url = (settings.RESTFM_BASE_URL +
-                   'layout/projectline_api/' +
-                   'projectline_id%3D%3D%3D' +
-                   str(form.cleaned_data['id']) + '.json?' +
-                   urlencode({
-                       'RFMkey': settings.RESTFM_KEY,
-                   })
-                   )
-            payload = {
-                'data': [
-                    {
-                        'Sample::customers_ref':
-                            form.cleaned_data['customers_ref'],
-                        'Sample::taxon_id':
-                            form.cleaned_data['taxon'].fm_id,
-                        'Aliquot::volume_ul':
-                            str(form.cleaned_data['volume_ul']),
-                        'Aliquot::dna_concentration_ng_ul':
-                            str(form.cleaned_data['dna_concentration_ng_ul']),
-                        'Sample::geo_country_iso2_id':
-                            form.cleaned_data['geo_country'].iso2,
-                        'Sample::geo_specific_location':
-                            form.cleaned_data['geo_specific_location'],
-                        'Sample::collection_day':
-                            form.cleaned_data['collection_day'],
-                        'Sample::collection_month':
-                            form.cleaned_data['collection_month'],
-                        'Sample::collection_year':
-                            form.cleaned_data['collection_year'],
-                        'Sample::study_type':
-                            form.cleaned_data['study_type'],
-                        'Sample::lab_experiment_type':
-                            form.cleaned_data['lab_experiment_type'],
-                        'Sample::host_taxon_id':
-                            (form.cleaned_data['host_taxon'].fm_id
-                                if form.cleaned_data['host_taxon'] else ''),
-                        'Sample::host_sample_type':
-                            (form.cleaned_data['host_sample_type'].name
-                                if form.cleaned_data['host_sample_type'] else ''),
-                        'Sample::environmental_sample_type':
-                            (form.cleaned_data['environmental_sample_type'].name
-                                if form.cleaned_data['environmental_sample_type'] else ''),
-                        'Sample::further_details':
-                            form.cleaned_data['further_details'],
-                    }
-                ]
-            }
             try:
-                api_response = requests.put(url, json=payload, timeout=5)
+                api_response = limsfm_update_projectline(form.cleaned_data)
                 # print(api_response.text)
                 status = api_response.status_code
             except requests.exceptions.RequestException:
                 status = 408
 
             if status == 200:
-                messages.success(request, success_message)
+                messages.success(request, SUCCESS_MESSAGE)
             else:
-                messages.error(request, failure_message)
+                messages.error(request, FAILURE_MESSAGE)
 
             response_data = {'messages': []}
             for message in messages.get_messages(request):
