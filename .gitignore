@@ -5,4 +5,3 @@ __pycache__
 source/mngweb/settings/local.py
 media/
 /static/
-bower_components/
