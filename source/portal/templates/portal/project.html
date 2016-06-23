@@ -12,8 +12,15 @@
 {% block full_jumbo %}
   <div class="jumbotron bg-grey">
     <div class="container">
-      <h1>Your project</h1>
-      <h2>{{ project.reference }}</h2>
+      <div class="flex-row row">
+        <div class="col-md-6">
+          <h1>Your project</h1>
+          <h2>{{ project.reference }}</h2>
+        </div>
+        <div class="col-md-3 col-md-offset-3 hidden-sm hidden-xs text-right">
+          <img src="{% static "images/mng-logo-500.png" %}" class="img-responsive">
+        </div>
+      </div>
     </div>
   </div>
 {% endblock %}
@@ -29,7 +36,7 @@
 
     {% if project %}
 
-      <div class="flex-row row">
+      <div class="row">
         <div class="col-md-6">
           <h2>Project Summary</h2>
           <table class="table">
@@ -86,8 +93,8 @@
             <div class="panel panel-default">
               <div class="panel-body">
               <div class="col-md-8">
-                <h4>Prefer to edit in Google Sheets?</h4>
-                <p>We recommend using our web form below for small numbers of samples, but you can also <a href="{{ project.sample_sheet_url }}">fill in your sample sheet here.</a></p>
+                <h4>Prefer to edit in Excel?</h4>
+                <p>We recommend using our web form below for small numbers of samples, but you can also <a href="{{ project.sample_sheet_url }}">download our excel template.</a></p>
               </div>
               <div class="col-md-4">
                 <button class="btn btn-primary">Fetch data</button>
@@ -190,8 +197,8 @@
     {% endif %}
   </div>
 
-<div class="hidden" id="env-fd-help-text">e.g. Extracted from soil sample collected in Central Park</div>
-<div class="hidden" id="lab-fd-help-text">e.g. SecA</div>
-<div class="hidden" id="host-fd-help-text">e.g. Bloody diarrhoea</div>
+  <div class="hidden" id="env-fd-help-text">e.g. Extracted from soil sample collected in Central Park</div>
+  <div class="hidden" id="lab-fd-help-text">e.g. SecA</div>
+  <div class="hidden" id="host-fd-help-text">e.g. Bloody diarrhoea</div>
 
 {% endblock %}
