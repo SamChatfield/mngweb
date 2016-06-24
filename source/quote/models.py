@@ -83,8 +83,6 @@ class QuoteRequestFormPage(Page):
                 else:
                     messages.success(request, self.success_message)
                     return HttpResponseRedirect(self.url)
-            else:
-                print(form.errors)
         else:
             form = QuoteRequestForm()
 
