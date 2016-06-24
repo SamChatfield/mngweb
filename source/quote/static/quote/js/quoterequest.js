@@ -42,7 +42,7 @@ $(function() {
       setQuoteEstimate();
   });
 
-  // scroll to first error
+  // scroll to first error on page
   (function() {
     var firstError = document.getElementsByClassName('has-error')[0];
     if (firstError !== undefined) {
