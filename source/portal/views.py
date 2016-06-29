@@ -1,15 +1,123 @@
 import requests
+import django_excel as excel
 
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.shortcuts import render
 from django.template.loader import render_to_string
-from django.http import HttpResponseRedirect, JsonResponse
-
-from .forms import EmailLinkForm, ProjectLineForm
+from django.http import HttpResponseBadRequest, HttpResponseRedirect,\
+    HttpResponseServerError, JsonResponse
+from .forms import EmailLinkForm, ProjectLineForm, UploadSampleSheetForm
 from .models import EnvironmentalSampleType, HostSampleType
 from .services import limsfm_email_project_links, limsfm_get_project,\
-    limsfm_update_projectline
+    limsfm_update_projectline, limsfm_bulk_update_projectlines
+
+
+SAMPLE_SHEET_COL_ORDER = [
+    'well',
+    'sample_ref',
+    'customers_ref',
+    'dna_concentration_ng_ul',
+    'volume_ul',
+    'taxon_name',
+    'collection_day',
+    'collection_month',
+    'collection_year',
+    'geo_country_name',
+    'geo_specific_location',
+    'lab_experiment_type',
+    'further_details',
+    'host_taxon_name',
+    'host_sample_type',
+    'further_details',
+    'environmental_sample_type',
+    'further_details',
+]
+
+
+def upload_sample_sheet(request, uuid):
+    FAILURE_MESSAGE = ("We're experiencing some problems right now, "
+                       "please try again later.")
+
+    if request.method == "POST":
+        form = UploadSampleSheetForm(request.POST, request.FILES)
+        if form.is_valid():
+            filehandle = request.FILES['file']
+            sheet = filehandle.get_sheet()
+
+            errors = []
+            projectlines = []
+
+            for row in sheet.row_range()[6:102]:
+                record_data = dict(zip(SAMPLE_SHEET_COL_ORDER, sheet.row[row]))
+
+                if not record_data['customers_ref']:
+                    continue
+
+                try:
+                    if record_data['lab_experiment_type']:
+                        record_data['study_type'] = 'Lab'
+                    elif record_data['host_taxon_name']:
+                        record_data['study_type'] = 'Host'
+                    elif record_data['environmental_sample_type']:
+                        record_data['study_type'] = 'Environmental'
+                except KeyError:
+                    messages.error(request, "Template file not recognised")
+                    return HttpResponseRedirect(
+                        reverse('project_detail', args=[uuid]))
+
+                pl_form = ProjectLineForm(record_data)
+                if pl_form.is_valid():
+                    projectlines.append(pl_form.cleaned_data)
+                else:
+                    for i, col in enumerate(pl_form.errors):
+                        message = (
+                            "Import error on ROW %(row)d (%(sample_ref)s):"
+                            " %(error)s" %
+                            {
+                                'row': row,
+                                'sample_ref': record_data['sample_ref'],
+                                'error': pl_form.errors[col][0]
+                            }
+                        )
+                        errors.append(message)
+                        if len(errors) == 3:
+                            break
+                if len(errors) == 3:
+                            break
+            if errors:
+                for m in errors:
+                    messages.error(request, m)
+                return HttpResponseRedirect(
+                    reverse('project_detail', args=[uuid]))
+
+            try:
+                response = limsfm_bulk_update_projectlines(
+                    uuid, projectlines)
+                status_code = response.status_code
+                print(status_code)
+            except requests.exceptions.RequestException:
+                status_code = 500
+
+            if status_code != 200:
+                messages.error(request, FAILURE_MESSAGE)
+                return HttpResponseRedirect(
+                    reverse('project_detail', args=[uuid]))
+
+            messages.success(
+                request,
+                "%(count)d rows successfully imported." %
+                {'count': len(projectlines)}
+            )
+            return HttpResponseRedirect(
+                reverse('project_detail', args=[uuid]))
+
+        else:
+            # Upload form error
+            return HttpResponseBadRequest()
+    else:
+        # Not POST
+        return HttpResponseBadRequest()
 
 
 def project_detail(request, uuid):
@@ -22,7 +130,14 @@ def project_detail(request, uuid):
         messages.error(request, FAILURE_MESSAGE)
         return render(request, 'portal/project.html')
 
-    return render(request, 'portal/project.html', {'project': project})
+    upload_sample_sheet_form = UploadSampleSheetForm
+
+    return render(
+        request, 'portal/project.html',
+        {
+            'project': project,
+            'upload_sample_sheet_form': upload_sample_sheet_form
+        })
 
 
 def projectline_update(request, uuid):
@@ -34,7 +149,7 @@ def projectline_update(request, uuid):
 
         if form.is_valid():
             try:
-                api_response = limsfm_update_projectline(form.cleaned_data)
+                api_response = limsfm_update_projectline(uuid, form.cleaned_data)
                 status = api_response.status_code
             except requests.exceptions.RequestException:
                 status = 500

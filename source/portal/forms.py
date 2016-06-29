@@ -45,34 +45,60 @@ class EmailLinkForm(forms.Form):
                              "associated with your projects")
 
 
+class UploadSampleSheetForm(forms.Form):
+    file = forms.FileField(label="Upload sample sheet file")
+
+
 class ProjectLineForm(forms.Form):
-    uuid = forms.CharField(widget=forms.HiddenInput())
+    sample_ref = forms.CharField(widget=forms.HiddenInput())
     customers_ref = forms.CharField(
         max_length=100,
-        label="Your sample reference")
+        label="Your sample reference",
+        error_messages={
+            'required': "Customer's reference (Sample name) is required.",
+            'max_length': "Customer's reference (Sample name) cannot exceep 100 characters."
+        })
     taxon_name = forms.ModelChoiceField(
         queryset=Taxon.objects.filter(data_set__in=['Prokaryotes', 'Other']),
         to_field_name='name',
         widget=forms.TextInput(),
         label="Sample taxon",
-        help_text="e.g. Escherichia coli (choose the closest available)")
+        help_text="e.g. Escherichia coli (choose the closest available)",
+        error_messages={
+            'required': "Taxon is required.",
+            'invalid_choice': "Please select a valid taxon from the list."
+        })
     volume_ul = forms.DecimalField(
         min_value=0,
         decimal_places=2,
-        label="Volume (µl)")
+        required=False,
+        label="Volume (µl)",
+        error_messages={
+            'max_decimal_places': "Volume (µl) should have a maximum of 2 decimal places."
+        })
     dna_concentration_ng_ul = forms.DecimalField(
         min_value=0,
         decimal_places=2,
-        label="DNA concentration (ng/µl)")
+        required=False,
+        label="DNA concentration (ng/µl)",
+        error_messages={
+            'max_decimal_places': "DNA Concentration (ng/µl) should have a maximum of 2 decimal places."
+        })
     geo_country_name = forms.ModelChoiceField(
         queryset=Country.objects.all(),
         to_field_name='name',
         label="Sample collection country",
-        widget=forms.TextInput())
+        widget=forms.TextInput(),
+        error_messages={
+            'required': "Sample collection country is required.",
+            'invalid_choice': "Please select a valid sample collection country from the list."
+        })
     geo_specific_location = forms.CharField(
-        max_length=100,
         label="Specific location",
-        help_text="e.g. Royal Free Hospital, London")
+        help_text="e.g. Royal Free Hospital, London",
+        error_messages={
+            'required': "Sample collection specific location is required."
+        })
     collection_day = forms.IntegerField(
         min_value=1,
         max_value=31,

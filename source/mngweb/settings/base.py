@@ -169,6 +169,12 @@ CACHES = {
 }
 
 
+# django-excel
+
+FILE_UPLOAD_HANDLERS = ("django_excel.ExcelMemoryFileUploadHandler",
+                        "django_excel.TemporaryExcelFileUploadHandler")
+
+
 # django-bootstrap settings
 
 BOOTSTRAP3 = {

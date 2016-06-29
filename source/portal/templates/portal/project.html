@@ -12,7 +12,7 @@
 {% block full_jumbo %}
   <div class="jumbotron bg-grey">
     <div class="container">
-      <div class="flex-row row">
+      <div class="row">
         <div class="col-md-6">
           <h1>Your project</h1>
           <h2>{{ project.reference }}</h2>
@@ -92,12 +92,20 @@
           {% if project.sample_sheet_url %}
             <div class="panel panel-default">
               <div class="panel-body">
-              <div class="col-md-8">
+              <div class="col-md-6">
                 <h4>Prefer to edit in Excel?</h4>
                 <p>We recommend using our web form below for small numbers of samples, but you can also <a href="{{ project.sample_sheet_url }}">download our excel template.</a></p>
               </div>
-              <div class="col-md-4">
-                <button class="btn btn-primary">Fetch data</button>
+              <div class="col-md-6">
+                <form method="post" action="{% url 'upload_sample_sheet' project.uuid %}" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  {% bootstrap_form upload_sample_sheet_form %}
+                  {% buttons %}
+                    <button type="submit" class="btn btn-success button-lg">
+                      <i class="fa fa-cloud-upload"></i> Upload
+                    </button>
+                  {% endbuttons %}
+                </form>
               </div>
               </div>
             </div>
@@ -138,7 +146,7 @@
                   <td colspan="6">
                     <form method="post" action="{% url 'projectline_update' project.uuid %}" class="projectline-form">
                       <div class="col-md-4">
-                        <input id="id_uuid" name="uuid" type="hidden" value="{{ pl.uuid }}" />
+                        <input id="id_sample_ref" name="sample_ref" type="hidden" value="{{ pl.sample_ref }}" />
                         <h3>Basic sample data</h3>
                         {% bootstrap_field pl.form.customers_ref %}
                         {% bootstrap_field pl.form.taxon_name field_class="taxon-pk-typeahead" %}
