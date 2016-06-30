@@ -10,7 +10,7 @@ urlpatterns = [
     url(r'^projects/(?P<uuid>[-\w]{36})/$',
         views.project_detail,
         name='project_detail'),
-    url(r'^projects/(?P<uuid>[-\w]{36})/projectlines/update/$',
+    url(r'^projects/(?P<project_uuid>[-\w]{36})/projectlines/(?P<projectline_uuid>[-\w]{36})/update/$',
         views.projectline_update,
         name='projectline_update'),
     url(r'^projects/(?P<uuid>[-\w]{36})/upload_sample_sheet/$',

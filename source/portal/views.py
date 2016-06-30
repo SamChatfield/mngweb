@@ -159,7 +159,7 @@ def project_detail(request, uuid):
         })
 
 
-def projectline_update(request, uuid):
+def projectline_update(request, project_uuid, projectline_uuid):
     SUCCESS_MESSAGE = "Saved"
     FAILURE_MESSAGE = "An unexpected error occurred"
 
@@ -168,7 +168,10 @@ def projectline_update(request, uuid):
 
         if form.is_valid():
             try:
-                api_response = limsfm_update_projectline(uuid, form.cleaned_data)
+                api_response = limsfm_update_projectline(
+                    project_uuid,
+                    projectline_uuid,
+                    form.cleaned_data)
                 status = api_response.status_code
             except requests.exceptions.RequestException:
                 status = 500

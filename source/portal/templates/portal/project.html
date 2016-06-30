@@ -144,7 +144,7 @@
                 </tr>
                 <tr class="collapse bg-grey" id="edit-row-{{ forloop.counter0 }}">
                   <td colspan="6">
-                    <form method="post" action="{% url 'projectline_update' project.uuid %}" class="projectline-form">
+                    <form method="post" action="{% url 'projectline_update' project.uuid pl.uuid %}" class="projectline-form">
                       <div class="col-md-4">
                         <input id="id_sample_ref" name="sample_ref" type="hidden" value="{{ pl.sample_ref }}" />
                         <h3>Basic sample data</h3>

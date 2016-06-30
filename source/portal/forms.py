@@ -50,7 +50,6 @@ class UploadSampleSheetForm(forms.Form):
 
 
 class ProjectLineForm(forms.Form):
-    sample_ref = forms.CharField(widget=forms.HiddenInput())
     customers_ref = forms.CharField(
         max_length=100,
         label="Your sample reference",
