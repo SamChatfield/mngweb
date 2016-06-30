@@ -97,7 +97,7 @@
                 <p>We recommend using our web form below for small numbers of samples, but you can also <a href="{{ project.sample_sheet_url }}">download our excel template.</a></p>
               </div>
               <div class="col-md-6">
-                <form method="post" action="{% url 'upload_sample_sheet' project.uuid %}" enctype="multipart/form-data">
+                <form method="post" action="{% url 'upload_sample_sheet' project.uuid %}" enctype="multipart/form-data" class="excel-upload-form">
                   {% csrf_token %}
                   {% bootstrap_form upload_sample_sheet_form %}
                   {% buttons %}

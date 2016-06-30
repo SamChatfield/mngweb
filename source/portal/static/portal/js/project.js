@@ -51,10 +51,9 @@ $(function() {
       showMetaFields(context);
   });
 
-  // AJAX post on submit
+  // AJAX post on projcetline submit
   $(document).on('submit', '.projectline-form', function(event){
     event.preventDefault();
-    console.log('Submit');
     ajaxPost(this, false, function(form) {
       var editRow = $(form).closest('tr');
       var dataRow = $(form).closest('tr').prev('tr');
@@ -66,6 +65,11 @@ $(function() {
         .addClass('btn-success')
         .html('<i class="fa fa-check"></i> Saved');
     });
+  });
+
+  // Excel upload submit
+  $(document).on('click', '.excel-upload-form button[type="submit"]', function(event){
+    $(this).html('<i class="fa fa-spin fa-spinner"></i> Please wait');
   });
 
   // EnvironmentalSampleType typeahead
