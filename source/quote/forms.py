@@ -29,13 +29,16 @@ BATCH_TYPE_CHOICES = [
 
 class QuoteRequestForm(forms.Form):
     name_title = forms.CharField(
-        max_length=10, label=_("Title"),
+        max_length=10,
+        label=_("Title"),
         widget=forms.TextInput(attrs={'placeholder': "Dr"}))
     name_first = forms.CharField(
-        max_length=50, label=_("First name"),
+        max_length=50,
+        label=_("First name"),
         widget=forms.TextInput(attrs={'placeholder': "John"}))
     name_last = forms.CharField(
-        max_length=50, label=_("Last name"),
+        max_length=50,
+        label=_("Last name"),
         widget=forms.TextInput(attrs={'placeholder': "Smith"}))
     email = forms.EmailField(
         widget=forms.EmailInput(attrs={'placeholder': "j.smith@bham.ac.uk"}))
@@ -43,76 +46,100 @@ class QuoteRequestForm(forms.Form):
         max_length=20,
         widget=forms.TextInput(attrs={'placeholder': "0121 4445555"}))
     organisation = forms.CharField(
-        max_length=50, label=_("Organisation / Institution"),
+        max_length=50,
+        label=_("Organisation / Institution"),
         widget=forms.TextInput(
             attrs={'placeholder': "University of Birmingham"}))
     department = forms.CharField(
-        max_length=50, required=False,
+        max_length=50,
+        required=False,
         widget=forms.TextInput(
             attrs={'placeholder': "Department of Biosciences"}))
     street_line_1 = forms.CharField(
-        max_length=50, label=_("Address lines"),
+        max_length=50,
+        label=_("Address lines"),
         widget=forms.TextInput(
             attrs={'placeholder': "Room W126, Biosciences building"}))
     street_line_2 = forms.CharField(
-        max_length=50, label=_("Address line 2"), required=False,
+        max_length=50,
+        label=_("Address line 2"),
+        required=False,
         widget=forms.TextInput(attrs={'placeholder': "Edgbaston"}))
     street_line_3 = forms.CharField(
-        max_length=50, label=_("Address line 3"), required=False)
+        max_length=50,
+        label=_("Address line 3"),
+        required=False)
     city = forms.CharField(
-        max_length=50, widget=forms.TextInput(
+        max_length=50,
+        widget=forms.TextInput(
             attrs={'placeholder': "Birmingham"}))
     region = forms.CharField(
-        max_length=50, label=_("Region / State"), help_text=_("Optional"),
-        required=False, widget=forms.TextInput(
+        max_length=50,
+        label=_("Region / State"),
+        required=False,
+        widget=forms.TextInput(
             attrs={'placeholder': "West Midlands"}))
     postcode = forms.CharField(
-        max_length=10, label=_("Postcode / Zip"), required=False,
+        max_length=10,
+        label=_("Postcode / Zip"),
+        required=False,
         widget=forms.TextInput(attrs={'placeholder': "B15 2TT"}))
     country = forms.CharField(
-        max_length=30, widget=forms.TextInput(
+        max_length=30,
+        widget=forms.TextInput(
             attrs={'placeholder': "United Kingdom"}))
     funding_type = forms.ChoiceField(choices=FUNDING_TYPE_CHOICES)
     bbsrc_code = forms.CharField(
-        required=False, label=_("BBSRC grant code"),
+        required=False,
+        label=_("BBSRC grant code"),
         widget=forms.TextInput(attrs={'placeholder': "BB/M0101234/1"}))
     is_confidential = forms.BooleanField(required=False)
     num_dna_samples = forms.IntegerField(
-        min_value=0, initial=0, label=_("No. of DNA samples"))
+        min_value=0,
+        initial=0,
+        label=_("No. of DNA samples"))
     num_strain_samples = forms.IntegerField(
-        min_value=0, initial=0, label=_("No. of strain samples"))
+        min_value=0,
+        initial=0,
+        label=_("No. of strain samples"))
     confirm_strain_bsl2 = forms.BooleanField(
-        required=False, label=_("Confirm your strains are BSL2 or lower"))
+        required=False,
+        label=_("Confirm your strains are BSL2 or lower"))
     batch_type = forms.ChoiceField(
-        choices=BATCH_TYPE_CHOICES, initial='all together')
+        choices=BATCH_TYPE_CHOICES,
+        initial='all together')
     referral_type = forms.ChoiceField(
-        choices=REFERRAL_TYPE_CHOICES, label=_("Where did you hear about us?"))
+        choices=REFERRAL_TYPE_CHOICES,
+        label=_("Where did you hear about us?"))
     comments = forms.CharField(required=False, widget=forms.Textarea())
 
     def clean(self):
-        if (self.cleaned_data.get('funding_type') == 'BBSRC funded' and
-                not self.cleaned_data.get('bbsrc_code')):
+        cleaned_data = super(QuoteRequestForm, self).clean()
+        non_field_errors = []
 
-            self.add_error(
-                'bbsrc_code',
-                ValidationError(_("BBSRC code is required"), code='required')
+        funding_type = cleaned_data.get('funding_type')
+        bbsrc_code = cleaned_data.get('bbsrc_code')
+        num_dna_samples = cleaned_data.get('num_dna_samples')
+        num_strain_samples = cleaned_data.get('num_strain_samples')
+        confirm_strain_bsl2 = cleaned_data.get('confirm_strain_bsl2')
+
+        if (funding_type == 'BBSRC funded' and not bbsrc_code):
+            bbsrc_error = ValidationError(_("BBSRC code is required"))
+            self.add_error('bbsrc_code', bbsrc_error)
+            non_field_errors.append(bbsrc_error)
+
+        if num_strain_samples > 0 and not confirm_strain_bsl2:
+            bsl2_error = ValidationError(
+                _("You must confirm that any strains are BSL2 or below"))
+            self.add_error('confirm_strain_bsl2', bsl2_error)
+            non_field_errors.append(bsl2_error)
+
+        if not (num_strain_samples or num_dna_samples):
+            non_field_errors.append(
+                ValidationError(
+                    _("A total sample quantity of at least one (strain or DNA)"
+                      " is required"))
             )
 
-        if (self.cleaned_data.get('num_strain_samples') > 0 and
-                not self.cleaned_data.get('confirm_strain_bsl2')):
-
-            self.add_error(
-                'confirm_strain_bsl2',
-                ValidationError(_(
-                    "You must confirm strains are BSL2 or below"),
-                    code='required')
-            )
-
-        if (self.cleaned_data.get('num_strain_samples') < 1 and
-                self.cleaned_data.get('num_dna_samples') < 1):
-
-            raise ValidationError(
-                _("A total sample quantity of at least one (strain or DNA) is required"),
-                code='required')
-
-        return self.cleaned_data
+        if non_field_errors:
+            raise ValidationError(non_field_errors)
