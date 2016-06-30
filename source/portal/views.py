@@ -41,80 +41,99 @@ def upload_sample_sheet(request, uuid):
 
     if request.method == "POST":
         form = UploadSampleSheetForm(request.POST, request.FILES)
-        if form.is_valid():
-            filehandle = request.FILES['file']
-            sheet = filehandle.get_sheet()
 
-            errors = []
-            projectlines = []
+        if not form.is_valid():
+            messages.error(request, "No file uploaded.")
+            return HttpResponseRedirect(reverse('project_detail', args=[uuid]))
 
-            for row in sheet.row_range()[6:102]:
-                record_data = dict(zip(SAMPLE_SHEET_COL_ORDER, sheet.row[row]))
+        filehandle = request.FILES['file']
+        sheet = filehandle.get_sheet()
 
-                if not record_data['customers_ref']:
-                    continue
-
-                try:
-                    if record_data['lab_experiment_type']:
-                        record_data['study_type'] = 'Lab'
-                    elif record_data['host_taxon_name']:
-                        record_data['study_type'] = 'Host'
-                    elif record_data['environmental_sample_type']:
-                        record_data['study_type'] = 'Environmental'
-                except KeyError:
-                    messages.error(request, "Template file not recognised")
-                    return HttpResponseRedirect(
-                        reverse('project_detail', args=[uuid]))
-
-                pl_form = ProjectLineForm(record_data)
-                if pl_form.is_valid():
-                    projectlines.append(pl_form.cleaned_data)
-                else:
-                    for i, col in enumerate(pl_form.errors):
-                        message = (
-                            "Import error on ROW %(row)d (%(sample_ref)s):"
-                            " %(error)s" %
-                            {
-                                'row': row,
-                                'sample_ref': record_data['sample_ref'],
-                                'error': pl_form.errors[col][0]
-                            }
-                        )
-                        errors.append(message)
-                        if len(errors) == 3:
-                            break
-                if len(errors) == 3:
-                            break
-            if errors:
-                for m in errors:
-                    messages.error(request, m)
-                return HttpResponseRedirect(
-                    reverse('project_detail', args=[uuid]))
-
-            try:
-                response = limsfm_bulk_update_projectlines(
-                    uuid, projectlines)
-                status_code = response.status_code
-                print(status_code)
-            except requests.exceptions.RequestException:
-                status_code = 500
-
-            if status_code != 200:
-                messages.error(request, FAILURE_MESSAGE)
-                return HttpResponseRedirect(
-                    reverse('project_detail', args=[uuid]))
-
-            messages.success(
-                request,
-                "%(count)d rows successfully imported." %
-                {'count': len(projectlines)}
-            )
+        # Check headers
+        if not (
+            len(sheet.row[2]) == 18 and
+            sheet[2, 17] == 'Further details'
+        ):
+            messages.error(request, "Invalid sample sheet headers. "
+                                    "Have you used the correct template?")
             return HttpResponseRedirect(
                 reverse('project_detail', args=[uuid]))
 
-        else:
-            # Upload form error
-            return HttpResponseBadRequest()
+        # Validate each row as form data
+        errors = []
+        projectlines = []
+
+        for row in sheet.row_range()[6:102]:
+            record_data = dict(zip(SAMPLE_SHEET_COL_ORDER, sheet.row[row]))
+
+            # Skip 'blank' rows
+            if not record_data['customers_ref']:
+                continue
+
+            # Determine 'study_type'
+            if record_data.get('lab_experiment_type'):
+                record_data['study_type'] = 'Lab'
+            elif record_data.get('host_taxon_name'):
+                record_data['study_type'] = 'Host'
+            elif record_data.get('environmental_sample_type'):
+                record_data['study_type'] = 'Environmental'
+            else:
+                message = (
+                    "Import error on ROW %(row)d: Meta data is required"
+                    " in one of the 3 coloured sections" % {'row': row}
+                )
+                errors.append(message)
+                continue
+
+            # Pass row data to form
+            pl_form = ProjectLineForm(record_data)
+            if pl_form.is_valid():
+                projectlines.append(pl_form.cleaned_data)
+            else:
+                for i, col in enumerate(pl_form.errors):
+                    message = (
+                        "Import error on ROW %(row)d (%(sample_ref)s):"
+                        " %(error)s" %
+                        {
+                            'row': row,
+                            'sample_ref': record_data['sample_ref'],
+                            'error': pl_form.errors[col][0]
+                        }
+                    )
+                    errors.append(message)
+
+        # Errors found
+        if errors:
+            for m in errors[0:3]:  # Only report first 3
+                messages.error(request, m)
+            return HttpResponseRedirect(
+                reverse('project_detail', args=[uuid]))
+
+        # Bulk update via API
+        try:
+            response = limsfm_bulk_update_projectlines(
+                uuid, projectlines)
+            status_code = response.status_code
+            print(status_code)
+        except requests.exceptions.RequestException:
+            status_code = 500
+
+        # Handle API call failure
+        if status_code != 200:
+            print("Failure %d" % status_code)
+            messages.error(request, FAILURE_MESSAGE)
+            return HttpResponseRedirect(
+                reverse('project_detail', args=[uuid]))
+
+        # Report success
+        messages.success(
+            request,
+            "%(count)d rows successfully imported." %
+            {'count': len(projectlines)}
+        )
+        return HttpResponseRedirect(
+            reverse('project_detail', args=[uuid]))
+
     else:
         # Not POST
         return HttpResponseBadRequest()
