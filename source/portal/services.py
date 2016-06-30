@@ -190,12 +190,11 @@ def limsfm_bulk_update_projectlines(project_uuid, projectlines):
 
 def limsfm_email_project_links(email_address):
     url = (
-        settings.RESTFM_BASE_URL +
-        'script/contact_email_project_links/REST.json?' +
-        urlencode({
-            'RFMkey': settings.RESTFM_KEY,
-            'RFMscriptParam': email_address,
-        })
+        "%(base)sscript/contact_email_project_links/REST.json?%(args)s" %
+        {
+            'base': settings.RESTFM_BASE_URL,
+            'args': urlencode({'RFMkey': settings.RESTFM_KEY})
+        }
     )
 
     return requests.get(url, timeout=5)
