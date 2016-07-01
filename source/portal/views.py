@@ -6,11 +6,12 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.http import HttpResponseBadRequest, HttpResponseRedirect,\
-    HttpResponseServerError, JsonResponse
+    HttpResponseServerError, JsonResponse, Http404
 from .forms import EmailLinkForm, ProjectLineForm, UploadSampleSheetForm
 from .models import EnvironmentalSampleType, HostSampleType
 from .services import limsfm_email_project_links, limsfm_get_project,\
     limsfm_update_projectline, limsfm_bulk_update_projectlines
+from .utils import messages_to_json
 
 
 SAMPLE_SHEET_COL_ORDER = [
@@ -56,6 +57,14 @@ def upload_sample_sheet(request, uuid):
         ):
             messages.error(request, "Invalid sample sheet headers. "
                                     "Have you used the correct template?")
+            return HttpResponseRedirect(
+                reverse('project_detail', args=[uuid]))
+
+        # Get project
+        try:
+            project = limsfm_get_project(uuid)
+        except Exception:
+            messages.error(request, FAILURE_MESSAGE)
             return HttpResponseRedirect(
                 reverse('project_detail', args=[uuid]))
 
@@ -139,74 +148,77 @@ def upload_sample_sheet(request, uuid):
         return HttpResponseBadRequest()
 
 
-def project_detail(request, uuid):
-    FAILURE_MESSAGE = ("We're experiencing some problems right now, "
-                       "please try again later.")
+def handle_limsfm_request_exception(request, e):
+    ERROR_MESSAGE = (
+        "The MicrobesNG customer portal is temporarily unavailable. "
+        "Please try again later."
+    )
 
-    try:
-        project = limsfm_get_project(uuid)
-    except Exception:
-        messages.error(request, FAILURE_MESSAGE)
+    messages.error(request, ERROR_MESSAGE)
+
+    if request.is_ajax():
+        return JsonResponse(messages_to_json(request), status=503)
+    else:
         return render(request, 'portal/project.html')
 
-    upload_sample_sheet_form = UploadSampleSheetForm
 
-    return render(
-        request, 'portal/project.html',
-        {
-            'project': project,
-            'upload_sample_sheet_form': upload_sample_sheet_form
-        })
+def handle_limsfm_http_exception(request, e):
+    ERROR_MESSAGE = ("An unexpected error has occured. "
+                     "Please contact info@microbesng.uk")
+
+    if e.response.status_code == 404:
+        raise Http404
+    else:
+        messages.error(request, ERROR_MESSAGE)
+
+    if request.is_ajax():
+        return JsonResponse(messages_to_json(request), status=500)
+    else:
+        return render(request, 'portal/project.html')
+
+
+def project_detail(request, uuid):
+    try:
+        project = limsfm_get_project(uuid)
+    except requests.HTTPError as e:
+        return handle_limsfm_http_exception(request, e)
+    except requests.RequestException as e:
+        return handle_limsfm_request_exception(request, e)
+    else:
+        return render(
+            request, 'portal/project.html',
+            {
+                'project': project,
+                'upload_sample_sheet_form': UploadSampleSheetForm()
+            })
 
 
 def projectline_update(request, project_uuid, projectline_uuid):
-    SUCCESS_MESSAGE = "Saved"
-    FAILURE_MESSAGE = "An unexpected error occurred"
-
     if request.method == 'POST' and request.is_ajax():
         form = ProjectLineForm(request.POST)
 
         if form.is_valid():
             try:
-                api_response = limsfm_update_projectline(
-                    project_uuid,
-                    projectline_uuid,
-                    form.cleaned_data)
-                status = api_response.status_code
-            except requests.exceptions.RequestException:
-                status = 500
-
-            if status == 200:
-                messages.success(request, SUCCESS_MESSAGE)
+                limsfm_update_projectline(project_uuid, projectline_uuid,
+                                          form.cleaned_data)
+            except requests.RequestException as e:
+                return handle_limsfm_request_exception(request, e)
             else:
-                messages.error(request, FAILURE_MESSAGE)
-
-            response_data = {'messages': []}
-            for message in messages.get_messages(request):
-                response_data['messages'].append({
-                    "level": message.level,
-                    "level_tag": message.level_tag,
-                    "message": message.message,
-                })
-            response_data['messages_html'] = render_to_string(
-                'includes/messages.html',
-                {'messages': messages.get_messages(request)})
-            return JsonResponse(response_data, status=status)
+                messages.success(request, "Saved")
+                return JsonResponse(messages_to_json(request))
         else:
-            response_data = {'errors': form.errors}
-            return JsonResponse(response_data, status=400)
+            json = {'errors': form.errors}
+            return JsonResponse(json, status=400)
     else:
         return JsonResponse({'error': 'Bad request'}, status=400)
 
 
 def project_email_link(request):
-    SUCCESS_MESSAGE = "Thanks! Your project links should arrive in " \
-        "your inbox shortly."
-    FAILURE_MESSAGE = "We're experiencing some problems right now, " \
-        "please try again later."
+    SUCCESS_MESSAGE = (
+        "Thanks! Your project links should arrive in your inbox shortly.")
 
     if request.method == 'POST':
-        # honeypot
+        # Bot honeypot
         if len(request.POST.get('url_h', '')):
             messages.success(request, SUCCESS_MESSAGE)
             return HttpResponseRedirect(reverse('project_email_link'))
@@ -215,33 +227,17 @@ def project_email_link(request):
 
         if form.is_valid():
             try:
-                api_response = limsfm_email_project_links(
-                    form.cleaned_data['email'])
-                status = api_response.status_code
-                messages.success(request, SUCCESS_MESSAGE)
-            except requests.exceptions.RequestException:
-                status = 408
-                messages.error(request, FAILURE_MESSAGE)
+                limsfm_email_project_links(form.cleaned_data['email'])
+            except requests.RequestException as e:
+                return handle_limsfm_request_exception(request, e)
 
+            messages.success(request, SUCCESS_MESSAGE)
             if request.is_ajax():
-                # Valid ajax POST
-                data = {'messages': []}
-                for message in messages.get_messages(request):
-                    data['messages'].append({
-                        "level": message.level,
-                        "level_tag": message.level_tag,
-                        "message": message.message,
-                    })
-                data['messages_html'] = render_to_string(
-                    'includes/messages.html',
-                    {'messages': messages.get_messages(request)})
-                return JsonResponse(data, status=status)
+                return JsonResponse(messages_to_json(request))
             else:
-                # Valid (non-ajax) post
                 HttpResponseRedirect(reverse('project_email_link'))
 
         elif request.is_ajax():
-            # Invalid ajax post
             data = {'errors': form.errors}
             return JsonResponse(data, status=400)
 
