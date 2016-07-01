@@ -1,10 +1,13 @@
 from datetime import datetime
 
 from django import forms
+from django.core.exceptions import ValidationError
+from django.utils.translation import ugettext as _
 
-from .models import EnvironmentalSampleType, HostSampleType
 from country.models import Country
 from taxon.models import Taxon
+
+from .models import EnvironmentalSampleType, HostSampleType
 
 
 ISOLATE_TYPE_CHOICES = [
@@ -54,8 +57,9 @@ class ProjectLineForm(forms.Form):
         max_length=100,
         label="Your sample reference",
         error_messages={
-            'required': "Customer's reference (Sample name) is required.",
-            'max_length': "Customer's reference (Sample name) cannot exceep 100 characters."
+            'required': "'Customer's reference' (Sample name) is required.",
+            'max_length': "'Customer's reference' (Sample name) cannot exceed"
+                          " 100 characters."
         })
     taxon_name = forms.ModelChoiceField(
         queryset=Taxon.objects.filter(data_set__in=['Prokaryotes', 'Other']),
@@ -64,24 +68,41 @@ class ProjectLineForm(forms.Form):
         label="Sample taxon",
         help_text="e.g. Escherichia coli (choose the closest available)",
         error_messages={
-            'required': "Taxon is required.",
-            'invalid_choice': "Please select a valid taxon from the list."
+            'required': "'Taxon' is required.",
+            'invalid_choice': "Please select a valid 'taxon' from the list."
         })
     volume_ul = forms.DecimalField(
-        min_value=0,
+        min_value=30,
+        max_value=100,
         decimal_places=2,
-        required=False,
         label="Volume (µl)",
         error_messages={
-            'max_decimal_places': "Volume (µl) should have a maximum of 2 decimal places."
+            'required': "'Volume (µl)' is required for DNA samples.",
+            'max_decimal_places': "Volume (µl) should have a maximum of 2 "
+                                  "decimal places.",
+            'min_value': "A 'volume' within the range 30-100µl is required "
+                         "for DNA samples.",
+            'max_value': "A 'volume' within the range 30-100µl is required "
+                         "for DNA samples.",
+            'invalid': "A 'volume' within the range 30-100µl is required "
+                         "for DNA samples.",
         })
     dna_concentration_ng_ul = forms.DecimalField(
-        min_value=0,
+        min_value=1,
+        max_value=30,
         decimal_places=2,
-        required=False,
         label="DNA concentration (ng/µl)",
         error_messages={
-            'max_decimal_places': "DNA Concentration (ng/µl) should have a maximum of 2 decimal places."
+            'required': "'DNA Concentration (ng/µl)' is required for DNA "
+                        "samples.",
+            'max_decimal_places': "'DNA Concentration (ng/µl)'' should have "
+                                  "a maximum of 2 decimal places.",
+            'min_value': "A 'DNA Concentration' within the range 1-30ng/µl is "
+                         "required for DNA samples.",
+            'max_value': "A 'DNA Concentration' within the range 1-30ng/µl is "
+                         "required for DNA samples.",
+            'invalid': "'DNA concentration (ng/µl)' must be a number (max. 2 "
+                       "decimal places).",
         })
     geo_country_name = forms.ModelChoiceField(
         queryset=Country.objects.all(),
@@ -90,31 +111,52 @@ class ProjectLineForm(forms.Form):
         widget=forms.TextInput(),
         error_messages={
             'required': "Sample collection country is required.",
-            'invalid_choice': "Please select a valid sample collection country from the list."
+            'invalid_choice': "Please select a valid 'sample collection "
+                              "country' from the list."
         })
     geo_specific_location = forms.CharField(
         label="Specific location",
         help_text="e.g. Royal Free Hospital, London",
         error_messages={
-            'required': "Sample collection specific location is required."
+            'required': "'Sample collection specific location' is required."
         })
     collection_day = forms.IntegerField(
         min_value=1,
         max_value=31,
         required=False,
         label="Day",
-        help_text="Day")
+        help_text="Day",
+        error_messages={
+            'invalid': "Please enter a 'Sample collection day' between 1 and "
+                       "31 (leave blank if unknown).",
+            'min_value': "Please enter a 'Sample collection day' between 1 "
+                         "and 31 (leave blank if unknown).",
+            'max_value': "Please enter a 'Sample collection day' between 1 "
+                         "and 31 (leave blank if unknown).",
+        })
     collection_month = forms.TypedChoiceField(
         coerce=int,
         choices=MONTH_CHOICES,
         required=False,
         label="Month",
-        help_text="Month")
+        help_text="Month",
+        error_messages={
+            'invalid_choice': "Please select a valid 'Sample collection "
+                              "month' (leave blank if unknown)."
+        })
     collection_year = forms.IntegerField(
-        min_value=1900,
+        min_value=1800,
         max_value=datetime.now().year,
         label="Year",
-        help_text="Year")
+        help_text="Year",
+        error_messages={
+            'min_value': "Please enter a 'Sample collection year' between "
+                         "1800 and the current year (leave blank if unknown).",
+            'max_value': "Please enter a 'Sample collection year' between "
+                         "1800 and the current year (leave blank if unknown).",
+            'invalid': "Please enter a 'Sample collection year' between 1800 "
+                       "and the current year (leave blank if unknown).",
+        })
     study_type = forms.ChoiceField(
         choices=ISOLATE_TYPE_CHOICES,
         label="Study type",
@@ -145,3 +187,27 @@ class ProjectLineForm(forms.Form):
     further_details = forms.CharField(
         required=False,
         help_text="Further details about your sample")
+
+    def clean(self):
+        cleaned_data = super(ProjectLineForm, self).clean()
+        non_field_errors = []
+
+        collection_year = cleaned_data.get('collection_year')
+        collection_month = cleaned_data.get('collection_month')
+        collection_day = cleaned_data.get('collection_day')
+
+        if collection_year and collection_month and collection_day:
+            try:
+                datetime(
+                    year=collection_year,
+                    month=collection_month,
+                    day=collection_day)
+            except ValueError:
+                non_field_errors.append(
+                    ValidationError(
+                        _("The sample collection day, month and year entered"
+                          " do not represent a valid date."))
+                )
+
+        if non_field_errors:
+            raise ValidationError(non_field_errors)
