@@ -1,7 +1,7 @@
 import requests
 
 from django.conf import settings
-from django.utils.http import urlencode, urlquote
+from django.utils.http import urlquote
 
 from .forms import ProjectLineForm
 
@@ -52,34 +52,71 @@ PROJECTLINE_LIMSFM_TO_DJANGO_MAP = {
     v: k for k, v in PROJECTLINE_DJANGO_TO_LIMSFM_MAP.items()}
 
 
+def projectline_to_fm_dict(project_uuid, cleaned_data):
+    """Convert dict data returned by a ProjectLineForm to a
+       dict suitable to be used as a Filemaker RESTfm payload"""
+
+    # Objects -> filemaker ids
+    taxon = cleaned_data.pop('taxon_name', None)
+    if taxon:
+        cleaned_data['taxon'] = taxon.fm_id
+
+    host_taxon = cleaned_data.pop('host_taxon_name', None)
+    if host_taxon:
+        cleaned_data['host_taxon'] = host_taxon.fm_id
+
+    geo_country = cleaned_data.pop('geo_country_name', None)
+    if geo_country:
+        cleaned_data['geo_country'] = geo_country.iso2
+
+    # Construct dict
+    fm_data = {}
+    for k, v in cleaned_data.items():
+        if k in PROJECTLINE_DJANGO_TO_LIMSFM_MAP:
+            fm_data[PROJECTLINE_DJANGO_TO_LIMSFM_MAP[k]] = str(v) if v else ''
+    fm_data['Project::uuid_validation'] = project_uuid
+
+    return fm_data
+
+
+def limsfm_request(rel_uri, method='get', params={}, json=None):
+    """Send an API request to LIMSfm (RESTfm).
+       Returns a response object or raises an exception"""
+
+    params['RFMkey'] = settings.RESTFM_KEY
+    uri = (
+        "%(base)s%(rel_uri)s.json?%(params)s" %
+        {
+            'base': settings.RESTFM_BASE_URL,
+            'rel_uri': rel_uri,
+            'params': params
+        }
+    )
+    s = requests.Session()
+    prepped_request = requests.Request(
+        method, uri, params=params, json=json).prepare()
+    response = s.send(prepped_request, timeout=5)
+    response.raise_for_status()
+
+    return response
+
+
 def limsfm_get_project(uuid):
-    """Return a Project dictionary, with related ProjectLines, from LIMSfm"""
+    """Return a Project dictionary, including ProjectLines, from LIMSfm"""
 
-    # Make API calls to get raw project and projectline data
-    project_url = (
-        settings.RESTFM_BASE_URL +
-        'layout/project_api.json?' +
-        urlencode({
-            'RFMkey': settings.RESTFM_KEY,
-            'RFMsF1': 'uuid',
-            'RFMsV1': '==' + uuid,
-        })
-    )
-    api_response = requests.get(project_url, timeout=5)
-    project_raw = api_response.json()['data'][0]
-
-    projectline_url = (
-        settings.RESTFM_BASE_URL +
-        'layout/projectline_api.json?' +
-        urlencode({
-            'RFMkey': settings.RESTFM_KEY,
-            'RFMsF1': 'project_id',
-            'RFMsV1': project_raw['project_id'],
-            'RFMmax': 0,
-        })
-    )
-    api_response = requests.get(projectline_url, timeout=5)
-    projectlines_raw = api_response.json()['data']
+    uri = ('layout/project_api/%(field)s%(value)s' %
+           {
+               'field': urlquote('uuid==='),
+               'value': urlquote(uuid)
+           })
+    project_response = limsfm_request(uri, 'get')
+    project_raw = project_response.json()['data'][0]
+    lines_response = limsfm_request('layout/projectline_api', 'get', {
+        'RFMsF1': 'project_id',
+        'RFMsV1': project_raw['project_id'],
+        'RFMmax': 0
+    })
+    projectlines_raw = lines_response.json()['data']
 
     # Map filemaker project keys to django keys
     project = {}
@@ -114,88 +151,38 @@ def limsfm_get_project(uuid):
     return project
 
 
-def projectline_to_fm_dict(project_uuid, cleaned_data):
-    """Convert dict data returned by a ProjectLineForm to a
-    dict suitable to be used as a Filemaker RESTfm payload"""
-
-    # Objects -> filemaker ids
-    taxon = cleaned_data.pop('taxon_name', None)
-    if taxon:
-        cleaned_data['taxon'] = taxon.fm_id
-
-    host_taxon = cleaned_data.pop('host_taxon_name', None)
-    if host_taxon:
-        cleaned_data['host_taxon'] = host_taxon.fm_id
-
-    geo_country = cleaned_data.pop('geo_country_name', None)
-    if geo_country:
-        cleaned_data['geo_country'] = geo_country.iso2
-
-    # Construct dict
-    fm_data = {}
-    for k, v in cleaned_data.items():
-        if k in PROJECTLINE_DJANGO_TO_LIMSFM_MAP:
-            fm_data[PROJECTLINE_DJANGO_TO_LIMSFM_MAP[k]] = str(v) if v else ''
-    fm_data['Project::uuid_validation'] = project_uuid
-
-    return fm_data
-
-
 def limsfm_update_projectline(project_uuid, projectline_uuid, cleaned_data):
     """Update a single LIMSfm ProjectLine"""
-    url = (
-        settings.RESTFM_BASE_URL +
-        'layout/projectline_api/' +
-        urlquote('uuid===') +
-        urlquote(projectline_uuid) + '.json?' +
-        urlencode({
-            'RFMkey': settings.RESTFM_KEY,
-        })
-    )
 
-    payload = {'data': [projectline_to_fm_dict(project_uuid, cleaned_data)]}
-
-    return requests.put(url, json=payload, timeout=5)
+    json = {'data': [projectline_to_fm_dict(project_uuid, cleaned_data)]}
+    uri = ('layout/projectline_api/%(field)s%(value)s' %
+           {
+               'field': urlquote('uuid==='),
+               'value': urlquote(projectline_uuid)
+           })
+    return limsfm_request(uri, 'put', json=json)
 
 
 def limsfm_bulk_update_projectlines(project_uuid, projectlines):
     """Update LIMSfm ProjectLines in bulk"""
-    url = (
-        "%(base)sbulk/projectline_api.json?%(args)s" %
-        {
-            'base': settings.RESTFM_BASE_URL,
-            'args': urlencode({'RFMkey': settings.RESTFM_KEY})
-        }
-    )
 
-    payload = {
-        'meta': [],
-        'data': []
-    }
+    json = {'meta': [], 'data': []}
 
     for projectline in projectlines:
-        payload['meta'].append(
-            {
-                'recordID': (
-                    'Sample::reference===%s' %
-                    projectline.pop('sample_ref')
-                )
-            }
-        )
-        payload['data'].append(
+        json['meta'].append({
+            'recordID': (
+                'Sample::reference===%s' %
+                projectline.pop('sample_ref')
+            )
+        })
+        json['data'].append(
             projectline_to_fm_dict(project_uuid, projectline)
         )
 
-    return requests.put(url, json=payload, timeout=30)
+    return limsfm_request('bulk/projectline_api', 'put', json=json)
 
 
 def limsfm_email_project_links(email_address):
-    url = (
-        "%(base)sscript/contact_email_project_links/REST.json?%(args)s" %
-        {
-            'base': settings.RESTFM_BASE_URL,
-            'args': urlencode({'RFMkey': settings.RESTFM_KEY})
-        }
-    )
-
-    return requests.get(url, timeout=5)
+    """Call a script to email project links to contact"""
+    uri = 'script/contact_email_project_links/REST'
+    return limsfm_request(uri, 'get', params={'RFMscriptParam': email_address})
