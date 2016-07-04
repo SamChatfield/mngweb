@@ -9,6 +9,10 @@ from taxon.models import Taxon
 
 from .models import EnvironmentalSampleType, HostSampleType
 
+ALIQUOTTYPE_NAME_CHOICES = [
+    ('DNA', 'DNA'),
+    ('Strain', 'Strain')
+]
 
 ISOLATE_TYPE_CHOICES = [
     ('', ''),
@@ -61,6 +65,9 @@ class ProjectLineForm(forms.Form):
             'max_length': "'Customer's reference' (Sample name) cannot exceed"
                           " 100 characters."
         })
+    aliquottype_name = forms.ChoiceField(
+        choices=ALIQUOTTYPE_NAME_CHOICES,
+        widget=forms.HiddenInput())
     taxon_name = forms.ModelChoiceField(
         queryset=Taxon.objects.filter(data_set__in=['Prokaryotes', 'Other']),
         to_field_name='name',
@@ -72,12 +79,12 @@ class ProjectLineForm(forms.Form):
             'invalid_choice': "Please select a valid 'taxon' from the list."
         })
     volume_ul = forms.DecimalField(
+        required=False,
         min_value=30,
         max_value=100,
         decimal_places=2,
         label="Volume (µl)",
         error_messages={
-            'required': "'Volume (µl)' is required for DNA samples.",
             'max_decimal_places': "Volume (µl) should have a maximum of 2 "
                                   "decimal places.",
             'min_value': "A 'volume' within the range 30-100µl is required "
@@ -88,13 +95,12 @@ class ProjectLineForm(forms.Form):
                          "for DNA samples.",
         })
     dna_concentration_ng_ul = forms.DecimalField(
+        required=False,
         min_value=1,
         max_value=30,
         decimal_places=2,
         label="DNA concentration (ng/µl)",
         error_messages={
-            'required': "'DNA Concentration (ng/µl)' is required for DNA "
-                        "samples.",
             'max_decimal_places': "'DNA Concentration (ng/µl)'' should have "
                                   "a maximum of 2 decimal places.",
             'min_value': "A 'DNA Concentration' within the range 1-30ng/µl is "
@@ -195,6 +201,9 @@ class ProjectLineForm(forms.Form):
         collection_year = cleaned_data.get('collection_year')
         collection_month = cleaned_data.get('collection_month')
         collection_day = cleaned_data.get('collection_day')
+        aliquottype_name = cleaned_data.pop('aliquottype_name')  # pop!
+        volume_ul = cleaned_data.get('volume_ul')
+        dna_concentration_ng_ul = cleaned_data.get('dna_concentration_ng_ul')
 
         if collection_year and collection_month and collection_day:
             try:
@@ -209,5 +218,18 @@ class ProjectLineForm(forms.Form):
                           " do not represent a valid date."))
                 )
 
+        if aliquottype_name == 'DNA':
+            if not volume_ul:
+                self.add_error('volume_ul', ValidationError(
+                    _("'Volume (µl)' is required for DNA samples."),
+                    code='required'))
+
+            if not dna_concentration_ng_ul:
+                self.add_error('dna_concentration_ng_ul', ValidationError(
+                    _("'DNA Concentration (ng/µl)' is required for DNA "
+                      "samples."), code='required'))
+
         if non_field_errors:
             raise ValidationError(non_field_errors)
+
+        return cleaned_data

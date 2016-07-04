@@ -146,7 +146,11 @@
                   <td colspan="6">
                     <form method="post" action="{% url 'projectline_update' project.uuid pl.uuid %}" class="projectline-form">
                       <div class="col-md-4">
-                        <input id="id_sample_ref" name="sample_ref" type="hidden" value="{{ pl.sample_ref }}" />
+                        {# Include hidden fields #}
+                        {% for hidden in pl.form.hidden_fields %}
+                          {{ hidden }}
+                        {% endfor %}
+
                         <h3>Basic sample data</h3>
                         {% bootstrap_field pl.form.customers_ref %}
                         {% bootstrap_field pl.form.taxon_name field_class="taxon-pk-typeahead" %}

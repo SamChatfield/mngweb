@@ -131,10 +131,7 @@ def limsfm_get_project(uuid):
         for d, f in PROJECTLINE_DJANGO_TO_LIMSFM_MAP.items():
             if f in pl:
                 data[d] = pl[f]
-        if data['customers_ref']:
-            data['form'] = ProjectLineForm(initial=data)
-        else:
-            data['form'] = ProjectLineForm()
+        data['form'] = ProjectLineForm(initial=data)
         projectlines.append(data)
 
     # Sort the projectlines and append to list project dict
@@ -168,16 +165,9 @@ def limsfm_bulk_update_projectlines(project_uuid, projectlines):
 
     json = {'meta': [], 'data': []}
 
-    for projectline in projectlines:
-        json['meta'].append({
-            'recordID': (
-                'Sample::reference===%s' %
-                projectline.pop('sample_ref')
-            )
-        })
-        json['data'].append(
-            projectline_to_fm_dict(project_uuid, projectline)
-        )
+    for k, v in projectlines.items():
+        json['meta'].append({'recordID': ('uuid===%s' % k)})
+        json['data'].append(projectline_to_fm_dict(project_uuid, v))
 
     return limsfm_request('bulk/projectline_api', 'put', json=json)
 
