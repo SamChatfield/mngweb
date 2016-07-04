@@ -143,3 +143,5 @@ class QuoteRequestForm(forms.Form):
 
         if non_field_errors:
             raise ValidationError(non_field_errors)
+
+        return cleaned_data
