@@ -3,6 +3,8 @@ import requests
 from django.conf import settings
 from django.utils.http import urlquote
 
+from urllib.parse import urljoin
+
 from .forms import ProjectLineForm
 
 
@@ -10,9 +12,11 @@ PROJECT_DJANGO_TO_LIMSFM_MAP = {
     'uuid': 'uuid',
     'all_content_received_date': 'all_content_received_date',
     'contact_name_full': 'Contact::name_full',
+    'meta_data_status': 'meta_data_status',
     'projectline_count': 'unstored_projectline_count',
     'queue_name': 'unstored_modal_queue_name',
     'reference': 'reference',
+    'results_path': 'results_path',
     'sample_sheet_url': 'sample_sheet_url',
     'wait_time_weeks': 'unstored_wait_time_weeks',
 }
@@ -123,6 +127,10 @@ def limsfm_get_project(uuid):
     for d, f in PROJECT_DJANGO_TO_LIMSFM_MAP.items():
         if f in project_raw:
             project[d] = project_raw[f]
+
+    if project['results_path']:
+        project['results_url'] = urljoin(
+            settings.MNGRESULTS_BASE_URL, project['results_path'])
 
     # Map filemaker projectline keys to django keys
     projectlines = []
