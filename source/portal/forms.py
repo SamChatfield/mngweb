@@ -38,6 +38,7 @@ MONTH_CHOICES = (
 )
 
 LAB_EXPERIMENT_TYPE = [
+    ('', '---'),
     ('Gene Knockout', 'Gene Knockout'),
     ('Gene Knockin', 'Gene Knockin'),
     ('Selection Experiment', 'Selection Experiment'),

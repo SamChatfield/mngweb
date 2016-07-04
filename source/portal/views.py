@@ -1,14 +1,16 @@
 import requests
 
+from openpyxl.writer.excel import save_virtual_workbook
+
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.shortcuts import render
-from django.http import HttpResponseBadRequest, HttpResponseRedirect,\
-    JsonResponse, Http404
+from django.http import HttpResponse, HttpResponseBadRequest,\
+    HttpResponseRedirect, JsonResponse, Http404
 
 from .forms import EmailLinkForm, ProjectLineForm, UploadSampleSheetForm
 from .models import EnvironmentalSampleType, HostSampleType
-from .sample_sheet import parse_sample_sheet
+from .sample_sheet import create_sample_sheet, parse_sample_sheet
 from .services import limsfm_email_project_links, limsfm_get_project,\
     limsfm_update_projectline, limsfm_bulk_update_projectlines
 from .utils import messages_to_json
@@ -136,6 +138,14 @@ def environmentalsampletype_typeahead(request):
     data = list(matches)
     return JsonResponse(data, safe=False)
 
+
+def download_sample_sheet(request, uuid):
+    wb = create_sample_sheet(uuid)
+    response = HttpResponse(
+        content=save_virtual_workbook(wb),
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=microbesng_sample_sheet.xlsx'
+    return response
 
 def upload_sample_sheet(request, uuid):
     if request.method == "POST":
