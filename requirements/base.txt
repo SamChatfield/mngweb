@@ -8,3 +8,4 @@ django-excel==0.0.4
 pyexcel-ods==0.2.0
 pyexcel-xls==0.2.0
 pyexcel-xlsx==0.2.0
+gunicorn==19.6.0
