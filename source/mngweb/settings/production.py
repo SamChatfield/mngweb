@@ -3,7 +3,7 @@ from .base import *
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['mng-staging.aresti.xyz']
+ALLOWED_HOSTS = ['staging.microbesng.uk', 'microbesng.uk']
 
 LIMS_STATS_CACHE_TIMEOUT = 86400  # 24 hours
 
