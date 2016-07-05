@@ -36,6 +36,9 @@
   height: 100%;
 }
 
+.flex-row img {
+  flex: none;
+}
 
 /* --- BASE --- */
 
