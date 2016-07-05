@@ -89,12 +89,8 @@ def limsfm_request(rel_uri, method='get', params={}, json=None):
 
     params['RFMkey'] = settings.RESTFM_KEY
     uri = (
-        "%(base)s%(rel_uri)s.json?%(params)s" %
-        {
-            'base': settings.RESTFM_BASE_URL,
-            'rel_uri': rel_uri,
-            'params': params
-        }
+        "%(base)s%(rel_uri)s.json" %
+        {'base': settings.RESTFM_BASE_URL, 'rel_uri': rel_uri}
     )
     s = requests.Session()
     prepped_request = requests.Request(
