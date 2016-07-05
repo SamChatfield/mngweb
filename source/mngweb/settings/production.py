@@ -3,7 +3,8 @@ from .base import *
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['staging.microbesng.uk', 'microbesng.uk']
+ALLOWED_HOSTS = ['staging.microbesng.uk']
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 LIMS_STATS_CACHE_TIMEOUT = 86400  # 24 hours
 
