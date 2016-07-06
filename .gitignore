@@ -1,5 +1,6 @@
 *.pyc
 *.swp
+*.sqlite3
 __pycache__
 *.sublime-*
 source/mngweb/settings/local.py
