@@ -1,6 +1,7 @@
 from django.conf.urls import include, url
 from django.conf import settings
 from django.contrib import admin
+from django.views.generic import TemplateView
 
 from wagtail.contrib.wagtailsitemaps.views import sitemap
 from wagtail.wagtailadmin import urls as wagtailadmin_urls
@@ -20,6 +21,8 @@ urlpatterns = [
     url(r'^admin/', include(wagtailadmin_urls)),
     url(r'^documents/', include(wagtaildocs_urls)),
     url('^sitemap\.xml$', sitemap),
+    url(r'^robots\.txt/$', TemplateView.as_view(
+        template_name='robots.txt', content_type='text/plain')),
 
     url(r'^search/$', search_views.search, name='search'),
 
@@ -38,4 +41,5 @@ if settings.DEBUG:
 
     # Serve static and media files from development server
     urlpatterns += staticfiles_urlpatterns()
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)
