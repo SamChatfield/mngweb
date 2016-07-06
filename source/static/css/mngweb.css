@@ -251,3 +251,9 @@ label {
   max-height: 150px;
   overflow-y: auto;
 }
+
+/* --- COLLAPSE --- */
+
+.a-collapse {
+  display: block;  /* Required for collapse to work on mobile safari */
+}
