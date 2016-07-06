@@ -5,7 +5,7 @@
 
 {% block full_jumbo %}
   <div class="jumbotron bg-grey">
-    <div class="container-fixed">
+    <div class="container">
       <h1>{{ page.title }}</h1>
     </div>
   </div>
@@ -15,7 +15,7 @@
 
   {% people_feed_by_team as people_feed_by_team %}
   {% for team in people_feed_by_team %}
-    <div class="container-fixed">
+    <div class="container">
       <div class="row">
         <div class="col-md-12">
           <h2 class="section-header">{{ team.name }}</h2>

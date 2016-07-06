@@ -46,7 +46,7 @@
   {# Feture Panels #}
   {% if self.feature_panels.all %}
     <div class="container-fluid text-center">
-      <div class="container-fixed">
+      <div class="container">
         <div class="row">
           {% for feature_panel in self.feature_panels.all %}
             <div class="col-sm-4">
@@ -68,7 +68,7 @@
 
   {# Pricing #}
   <div class="container-fluid bg-grey">
-    <div class="container-fixed">
+    <div class="container">
         <div class="text-center">
           <h2>{{ self.pricing_title }}</h2>
           <h4>{{ self.pricing_subtitle }}</h4>

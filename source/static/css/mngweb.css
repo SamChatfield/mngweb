@@ -46,12 +46,6 @@ main {
   margin-bottom: 30px;
 }
 
-.container-fixed {
-  margin: 0 auto;
-  max-width: 970px;
-  padding: 0 10px;
-}
-
 .bg-grey {
   background-color: #f6f6f6;
 }
