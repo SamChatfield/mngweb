@@ -5,6 +5,7 @@ from django import forms
 
 
 FUNDING_TYPE_CHOICES = [
+    ('', '---'),
     ('BBSRC funded', 'BBSRC funded'),
     ('Non-commercial', 'Other non-commercial (Academic/Charity)'),
     ('Commercial', 'Commercial'),
@@ -12,6 +13,7 @@ FUNDING_TYPE_CHOICES = [
 ]
 
 REFERRAL_TYPE_CHOICES = [
+    ('', '---'),
     ('SGM 2016', 'SGM Conference 2016'),
     ('Internal UoB', 'Internal UoB'),
     ('Word of mouth', 'Word of mouth'),
@@ -28,71 +30,40 @@ BATCH_TYPE_CHOICES = [
 
 
 class QuoteRequestForm(forms.Form):
-    name_title = forms.CharField(
-        max_length=10,
-        label=_("Title"),
-        widget=forms.TextInput(attrs={'placeholder': "Dr"}))
-    name_first = forms.CharField(
-        max_length=50,
-        label=_("First name"),
-        widget=forms.TextInput(attrs={'placeholder': "John"}))
-    name_last = forms.CharField(
-        max_length=50,
-        label=_("Last name"),
-        widget=forms.TextInput(attrs={'placeholder': "Smith"}))
-    email = forms.EmailField(
-        widget=forms.EmailInput(attrs={'placeholder': "j.smith@bham.ac.uk"}))
-    phone = forms.CharField(
-        max_length=20,
-        widget=forms.TextInput(attrs={'placeholder': "0121 4445555"}))
+    name_title = forms.CharField(max_length=10, label=_("Title"))
+    name_first = forms.CharField(max_length=50, label=_("First name"))
+    name_last = forms.CharField(max_length=50, label=_("Last name"))
+    email = forms.EmailField()
+    phone = forms.CharField(max_length=20)
     organisation = forms.CharField(
         max_length=50,
-        label=_("Organisation / Institution"),
-        widget=forms.TextInput(
-            attrs={'placeholder': "University of Birmingham"}))
-    department = forms.CharField(
-        max_length=50,
-        required=False,
-        widget=forms.TextInput(
-            attrs={'placeholder': "Department of Biosciences"}))
+        label=_("Organisation / Institution"))
+    department = forms.CharField(max_length=50, required=False)
     street_line_1 = forms.CharField(
         max_length=50,
         label=_("Address lines"),
         widget=forms.TextInput(
-            attrs={'placeholder': "Room W126, Biosciences building"}))
+            attrs={'placeholder': "e.g. Room W126, Biosciences building"}))
     street_line_2 = forms.CharField(
         max_length=50,
         label=_("Address line 2"),
-        required=False,
-        widget=forms.TextInput(attrs={'placeholder': "Edgbaston"}))
+        required=False)
     street_line_3 = forms.CharField(
         max_length=50,
         label=_("Address line 3"),
         required=False)
-    city = forms.CharField(
-        max_length=50,
-        widget=forms.TextInput(
-            attrs={'placeholder': "Birmingham"}))
+    city = forms.CharField(max_length=50)
     region = forms.CharField(
         max_length=50,
         label=_("Region / State"),
-        required=False,
-        widget=forms.TextInput(
-            attrs={'placeholder': "West Midlands"}))
+        required=False)
     postcode = forms.CharField(
         max_length=10,
         label=_("Postcode / Zip"),
-        required=False,
-        widget=forms.TextInput(attrs={'placeholder': "B15 2TT"}))
-    country = forms.CharField(
-        max_length=30,
-        widget=forms.TextInput(
-            attrs={'placeholder': "United Kingdom"}))
+        required=False)
+    country = forms.CharField(max_length=30)
     funding_type = forms.ChoiceField(choices=FUNDING_TYPE_CHOICES)
-    bbsrc_code = forms.CharField(
-        required=False,
-        label=_("BBSRC grant code"),
-        widget=forms.TextInput(attrs={'placeholder': "BB/M0101234/1"}))
+    bbsrc_code = forms.CharField(required=False, label=_("BBSRC grant code"))
     is_confidential = forms.BooleanField(required=False)
     num_dna_samples = forms.IntegerField(
         min_value=0,
