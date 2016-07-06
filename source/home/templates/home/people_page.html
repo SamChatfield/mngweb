@@ -31,7 +31,7 @@
             {% if person.photo %}<dd>{% image person.photo fill-180x180 class="img-circle person-photo" %}</dd>{% endif %}
             {% if person.short_bio %}
               <dd>
-                <a data-toggle="collapse" data-target="#person-{{ person.id }}">Read bio</a></button>
+                <a class="a-collapse" data-toggle="collapse" data-target="#person-{{ person.id }}">Read bio</a></button>
                 <div id="person-{{ person.id }}" class="collapse">
                   {{ person.short_bio }}
                 </div></dd>
