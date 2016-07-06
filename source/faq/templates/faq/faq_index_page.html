@@ -23,7 +23,7 @@
           <dl class="faq-questions">
             {% for question in category.questions.all %}
               <dt>
-                <a data-toggle="collapse" data-target="#question-{{ question.id }}">{{ question.question }}</a>
+                <a class="a-collapse" data-toggle="collapse" data-target="#question-{{ question.id }}">{{ question.question }}</a>
               </dt>
               <dd id="question-{{ question.id }}" class="collapse">{{ question.answer|richtext }}</dd>
             {% endfor %}
