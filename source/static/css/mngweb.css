@@ -42,16 +42,8 @@
 
 /* --- BASE --- */
 
-body {
-  font-family: 'Source Sans Pro', Calibri, Candara, Arial, sans-serif;
-}
-
 main {
   margin-bottom: 30px;
-}
-
-h1 i.fa, h2 i.fa, h3 i.fa, h4 i.fa {
-  margin-right: 0.3em;
 }
 
 .container-fixed {
@@ -67,6 +59,16 @@ h1 i.fa, h2 i.fa, h3 i.fa, h4 i.fa {
 
 /* --- TYPOGRAPHY --- */
 
+body {
+  font-family: 'Source Sans Pro', Calibri, Candara, Arial, sans-serif;
+  font-size: 15px;
+  font-weight: 300;
+}
+
+h1 i.fa, h2 i.fa, h3 i.fa, h4 i.fa {
+  margin-right: 0.3em;
+}
+
 h1, .h1 {
   font-weight: 300;
 }
@@ -76,11 +78,7 @@ h2, .h2 {
   color: #00bbe3;
 }
 
-h3, .h3 {
-  font-weight: 300;
-}
-
-h4, .h4 {
+h3, .h3, h4, .h4 {
   font-weight: 300;
 }
 
@@ -88,8 +86,7 @@ dt {
   font-weight: 300;
 }
 
-p, dd {
-  font-size: 1.2em;
+p {
   font-weight: 300;
 }
 
@@ -104,6 +101,10 @@ p, dd {
 
 .url_h {
   display: none;
+}
+
+label {
+  font-weight: 400;
 }
 
 
