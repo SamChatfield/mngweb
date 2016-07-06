@@ -43,8 +43,7 @@
 /* --- BASE --- */
 
 body {
-  padding-top: 50px;
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: 'Source Sans Pro', Calibri, Candara, Arial, sans-serif;
 }
 
 main {
@@ -66,10 +65,32 @@ h1 i.fa, h2 i.fa, h3 i.fa, h4 i.fa {
 }
 
 
-/* --- HEADERS --- */
+/* --- TYPOGRAPHY --- */
+
+h1, .h1 {
+  font-weight: 300;
+}
 
 h2, .h2 {
+  font-weight: 300;
   color: #00bbe3;
+}
+
+h3, .h3 {
+  font-weight: 300;
+}
+
+h4, .h4 {
+  font-weight: 300;
+}
+
+dt {
+  font-weight: 300;
+}
+
+p, dd {
+  font-size: 1.2em;
+  font-weight: 300;
 }
 
 .section-header {
@@ -203,6 +224,7 @@ h2, .h2 {
 
 .jumbotron { 
   padding: 20px 0;
+  margin-top: -20px;
 }
 
 .jumbotron img {

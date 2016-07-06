@@ -69,7 +69,11 @@
 }
 
 .feature-grid-cell h4 {
-  font-weight: bold;
+  font-weight: 400;
+}
+
+.feature-grid-cell p {
+  font-size: 1em;
 }
 
 .feature-grid-cell .glyphicon {
@@ -103,7 +107,7 @@
 }
 
 .panel-prices .panel-heading {
-  padding: 25px;
+  padding: 10px;
 }
 
 .panel-prices .panel-footer {
@@ -167,7 +171,7 @@
 }
 
 .person dt {
-  font-size: 1.5em;
+  font-size: 1.8em;
   margin-bottom: 5px;
 }
 

@@ -90,18 +90,3 @@
     {% testimonial_carousel %}
   </div>
 {% endblock %}
-
-{% block extra_js %}
-  <script>
-    // Hide mini logo in navbar initially, fade in on scroll
-    $(".navbar-brand").hide();
-    $(window).scroll(function() {
-        if ($(window).scrollTop() > 200) {
-            $(".navbar-brand").fadeIn("slow");
-        }
-        else {
-            $(".navbar-brand").fadeOut("fast");
-        }
-    });
-  </script>
-{% endblock %}
