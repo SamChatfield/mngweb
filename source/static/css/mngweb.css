@@ -173,6 +173,9 @@ label {
   color: #00bbe3;
 }
 
+.btn-link {
+  font-weight: 300;
+}
 
 /* --- FOOTER --- */
 
@@ -247,10 +250,4 @@ label {
 .tt-menu {
   max-height: 150px;
   overflow-y: auto;
-}
-
-/* --- COLLAPSE --- */
-
-.a-collapse {
-  display: block;  /* Required for collapse to work on mobile safari */
 }

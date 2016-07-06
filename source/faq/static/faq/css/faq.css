@@ -13,7 +13,8 @@
   margin-bottom: 20px;
 }
 
-.faq-questions dt a {
+.faq-questions dt .btn-link {
+  text-align: left;
   color: #333;
 }
 
