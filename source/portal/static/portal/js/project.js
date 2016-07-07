@@ -58,7 +58,7 @@ $(function() {
       var editRow = $(form).closest('tr');
       var dataRow = $(form).closest('tr').prev('tr');
       editRow.collapse('hide');
-      $('td.pl-taxon', dataRow).text($('input[name="taxon"]', form).val());
+      $('td.pl-taxon', dataRow).text($('input[name="taxon_name"]', form).val());
       $('td.pl-customers-ref', dataRow).text($('input[name="customers_ref"]', form).val());
       $('button.pl-edit-button', dataRow)
         .removeClass('btn-warning')
