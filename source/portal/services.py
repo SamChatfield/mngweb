@@ -14,7 +14,7 @@ PROJECT_DJANGO_TO_LIMSFM_MAP = {
     'contact_name_full': 'Contact::name_full',
     'meta_data_status': 'meta_data_status',
     'projectline_count': 'unstored_projectline_count',
-    'queue_name': 'unstored_modal_queue_name',
+    'modal_queue_name': 'unstored_modal_queue_name',
     'reference': 'reference',
     'results_path': 'results_path',
     'sample_sheet_url': 'sample_sheet_url',
@@ -129,6 +129,7 @@ def limsfm_get_project(uuid):
             settings.MNGRESULTS_BASE_URL, project['results_path'])
 
     # Map filemaker projectline keys to django keys
+    project['modal_queue_matches'] = 0
     projectlines = []
     for pl in projectlines_raw:
         data = {}
@@ -136,6 +137,8 @@ def limsfm_get_project(uuid):
             if f in pl:
                 data[d] = pl[f]
         data['form'] = ProjectLineForm(initial=data)
+        if data['queue_name'] == project['modal_queue_name']:
+            project['modal_queue_matches'] += 1
         projectlines.append(data)
 
     # Sort the projectlines and append to list project dict
