@@ -263,3 +263,10 @@ label {
 .a-collapse {
   display: block;  /* Required for collapse to work on mobile safari */
 }
+
+
+/* --- PANELS --- */
+
+.panel {
+  word-wrap: break-word;
+}
