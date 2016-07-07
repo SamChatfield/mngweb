@@ -1,4 +1,4 @@
-{% load home_tags portal_tags %}
+ {% load home_tags portal_tags %}
 {% load static %}
 
 {% get_navigation_menu "top_menu" as top_menu_items %}
@@ -18,11 +18,11 @@
     <div class="collapse navbar-collapse" id="primary-navbar">
       <ul class="nav navbar-nav navbar-right">
         {% for item in top_menu_items %}
-          <li><a href="{{ item.link }}">{{ item.title|upper }}</a></li>
+          <li><a href="{{ item.link }}">{{ item.title }}</a></li>
         {% endfor %}
         <li>
           <a href="#" data-toggle="popover" data-popover-content="#project-tracker-popover-content" 
-             data-placement="bottom">PROJECT TRAKER</a>
+             data-placement="bottom">Project Tracker <span class="label label-info">New!</span></a>
 
           <div id="project-tracker-popover-content" class="hidden">
             <div class="popover-heading">
