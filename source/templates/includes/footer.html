@@ -20,13 +20,6 @@
             </a>
           </li>
         {% endif %}
-        {% if contact_settings.phone_display %}
-          <li>
-            <a href="{{ contact_settings.phone_uri }}" title="Call us">
-              <i class="fa fa-phone fa-lg"></i>{{ contact_settings.phone_display }}
-            </a>
-          </li>
-        {% endif %}
         {% if contact_settings.twitter_username %}
           <li>
             <a href="https://twitter.com/{{ contact_settings.twitter_username }}" title="Follow us on twitter">
