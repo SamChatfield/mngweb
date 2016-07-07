@@ -123,7 +123,7 @@ label {
 .navbar-default .navbar-nav>li>a {
   color: #fff;
   font-weight: 400;
-  padding: 15px 25px;
+  padding: 15px 15px;
 }
 
 .navbar-default .navbar-nav>li>a:hover {
