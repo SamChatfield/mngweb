@@ -1,5 +1,6 @@
 import requests
 
+from datetime import datetime
 from django.conf import settings
 from django.utils.http import urlquote
 
@@ -12,6 +13,7 @@ PROJECT_DJANGO_TO_LIMSFM_MAP = {
     'uuid': 'uuid',
     'all_content_received_date': 'all_content_received_date',
     'contact_name_full': 'Contact::name_full',
+    'data_sent_date': 'data_sent_date',
     'meta_data_status': 'meta_data_status',
     'projectline_count': 'unstored_projectline_count',
     'modal_queue_name': 'unstored_modal_queue_name',
@@ -124,9 +126,20 @@ def limsfm_get_project(uuid):
         if f in project_raw:
             project[d] = project_raw[f]
 
+    # Transformations
     if project['results_path']:
         project['results_url'] = urljoin(
             settings.MNGRESULTS_BASE_URL, project['results_path'])
+
+    if project['all_content_received_date']:
+        date = project['all_content_received_date']
+        date = datetime.strptime(date, '%m/%d/%Y').strftime('%d-%b-%Y')
+        project['all_content_received_date'] = date
+
+    if project['data_sent_date']:
+        date = project['data_sent_date']
+        date = datetime.strptime(date, '%m/%d/%Y').strftime('%d-%b-%Y')
+        project['data_sent_date'] = date
 
     # Map filemaker projectline keys to django keys
     project['modal_queue_matches'] = 0

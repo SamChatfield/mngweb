@@ -68,6 +68,12 @@
                 {% endif %}
               </tr>
               <tr>
+                {% if project.data_sent_date %}
+                  <th>Data sent date</th>
+                  <td>{{ project.data_sent_date }}</td>
+                {% endif %}
+              </tr>
+              <tr>
                 {% if project.wait_time_weeks %}
                   <th>Waiting time</th>
                   <td>{{ project.wait_time_weeks }} weeks</td>
@@ -79,7 +85,7 @@
         </div>
         <div class="col-md-6">
 
-          {% if project.results_url %}
+          {% if project.results_url and project.data_sent_date %}
             <div class="panel panel-success">
               <div class="panel-heading">Your sequencing results</div>
               <div class="panel-body">
