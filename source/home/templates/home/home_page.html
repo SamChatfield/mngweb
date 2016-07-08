@@ -56,11 +56,8 @@
                 <p>{{ feature_panel.text }}</p>
               </div>
             </div>
-            {% if forloop.counter|divisibleby:"2" %}
-              <div class="clearfix hidden-sm hidden-md hidden-lg"></div>
-            {% endif %}
             {% if forloop.counter|divisibleby:"3" %}
-              <div class="clearfix hidden-xs"></div>
+              <div class="clearfix"></div>
             {% endif %}
           {% endfor %}
         </div>
@@ -87,7 +84,7 @@
   </div>
 
   {# Testimonials #}
-  <div class="container-fluid text-center">
+  <div class="container-fluid text-center hidden-xs">
     <h2>Testimonials</h2>
     {% testimonial_carousel %}
   </div>
