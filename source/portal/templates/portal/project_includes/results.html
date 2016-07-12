@@ -2,7 +2,7 @@
   <div class="panel panel-default">
     <div class="panel-heading">
       <h4 class="panel-title">
-        <a data-toggle="collapse" href="#trimmed-reads"><i class="fa fa-scissors"></i> Trimmed Reads</a>
+        <a data-toggle="collapse" href="#trimmed-reads"><i class="fa fa-align-center"></i> Trimmed Reads</a>
       </h4>
     </div>
     <div id="trimmed-reads" class="panel-collapse collapse">
@@ -24,7 +24,7 @@
 
         <div class="clearfix"></div>
 
-        <p><a class="btn btn-success" href="https://microbesng.s3.climb.ac.uk/{{ project.results_path }}/reads.zip"><i class="fa fa-download"></i>  Download Trimmed Reads</a></p>
+        <p><a class="btn btn-success" href="{{ project.results_url }}reads.zip"><i class="fa fa-download"></i>  Download Trimmed Reads</a></p>
 
         <p class="small">When you download your reads there will be four files for each sample, samplename_1_trimmed.fastq.gz (forward reads for sample), samplename_2_trimmed.fastq.gz (reverse reads for sample), samplename_U1_trimmed.fastq.gz (forward reads that are unpaired, the reverse read was lost during trimming), samplename_U2_trimmed.fastq.gz (reverse reads that are unpaired, the forward read was lost during trimming).</p>
       </div>
@@ -33,7 +33,7 @@
   <div class="panel panel-default">
     <div class="panel-heading">
       <h4 class="panel-title">
-        <a data-toggle="collapse" href="#assemblies"><i class="fa fa-align-center"></i> Assemblies</a>
+        <a data-toggle="collapse" href="#assemblies"><i class="fa fa-circle-o-notch"></i> Assemblies</a>
       </h4>
     </div>
     <div id="assemblies" class="panel-collapse collapse">
@@ -67,8 +67,8 @@
         <div class="clearfix"></div>
 
         <p>
-          <a class="btn btn-success" href="https://microbesng.s3.climb.ac.uk/{{ project.results_path }}/contigs.zip"><i class="fa fa-download"></i> Download Annotation and Assemblies</a>
-          <a class="btn btn-info" href="https://microbesng.s3.climb.ac.uk/{{ project.results_path }}/report.html" target="_blank"><i class="fa fa-line-chart"></i> Assembly Quality Visualisation</a>
+          <a class="btn btn-success" href="{{ project.results_url }}contigs.zip"><i class="fa fa-download"></i> Download Annotation and Assemblies</a>
+          <a class="btn btn-info" href="{{ project.results_url }}report.html" target="_blank"><i class="fa fa-line-chart"></i> Assembly Quality Visualisation</a>
         </p>
 
       </div>

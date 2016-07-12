@@ -129,8 +129,7 @@ def limsfm_get_project(uuid):
     # Transformations
     if project['results_path']:
         project['results_url'] = urljoin(
-            settings.MNGRESULTS_BASE_URL,
-            project['results_path'] + '/data.html')
+            settings.MNGRESULTS_BASE_URL, project['results_path'] + '/')
 
     if project['all_content_received_date']:
         date = project['all_content_received_date']

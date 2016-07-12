@@ -6,30 +6,27 @@
   <script src="{% static 'portal/js/project.js' %}"></script>
   <script src="{% static 'taxon/js/typeahead.js' %}"></script>
   <script src="{% static 'country/js/typeahead.js' %}"></script>
-  <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
 
-<script>
-  $.fn.dataTableExt.sErrMode = '';
-  $(document).ready(function() {
-    $('#trimmed_reads_table').DataTable({
-      ajax: "http://microbesng.s3.climb.ac.uk/{{ project.results_path }}/json_reads.txt",
-      responsive: true
-    });
-    $('#assemblies_table').DataTable({
-      ajax: "http://microbesng.s3.climb.ac.uk/{{ project.results_path }}/assembly_json.txt",
-      responsive: true
-    });
-    $('#taxonomic_distribution_table').DataTable({
-      ajax: "http://microbesng.s3.climb.ac.uk/{{ project.results_path }}/json_cont.txt",
-      responsive: true
-    });
-  });
-</script>
-{% endblock %}
-
-{% block extra_css %}
-  {{ block.super }}
-  <link rel="stylesheet" href="https://cdn.dtatables.net/1.10.12/css/jquery.dataTables.min.css">
+  {% if project.results_url and project.data_sent_date %}
+    <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+    <script>
+      $.fn.dataTableExt.sErrMode = '';
+      $(document).ready(function() {
+        $('#trimmed_reads_table').DataTable({
+          ajax: "{{ project.results_url }}json_reads.txt",
+          responsive: true
+        });
+        $('#assemblies_table').DataTable({
+          ajax: "{{ project.results_url }}assembly_json.txt",
+          responsive: true
+        });
+        $('#taxonomic_distribution_table').DataTable({
+          ajax: "{{ project.results_url }}json_cont.txt",
+          responsive: true
+        });
+      });
+    </script>
+  {% endif %}
 {% endblock %}
 
 {% block title %}Your Project {{ project.reference }}{% endblock %}
