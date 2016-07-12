@@ -1,0 +1,43 @@
+<h2>Project Summary</h2>
+<table class="table">
+  <tbody>
+    <tr>
+      <th>Reference</th>
+      <td>{{ project.reference }}</td>
+    </tr>
+    <tr>
+      {% if project.modal_queue_name %}
+        <th>Overall status</th>
+        <td>{{ project.modal_queue_name }} ({{ project.modal_queue_matches }}/{{ project.projectline_count }})</td>
+      {% endif %}
+    </tr>
+    <tr>
+      <th>Primary contact</th>
+      <td>{{ project.contact_name_full }}</td>
+    </tr>
+    <tr>
+      {% if project.projectline_count %}
+        <th>Number of samples</th>
+        <td>{{ project.projectline_count }}</td>
+      {% endif %}
+    </tr>
+    <tr>
+      {% if project.all_content_received_date %}
+        <th>Date all samples received</th>
+        <td>{{ project.all_content_received_date }}</td>
+      {% endif %}
+    </tr>
+    <tr>
+      {% if project.data_sent_date %}
+        <th>Data sent date</th>
+        <td>{{ project.data_sent_date }}</td>
+      {% endif %}
+    </tr>
+    <tr>
+      {% if project.wait_time_weeks %}
+        <th>Waiting time</th>
+        <td>{{ project.wait_time_weeks }} weeks</td>
+      {% endif %}
+    </tr>
+  </tbody>
+</table>

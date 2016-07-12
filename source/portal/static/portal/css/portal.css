@@ -1,3 +1,55 @@
 .panel-sample-data-options > .panel-body > div:nth-child(2) {
-    border-left: 1px solid #ddd;
+  border-left: 1px solid #ddd;
+}
+
+.panel-group.results-panels .panel-heading {
+  padding: 0;
+}
+
+.panel-group.results-panels .panel-title a {
+  display: block;
+  padding: 10px 15px;
+}
+
+.table-results-meta {
+  font-size: 0.8em;
+}
+
+.dataTables_length {
+  float: left;
+}
+
+.dataTables_filter {
+  float: right;
+}
+
+.dataTables_filter input {
+  margin-left: 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.dataTables_paginate {
+  float: right;
+}
+
+.dataTables_paginate a {
+  display: inline-block;
+  padding: 5px 10px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  margin: 0 5px;
+}
+
+.dataTables_paginate a:hover {
+  border: 1px solid #ccc;
+}
+
+.dataTables_info {
+  float: left;
+  margin-bottom: 10px;
+}
+
+.dataTables_wrapper {
+  overflow-x: scroll;
 }

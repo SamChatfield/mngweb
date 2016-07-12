@@ -1,0 +1,35 @@
+{% load bootstrap3 %}
+
+<div class="panel panel-warning panel-sample-data-options">
+  <div class="panel-heading"><h4>We need your sample data before we can proceed</h4></div>
+  <div class="panel-body">
+    <div class="col-md-5">
+      <h4>Option 1: Edit online</h4>
+      <ul>
+        <li>Use the <span class="label label-warning">Provide sample data</span> buttons below</li>
+        <li>Enter your data and <span class="label label-success">Save</span> one sample at a time</li>
+        <li>Best option for 10 samples or less</li>
+      </ul>
+    </div>
+    <div class="col-md-4">
+      <h4>Option 2: Edit in Excel</h4>
+      <ol>
+        <li><a href="{% url 'download_sample_sheet' project.uuid %}"><i class="fa fa-file-excel-o"></i> Download your excel template</a></li>
+        <li>Edit in Excel (or compatible program)</li>
+        <li>Upload your completed sheet</li>
+        <li>Check validation error messages</li>
+      </ol>
+    </div>
+    <div class="col-md-3">
+      <form method="post" action="{% url 'upload_sample_sheet' project.uuid %}" enctype="multipart/form-data" class="excel-upload-form">
+        {% csrf_token %}
+        {% bootstrap_form upload_sample_sheet_form %}
+        {% buttons %}
+          <button type="submit" class="btn btn-success button-lg">
+            <i class="fa fa-cloud-upload"></i> Upload
+          </button>
+        {% endbuttons %}
+      </form>
+    </div>
+  </div>
+</div>

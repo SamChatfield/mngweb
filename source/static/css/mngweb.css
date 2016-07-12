@@ -284,3 +284,14 @@ label {
   background-color: #f0ad4e;
   color: #fff;
 }
+
+/* --- TABS --- */
+
+.tab-pane {
+  padding: 10px 0;
+}
+
+.nav-tabs > li > a {
+  font-size: 1.2em;
+  font-weight: 400;
+}

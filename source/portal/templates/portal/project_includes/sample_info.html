@@ -1,0 +1,98 @@
+{% load bootstrap3 %}
+
+<table class="table">
+  <thead>
+    <th>Barcode <span data-toggle="tooltip" title="Our internal identifier for your sample"><i class="fa fa-question-circle"></i></span></th>
+    <th>Type</th>
+    <th>Customer's Ref</th>
+    <th>Taxon</th>
+    <th>Current Queue (Status)</th>
+    <th></th>
+  </thead>
+  <tbody>
+    {% for pl in project.projectlines %}
+      <tr class="vert-middle">
+        <td>{{ pl.sample_ref }}</td>
+        <td>{{ pl.aliquottype_name  }}</td>
+        <td class="pl-customers-ref">{{ pl.customers_ref  }}</td>
+        <td class="pl-taxon">{{ pl.taxon_name  }}</td>
+        <td>{{ pl.queue_name  }}</td>
+        <td>
+          {% if project.meta_data_status == "Open" %}
+            {% if pl.customers_ref %}
+              <button class="btn btn-default pull-right pl-edit-button" type="button" data-target="#edit-row-{{ forloop.counter0 }}" data-toggle="collapse">Edit sample data</button>
+            {% else %}
+              <button class="btn btn-warning pull-right pl-edit-button" type="button" data-target="#edit-row-{{ forloop.counter0 }}" data-toggle="collapse">Provide sample data</button>
+            {% endif %}
+          {% endif %}
+        </td>
+      </tr>
+      {% if project.meta_data_status == "Open" %}
+        <tr class="collapse bg-grey" id="edit-row-{{ forloop.counter0 }}">
+          <td colspan="6">
+            <form method="post" action="{% url 'projectline_update' project.uuid pl.uuid %}" class="projectline-form">
+              <div class="col-md-4">
+                {# Include hidden fields #}
+                {% for hidden in pl.form.hidden_fields %}
+                  {{ hidden }}
+                {% endfor %}
+
+                <h3>Basic sample data</h3>
+                {% bootstrap_field pl.form.customers_ref %}
+                {% bootstrap_field pl.form.taxon_name field_class="taxon-pk-typeahead" %}
+                {% if pl.aliquottype_name == "DNA" %}
+                  {% bootstrap_field pl.form.dna_concentration_ng_ul %}
+                  {% bootstrap_field pl.form.volume_ul %}
+                {% endif %}
+              </div>
+              <div class="col-md-4">
+                <h3>Core meta data</h3>
+                {% bootstrap_field pl.form.geo_country_name field_class="country-typeahead" %}
+                {% bootstrap_field pl.form.geo_specific_location %}
+                <label>Sample Collection Date (DD/MMM/YYYY)</label>
+                <span class="help-block">Day or Month can be omitted if unknown</span>
+                <div class="row">
+                  <div class="col-md-4">{% bootstrap_field pl.form.collection_day show_label=False %}</div>
+                  <div class="col-md-4">{% bootstrap_field pl.form.collection_month show_label=False %}</div>
+                  <div class="col-md-4">{% bootstrap_field pl.form.collection_year show_label=False %}</div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <h3>Extended meta data</h3>
+                {% bootstrap_field pl.form.study_type %}
+                <div class="meta-data-host">
+                  {% bootstrap_field pl.form.host_taxon_name field_class="taxon-typeahead" %}
+                  {% bootstrap_field pl.form.host_sample_type field_class="hostsampletype-typeahead" %}
+                </div>
+                <div class="meta-data-environmental">
+                  {% bootstrap_field pl.form.environmental_sample_type field_class="environmentalsampletype-typeahead" %}
+                </div>
+                <div class="meta-data-lab">
+                  {% bootstrap_field pl.form.lab_experiment_type %}
+                </div>
+                <div class="meta-data-further-details">
+                  {% bootstrap_field pl.form.further_details %}
+                </div>
+
+                {% buttons %}
+                <button type="submit" class="btn btn-success button-lg">
+                  <i class="fa fa-floppy-o"></i> Save
+                </button>
+                {% endbuttons %}
+
+                <div class="form-messages">
+                  {# placeholder for ajax messages #}
+                </div>
+              </div>
+            </form>
+          </td>
+        </tr>
+      {% endif %}
+    {% endfor %}
+  </tbody>
+</table>
+
+{# meta data help text #}
+<div class="hidden" id="env-fd-help-text">e.g. Extracted from soil sample collected in Central Park</div>
+<div class="hidden" id="lab-fd-help-text">e.g. SecA</div>
+<div class="hidden" id="host-fd-help-text">e.g. Bloody diarrhoea</div>
