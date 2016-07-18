@@ -8,6 +8,8 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseBadRequest,\
     HttpResponseRedirect, JsonResponse, Http404
 
+from mngweb.settings import LIMS_UNAVAILABLE
+
 from .forms import EmailLinkForm, ProjectLineForm, UploadSampleSheetForm
 from .models import EnvironmentalSampleType, HostSampleType
 from .sample_sheet import create_sample_sheet, parse_sample_sheet
@@ -44,6 +46,9 @@ def handle_limsfm_http_exception(request, e):
 
 
 def project_detail(request, uuid):
+    if LIMS_UNAVAILABLE:
+        return render(request, 'portal/portal_unavailable.html')
+
     try:
         project = limsfm_get_project(uuid)
     except requests.HTTPError as e:

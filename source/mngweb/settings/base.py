@@ -222,3 +222,8 @@ BOOTSTRAP3 = {
         'inline': 'bootstrap3.renderers.InlineFieldRenderer',
     },
 }
+
+
+# LIMS
+
+LIMS_UNAVAILABLE = True
