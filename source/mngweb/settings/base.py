@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'taxon',
 
     'bootstrap3',
+    'django_slack',
     'pipeline',
 
     'wagtail.contrib.settings',

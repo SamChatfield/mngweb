@@ -1,12 +1,13 @@
 import requests
 
-from openpyxl.writer.excel import save_virtual_workbook
-
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseBadRequest,\
     HttpResponseRedirect, JsonResponse, Http404
+
+from openpyxl.writer.excel import save_virtual_workbook
+from django_slack import slack_message
 
 from mngweb.settings import LIMS_UNAVAILABLE
 
@@ -47,6 +48,9 @@ def handle_limsfm_http_exception(request, e):
 
 def project_detail(request, uuid):
     if LIMS_UNAVAILABLE:
+        slack_message('portal/slack/project_portal_unavailable.slack', {
+            'uuid': uuid,
+        })
         return render(request, 'portal/portal_unavailable.html')
 
     try:
