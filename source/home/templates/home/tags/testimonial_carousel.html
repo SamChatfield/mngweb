@@ -2,8 +2,10 @@
   <div id="testimonialCarousel" class="carousel slide text-center" data-ride="carousel">
     {# Indicators #}
     <ol class="carousel-indicators">
-      <li data-target="#testimonialCarousel" data-slide-to="0" class="active"></li>
-      <li data-target="#testimonialCarousel" data-slide-to="1"></li>
+      {% for testimonial in testimonials %}
+        <li data-target="#testimonialCarousel" data-slide-to="{{ forloop.counter0 }}"
+        {% if forloop.counter0 == 0 %}class="active"{% endif %}></li>
+      {% endfor %}
     </ol>
 
     {# Wrapper for slides #}
