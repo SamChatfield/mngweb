@@ -93,15 +93,16 @@ class QuoteRequestForm(forms.Form):
         num_dna_samples = cleaned_data.get('num_dna_samples')
         num_strain_samples = cleaned_data.get('num_strain_samples')
         confirm_strain_bsl2 = cleaned_data.get('confirm_strain_bsl2')
+        country = cleaned_data.get('country')
 
         if (funding_type == 'BBSRC funded' and not bbsrc_code):
-            bbsrc_error = ValidationError(_("BBSRC code is required"))
+            bbsrc_error = ValidationError(_("BBSRC code is required."))
             self.add_error('bbsrc_code', bbsrc_error)
             non_field_errors.append(bbsrc_error)
 
         if num_strain_samples > 0 and not confirm_strain_bsl2:
             bsl2_error = ValidationError(
-                _("You must confirm that any strains are BSL2 or below"))
+                _("You must confirm that any strains are BSL2 or below."))
             self.add_error('confirm_strain_bsl2', bsl2_error)
             non_field_errors.append(bsl2_error)
 
@@ -109,7 +110,15 @@ class QuoteRequestForm(forms.Form):
             non_field_errors.append(
                 ValidationError(
                     _("A total sample quantity of at least one (strain or DNA)"
-                      " is required"))
+                      " is required."))
+            )
+
+        if country.lower() != 'united kingdom' and num_strain_samples:
+            non_field_errors.append(
+                ValidationError(
+                    _("Unfortunately we cannot currently accept strains sent "
+                      "from outside the UK. Please use our DNA service as an "
+                      "alternative."))
             )
 
         if non_field_errors:

@@ -29,6 +29,13 @@
           {% bootstrap_form_errors form %}
         </div>
 
+        <div class="panel panel-danger">
+          <div class="panel-heading"><h4>Important notice!</h4></div>
+          <div class="panel-body">
+            <p><strong>Please under no circumstances post samples to us before you receive your barcodes or strain tubes.</strong></p>
+          </div>
+        </div>
+
         {{ self.intro|richtext }}
 
         <form action="{% pageurl page %}" method="POST">
@@ -99,9 +106,11 @@
           <div class="row">
             <div class="col-md-3">
               {% bootstrap_field form.num_dna_samples %}
+              <div class="panel panel-success"><div class="panel-body"><i class="fa fa-globe text-success"></i> DNA samples can be sent from customers worldwide</div></div>
             </div>
             <div class="col-md-3">
               {% bootstrap_field form.num_strain_samples %}
+              <div class="panel panel-warning"><div class="panel-body"><span class="flag-icon flag-icon-gb"></span> Strains can only be sent from UK addresses</div></div>
               {% bootstrap_field form.confirm_strain_bsl2 %}
             </div>
             <div class="col-md-6">
