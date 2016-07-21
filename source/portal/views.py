@@ -9,8 +9,6 @@ from django.http import HttpResponse, HttpResponseBadRequest,\
 from openpyxl.writer.excel import save_virtual_workbook
 from django_slack import slack_message
 
-from mngweb.settings import LIMS_UNAVAILABLE
-
 from .forms import EmailLinkForm, ProjectLineForm, UploadSampleSheetForm
 from .models import EnvironmentalSampleType, HostSampleType
 from .sample_sheet import create_sample_sheet, parse_sample_sheet
@@ -22,8 +20,10 @@ from .utils import messages_to_json
 def handle_limsfm_request_exception(request, e):
     ERROR_MESSAGE = ("The MicrobesNG customer portal is temporarily "
                      "unavailable. Please try again later.")
-
     messages.error(request, ERROR_MESSAGE)
+
+    slack_message('portal/slack/limsfm_request_exception.slack',
+                  {'e': e, 'path': request.path,})
 
     if request.is_ajax():
         return JsonResponse(messages_to_json(request), status=503)
@@ -47,12 +47,6 @@ def handle_limsfm_http_exception(request, e):
 
 
 def project_detail(request, uuid):
-    if LIMS_UNAVAILABLE:
-        slack_message('portal/slack/project_portal_unavailable.slack', {
-            'uuid': uuid,
-        })
-        return render(request, 'portal/portal_unavailable.html')
-
     try:
         project = limsfm_get_project(uuid)
     except requests.HTTPError as e:

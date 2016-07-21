@@ -1,0 +1,5 @@
+{% extends django_slack %}
+
+{% block text %}
+    Web portal LIMSfm request exception. Path: {{ path }}. Exception: {{ e }}
+{% endblock %}
