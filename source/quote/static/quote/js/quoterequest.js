@@ -34,12 +34,23 @@ $(function() {
   });
 
   $('#id_funding_type').change(function() {
-      if ($(this).val() == 'BBSRC funded') {
-        $('#id_bbsrc_code').parent().show();
-      } else {
-        $('#id_bbsrc_code').parent().hide();
-      }
-      setQuoteEstimate();
+    if ($(this).val() == 'BBSRC funded') {
+      $('#id_bbsrc_code').parent().show();
+    } else {
+      $('#id_bbsrc_code').parent().hide();
+    }
+    setQuoteEstimate();
+  });
+
+  $(".country-typeahead").on("typeahead:change", "input", function() {
+    if ($(this).val().toLowerCase() == 'united kingdom') {
+      $('#id_num_strain_samples').prop('disabled', false);
+      $('#id_confirm_strain_bsl2').prop('disabled', false);
+    } else {
+      $('#id_num_strain_samples').val(0);
+      $('#id_num_strain_samples').prop('disabled', true);
+      $('#id_confirm_strain_bsl2').prop('disabled', true);
+    }
   });
 
   // scroll to first error on page
