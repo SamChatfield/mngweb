@@ -168,6 +168,7 @@ PIPELINE = {
         'libraries': {
             'source_filenames': (
                 'bower_components/typeahead.js-bootstrap3.less/typeaheadjs.css',
+                'bower_components/flag-icon-css/css/flag-icon.css',
             ),
             'output_filename': 'css/libs.min.css',
         },
