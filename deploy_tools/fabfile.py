@@ -1,7 +1,7 @@
 from fabric.contrib.files import exists, sed
 from fabric.api import env, local, run, put
 
-REPO_URL = 'https://bitbucket.org/jomaresti/mngweb'
+REPO_URL = 'https://github.com/MicrobesNG/mngweb'
 
 
 def deploy():
@@ -66,8 +66,8 @@ def _update_database(source_folder):
 
 
 def _restart_gunicorn(site_name):
-    run('sudo restart gunicorn-%s' % (site_name,))
+    run('sudo systemctl restart gunicorn-%s' % (site_name,))
 
 
 def _restart_nginx():
-    run('sudo service nginx restart')
+    run('sudo service nginx reload')

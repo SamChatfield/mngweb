@@ -1,0 +1,12 @@
+[Unit]
+Description=Gunicorn server for SITENAME
+After=network.target
+
+[Service]
+User=ubuntu
+ExecStart=/home/ubuntu/sites/SITENAME/venv/bin/gunicorn --bind unix:/tmp/SITENAME.socket --workers 4 --error-logfile /var/log/gunicorn/error.log mngweb.wsgi:application
+ExecStop=/bin/true
+WorkingDirectory=/home/ubuntu/sites/SITENAME/source
+
+[Install]
+WantedBy=multi-user.target

@@ -1,5 +1,5 @@
-Provisioning a new site
-=======================
+Provisioning
+============
 
 ## Required packages:
 
@@ -8,21 +8,38 @@ Provisioning a new site
 * Git
 * pip
 * virtualenv
-
-eg, on Ubuntu:
-
-    sudo apt-get install nginx git python3 python3-pip
-    sudo pip3 install virtualenv
+* nodejs
+* npm
+* yuglify
 
 ## Nginx Virtual Host config
 
-* see nginx.template.conf
-* replace SITENAME with, eg, staging.my-domain.com
+* see nginx.template.conf2
+* replace SITENAME with, eg, staging.microbesng.uk
 
-## Upstart Job
+## Letsencrypt
 
-* see gunicorn-upstart.template.conf
-* replace SITENAME with, eg, staging.my-domain.com
+Follow this guide https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-16-04
+Use /tmp/letsencrypt for document root
+
+crontab
+30 2 * * 1 /opt/letsencrypt/letsencrypt-auto renew >> /var/log/le-renew.log
+35 2 * * 1 /bin/systemctl reload nginx
+
+to update client
+cd /opt/letsencrypt
+sudo git pull
+
+## Node / NPM + Yuglify
+sudo apt-get install nodejs
+sudo ln -s /usr/bin/nodejs /usr/bin/node
+sudo apt-get install npm
+sudo npm -g install yuglify
+
+## Systemd
+
+* see gunicorn-microbesng.uk.service template
+* replace SITENAME with, eg, microbesng.uk
 
 ## Folder structure:
 Assume we have a user account at /home/username
@@ -33,4 +50,3 @@ Assume we have a user account at /home/username
          ├── database
          ├── source
          ├── static
-         └── virtualenv
