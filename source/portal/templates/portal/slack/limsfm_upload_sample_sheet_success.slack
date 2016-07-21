@@ -1,0 +1,5 @@
+{% extends django_slack %}
+
+{% block text %}
+    :trollface: *{{ project.contact_name_full }}* just updated {{ update_count }} samples via. excel upload!
+{% endblock %}

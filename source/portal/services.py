@@ -11,6 +11,7 @@ from .forms import ProjectLineForm
 
 PROJECT_DJANGO_TO_LIMSFM_MAP = {
     'uuid': 'uuid',
+    'address_country_iso2': 'Address::country_iso2',
     'all_content_received_date': 'all_content_received_date',
     'contact_name_full': 'Contact::name_full',
     'data_sent_date': 'data_sent_date',

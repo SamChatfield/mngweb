@@ -1,0 +1,5 @@
+{% extends django_slack %}
+
+{% block text %}
+    :glitch_crab: *New sample data submission!* _{{ form.taxon_name.value }}_ from {{ form.geo_specific_location.value }}, {{ form.geo_country_name.value }}
+{% endblock %}

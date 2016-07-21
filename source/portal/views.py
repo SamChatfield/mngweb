@@ -21,9 +21,8 @@ def handle_limsfm_request_exception(request, e):
     ERROR_MESSAGE = ("The MicrobesNG customer portal is temporarily "
                      "unavailable. Please try again later.")
     messages.error(request, ERROR_MESSAGE)
-
     slack_message('portal/slack/limsfm_request_exception.slack',
-                  {'e': e, 'path': request.path,})
+                  {'e': e, 'path': request.path})
 
     if request.is_ajax():
         return JsonResponse(messages_to_json(request), status=503)
@@ -39,6 +38,8 @@ def handle_limsfm_http_exception(request, e):
         raise Http404
     else:
         messages.error(request, ERROR_MESSAGE)
+        slack_message('portal/slack/limsfm_http_exception.slack',
+                      {'e': e, 'path': request.path})
 
     if request.is_ajax():
         return JsonResponse(messages_to_json(request), status=500)
@@ -54,6 +55,8 @@ def project_detail(request, uuid):
     except requests.RequestException as e:
         return handle_limsfm_request_exception(request, e)
     else:
+        slack_message('portal/slack/limsfm_project_detail_access.slack',
+                      {'project': project})
         return render(
             request, 'portal/project.html',
             {
@@ -73,6 +76,8 @@ def projectline_update(request, project_uuid, projectline_uuid):
             except requests.RequestException as e:
                 return handle_limsfm_request_exception(request, e)
             else:
+                slack_message('portal/slack/limsfm_projectline_update.slack',
+                              {'form': form})
                 messages.success(request, "Saved")
                 return JsonResponse(messages_to_json(request))
         else:
@@ -150,6 +155,7 @@ def download_sample_sheet(request, uuid):
     response['Content-Disposition'] = 'attachment; filename=microbesng_sample_sheet.xlsx'
     return response
 
+
 def upload_sample_sheet(request, uuid):
     if request.method == "POST":
         form = UploadSampleSheetForm(request.POST, request.FILES)
@@ -201,10 +207,14 @@ def upload_sample_sheet(request, uuid):
             return handle_limsfm_request_exception(request, e)
 
         # Report success
+        update_count = len(parsed['updates'])
+        slack_message(
+            'portal/slack/limsfm_upload_sample_sheet_success.slack',
+            {'project': project, 'update_count': update_count})
         messages.success(
             request,
             "%(count)d rows successfully imported." %
-            {'count': len(parsed['updates'])}
+            {'count': update_count}
         )
         return HttpResponseRedirect(reverse('project_detail', args=[uuid]))
 
