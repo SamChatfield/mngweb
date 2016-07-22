@@ -193,6 +193,21 @@ def limsfm_bulk_update_projectlines(project_uuid, projectlines):
     return limsfm_request('bulk/projectline_api', 'put', json=json)
 
 
+def limsfm_get_taxonomy(data_set=None, q=None):
+    """Return taxonomy as a list of dictionaries"""
+    uri = ('layout/taxon_api')
+    request_args = {'RFMmax': 0}
+    if data_set:
+        request_args['RFMsF1'] = 'data_set'
+        request_args['RFMsV1'] = data_set
+    if q:
+        request_args['RFMsF1'] = 'name'
+        request_args['RFMsV1'] = q
+    response = limsfm_request(uri, 'get', request_args)
+
+    return response.json()['data']
+
+
 def limsfm_email_project_links(email_address):
     """Call a script to email project links to contact"""
     uri = 'script/contact_email_project_links/REST'
