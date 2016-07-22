@@ -13,6 +13,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
 
 LIMS_STATS_CACHE_TIMEOUT = 10
 
+SLACK_BACKEND = "django_slack.backends.UrllibBackend"
 SLACK_CHANNEL = '#webportal-staging'
 
 try:
