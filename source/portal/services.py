@@ -14,10 +14,12 @@ PROJECT_DJANGO_TO_LIMSFM_MAP = {
     'address_country_iso2': 'Address::country_iso2',
     'all_content_received_date': 'all_content_received_date',
     'contact_name_full': 'Contact::name_full',
+    'contact_uuid': 'Contact::uuid',
     'data_sent_date': 'data_sent_date',
+    'first_plate_barcode': 'projectcontainer_Container::reference',
     'meta_data_status': 'meta_data_status',
-    'projectline_count': 'unstored_projectline_count',
     'modal_queue_name': 'unstored_modal_queue_name',
+    'projectline_count': 'unstored_projectline_count',
     'reference': 'reference',
     'results_path': 'results_path',
     'sample_sheet_url': 'sample_sheet_url',
@@ -102,6 +104,35 @@ def limsfm_request(rel_uri, method='get', params={}, json=None):
     response.raise_for_status()
 
     return response
+
+
+def limsfm_get_contact(uuid):
+    # Get LIMSfm contact data
+    response = limsfm_request(
+        'layout/contact_api/%(field)s%(value)s' %
+        {
+            'field': urlquote('uuid==='),
+            'value': urlquote(uuid)
+        }, 'get')
+    contact = response.json()['data'][0]
+
+    # Get related projects
+    contact['projects'] = []
+    response = limsfm_request('layout/project_api', 'get', {
+        'RFMsF1': 'contact_id',
+        'RFMsV1': contact['contact_id'],
+        'RFMmax': 0
+    })
+    project_records = response.json()['data']
+    for record in project_records:
+        # Map LIMSfm project keys to django keys
+        project = {}
+        for d, f in PROJECT_DJANGO_TO_LIMSFM_MAP.items():
+            if f in record:
+                project[d] = record[f]
+        contact['projects'].append(project)
+
+    return contact
 
 
 def limsfm_get_project(uuid):

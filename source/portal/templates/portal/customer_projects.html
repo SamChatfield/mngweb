@@ -1,0 +1,67 @@
+{% extends "portal/base.html" %}
+{% load bootstrap3 portal_tags static %}
+
+{% block title %}Your Projects{% endblock %}
+
+{% block full_jumbo %}
+  <div class="jumbotron bg-grey">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6">
+          <h1>Your projects</h1>
+          <h2>{{ customer.name_full }}</h2>
+        </div>
+        <div class="col-md-3 col-md-offset-3 hidden-sm hidden-xs text-right">
+          <img src="{% static "images/mng-logo-500.png" %}" class="img-responsive">
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block content %}
+
+  <div class="container">
+
+    <div class="row">
+      <div class="col-md-12">
+        {% bootstrap_messages %}
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        {% if customer.projects %}
+          <table class="table table-striped">
+            <thead>
+              <th>Reference</th>
+              <th>Plate barcode</th>
+              <th>No. Samples</th>
+              <th>Overall Status</th>
+              <th></th>
+            </thead>
+            <tbody>
+              {% for project in customer.projects %}
+                <tr class="vert-middle">
+                  <td>{{ project.reference }}</td>
+                  <td>
+                    {% if project.first_plate_barcode %}
+                      {{ project.first_plate_barcode }}
+                    {% else %}
+                      N/A
+                    {% endif %}
+                  </td>
+                  <td>{{ project.projectline_count }}</td>
+                  <td>{{ project.modal_queue_name }}</td>
+                  <td><a href="{% url 'project_detail' project.uuid %}" class="btn btn-default pull-right"><i class="fa fa-arrow-circle-right"></i>View project page</a></td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <p>You don't currently have any projects set up.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -13,7 +13,8 @@ from .forms import EmailLinkForm, ProjectLineForm, UploadSampleSheetForm
 from .models import EnvironmentalSampleType, HostSampleType
 from .sample_sheet import create_sample_sheet, parse_sample_sheet
 from .services import limsfm_email_project_links, limsfm_get_project,\
-    limsfm_update_projectline, limsfm_bulk_update_projectlines
+    limsfm_update_projectline, limsfm_bulk_update_projectlines,\
+    limsfm_get_contact
 from .utils import messages_to_json
 
 
@@ -45,6 +46,18 @@ def handle_limsfm_http_exception(request, e):
         return JsonResponse(messages_to_json(request), status=500)
     else:
         return render(request, 'portal/project.html')
+
+
+def customer_projects(request, customer_uuid):
+    try:
+        customer = limsfm_get_contact(customer_uuid)
+    except requests.HTTPError as e:
+        return handle_limsfm_http_exception(request, e)
+    except requests.RequestException as e:
+        return handle_limsfm_request_exception(request, e)
+    else:
+        return render(
+            request, 'portal/customer_projects.html', {'customer': customer})
 
 
 def project_detail(request, uuid):
@@ -122,31 +135,6 @@ def project_email_link(request):
     return render(request, 'portal/email_link.html', {'form': form})
 
 
-def hostsampletype_typeahead(request):
-    q = request.GET.get('q', '')
-    if q:
-        matches = (HostSampleType.objects
-                   .filter(name__icontains=q)
-                   .values_list('name', flat=True)[:10])
-    else:
-        matches = HostSampleType.objects.all().values_list('name', flat=True)
-    data = list(matches)
-    return JsonResponse(data, safe=False)
-
-
-def environmentalsampletype_typeahead(request):
-    q = request.GET.get('q', '')
-    if q:
-        matches = (EnvironmentalSampleType.objects
-                   .filter(name__icontains=q)
-                   .values_list('name', flat=True)[:10])
-    else:
-        matches = EnvironmentalSampleType.objects.all().\
-            values_list('name', flat=True)
-    data = list(matches)
-    return JsonResponse(data, safe=False)
-
-
 def download_sample_sheet(request, uuid):
     wb = create_sample_sheet(uuid)
     response = HttpResponse(
@@ -221,3 +209,28 @@ def upload_sample_sheet(request, uuid):
     else:
         # Not POST
         return HttpResponseBadRequest()
+
+
+def hostsampletype_typeahead(request):
+    q = request.GET.get('q', '')
+    if q:
+        matches = (HostSampleType.objects
+                   .filter(name__icontains=q)
+                   .values_list('name', flat=True)[:10])
+    else:
+        matches = HostSampleType.objects.all().values_list('name', flat=True)
+    data = list(matches)
+    return JsonResponse(data, safe=False)
+
+
+def environmentalsampletype_typeahead(request):
+    q = request.GET.get('q', '')
+    if q:
+        matches = (EnvironmentalSampleType.objects
+                   .filter(name__icontains=q)
+                   .values_list('name', flat=True)[:10])
+    else:
+        matches = EnvironmentalSampleType.objects.all().\
+            values_list('name', flat=True)
+    data = list(matches)
+    return JsonResponse(data, safe=False)
