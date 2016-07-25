@@ -4,9 +4,13 @@ $(function() {
     var fundingType = $('#id_funding_type').val();
     var dnaQty = parseInt($('#id_num_dna_samples').val());
     var strainQty = parseInt($('#id_num_strain_samples').val());
-    var totalQty = dnaQty + strainQty;
+    var totalQty;
     var unitPrice;
     var totalPrice;
+
+    if (dnaQty != dnaQty) { dnaQty = 0; }
+    if (strainQty != strainQty) { strainQty = 0; }
+    totalQty = dnaQty + strainQty;
 
     if (isConfidential) {
       unitPrice = 100;
@@ -50,6 +54,7 @@ $(function() {
       $('#id_num_strain_samples').val(0);
       $('#id_num_strain_samples').prop('disabled', true);
       $('#id_confirm_strain_bsl2').prop('disabled', true);
+      setQuoteEstimate();
     }
   });
 

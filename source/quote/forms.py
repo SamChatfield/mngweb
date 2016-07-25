@@ -1,8 +1,9 @@
+from django import forms
+
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
 
-from django import forms
-
+from country.models import Country
 
 FUNDING_TYPE_CHOICES = [
     ('', '---'),
@@ -61,17 +62,26 @@ class QuoteRequestForm(forms.Form):
         max_length=10,
         label=_("Postcode / Zip"),
         required=False)
-    country = forms.CharField(max_length=30)
+    country = forms.ModelChoiceField(
+        queryset=Country.objects.all(),
+        to_field_name='name',
+        widget=forms.TextInput(),
+        error_messages={
+            'required': "Sample collection country is required.",
+            'invalid_choice': "Please select a valid country from the list."
+        })
     funding_type = forms.ChoiceField(choices=FUNDING_TYPE_CHOICES)
     bbsrc_code = forms.CharField(required=False, label=_("BBSRC grant code"))
     is_confidential = forms.BooleanField(required=False)
     num_dna_samples = forms.IntegerField(
         min_value=0,
         initial=0,
+        required=False,
         label=_("No. of DNA samples"))
     num_strain_samples = forms.IntegerField(
         min_value=0,
         initial=0,
+        required=False,
         label=_("No. of strain samples"))
     confirm_strain_bsl2 = forms.BooleanField(
         required=False,
@@ -95,12 +105,15 @@ class QuoteRequestForm(forms.Form):
         confirm_strain_bsl2 = cleaned_data.get('confirm_strain_bsl2')
         country = cleaned_data.get('country')
 
+        if num_strain_samples is None:
+            num_strain_samples = 0
+
         if (funding_type == 'BBSRC funded' and not bbsrc_code):
             bbsrc_error = ValidationError(_("BBSRC code is required."))
             self.add_error('bbsrc_code', bbsrc_error)
             non_field_errors.append(bbsrc_error)
 
-        if num_strain_samples > 0 and not confirm_strain_bsl2:
+        if (num_strain_samples > 0 and not confirm_strain_bsl2):
             bsl2_error = ValidationError(
                 _("You must confirm that any strains are BSL2 or below."))
             self.add_error('confirm_strain_bsl2', bsl2_error)
@@ -113,7 +126,7 @@ class QuoteRequestForm(forms.Form):
                       " is required."))
             )
 
-        if country.lower() != 'united kingdom' and num_strain_samples:
+        if country and country.iso2 != 'gb' and num_strain_samples:
             non_field_errors.append(
                 ValidationError(
                     _("Unfortunately we cannot currently accept strains sent "
