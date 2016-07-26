@@ -126,7 +126,7 @@ class QuoteRequestForm(forms.Form):
                       " is required."))
             )
 
-        if country and country.iso2 != 'gb' and num_strain_samples:
+        if country and country.iso2 != 'GB' and num_strain_samples:
             non_field_errors.append(
                 ValidationError(
                     _("Unfortunately we cannot currently accept strains sent "
