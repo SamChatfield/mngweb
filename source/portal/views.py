@@ -94,7 +94,10 @@ def projectline_update(request, project_uuid, projectline_uuid):
                 messages.success(request, "Saved")
                 return JsonResponse(messages_to_json(request))
         else:
-            json = {'errors': form.errors}
+            for nfe in form.non_field_errors():
+                messages.error(request, nfe)
+            json = messages_to_json(request)
+            json['errors'] = form.errors
             return JsonResponse(json, status=400)
     else:
         return JsonResponse({'error': 'Bad request'}, status=400)

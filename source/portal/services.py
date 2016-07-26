@@ -67,16 +67,13 @@ def projectline_to_fm_dict(project_uuid, cleaned_data):
 
     # Objects -> filemaker ids
     taxon = cleaned_data.pop('taxon_name', None)
-    if taxon:
-        cleaned_data['taxon'] = taxon.fm_id
+    cleaned_data['taxon'] = taxon.fm_id if taxon else ''
 
     host_taxon = cleaned_data.pop('host_taxon_name', None)
-    if host_taxon:
-        cleaned_data['host_taxon'] = host_taxon.fm_id
+    cleaned_data['host_taxon'] = host_taxon.fm_id if host_taxon else ''
 
     geo_country = cleaned_data.pop('geo_country_name', None)
-    if geo_country:
-        cleaned_data['geo_country'] = geo_country.iso2
+    cleaned_data['geo_country'] = geo_country.iso2 if geo_country else ''
 
     # Construct dict
     fm_data = {}

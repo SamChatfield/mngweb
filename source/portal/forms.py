@@ -192,8 +192,10 @@ class ProjectLineForm(forms.Form):
         widget=forms.TextInput(),
         help_text="e.g. Soil")
     further_details = forms.CharField(
-        required=False,
-        help_text="Further details about your sample")
+        help_text="Further details about your sample",
+        error_messages={
+            'required': "'Further details' is a required field.",
+        })
 
     def clean(self):
         cleaned_data = super(ProjectLineForm, self).clean()
@@ -205,6 +207,11 @@ class ProjectLineForm(forms.Form):
         aliquottype_name = cleaned_data.pop('aliquottype_name')  # pop!
         volume_ul = cleaned_data.get('volume_ul')
         dna_concentration_ng_ul = cleaned_data.get('dna_concentration_ng_ul')
+        study_type = cleaned_data.get('study_type')
+        lab_experiment_type = cleaned_data.get('lab_experiment_type')
+        host_taxon_name = cleaned_data.get('host_taxon_name')
+        host_sample_type = cleaned_data.get('host_sample_type')
+        environmental_sample_type = cleaned_data.get('environmental_sample_type')
 
         if collection_year and collection_month and collection_day:
             try:
@@ -229,6 +236,46 @@ class ProjectLineForm(forms.Form):
                 self.add_error('dna_concentration_ng_ul', ValidationError(
                     _("'DNA Concentration (ng/µl)' is required for DNA "
                       "samples."), code='required'))
+
+        if study_type == 'Lab':
+            if not lab_experiment_type:
+                self.add_error('lab_experiment_type', ValidationError(
+                    _("'Lab experiment type' is required when selecting"
+                      " study type 'Lab'."), code='required'))
+            if (host_taxon_name or host_sample_type or environmental_sample_type):
+                non_field_errors.append(
+                    ValidationError(
+                        _("Please only enter meta data for one study type"
+                          " (lab, host or environmental)."))
+                )
+
+        if study_type == 'Host':
+            if not host_taxon_name:
+                self.add_error('host_taxon_name', ValidationError(
+                    _("'Host taxon name' is required when selecting"
+                      " study type 'Host'."), code='required'))
+            if not host_sample_type:
+                self.add_error('host_sample_type', ValidationError(
+                    _("'Host sample type' is required when selecting"
+                      " study type 'Host'."), code='required'))
+            if (lab_experiment_type or environmental_sample_type):
+                non_field_errors.append(
+                    ValidationError(
+                        _("Please only enter meta data for one study type"
+                          " (lab, host or environmental)."))
+                )
+
+        if study_type == 'Environmental':
+            if not environmental_sample_type:
+                self.add_error('environmental_sample_type', ValidationError(
+                    _("'Environmental sample type' is required when selecting"
+                      " study type 'Environmental'."), code='required'))
+            if (host_taxon_name or host_sample_type or lab_experiment_type):
+                non_field_errors.append(
+                    ValidationError(
+                        _("Please only enter meta data for one study type"
+                          " (lab, host or environmental)."))
+                )
 
         if non_field_errors:
             raise ValidationError(non_field_errors)
