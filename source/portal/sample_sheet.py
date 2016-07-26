@@ -20,12 +20,12 @@ SAMPLE_SHEET_COL_ORDER = [
     'geo_country_name',
     'geo_specific_location',
     'lab_experiment_type',
-    'further_details',
+    'lab_further_details',
     'host_taxon_name',
     'host_sample_type',
-    'further_details',
+    'host_further_details',
     'environmental_sample_type',
-    'further_details',
+    'env_further_details',
 ]
 
 
@@ -144,21 +144,34 @@ def parse_sample_sheet(project, sheet):
                  {'row': row, 'barcode': sample_ref}})
             continue
 
-        # Determine 'study_type'
-        if row_data.get('lab_experiment_type'):
-            row_data['study_type'] = 'Lab'
-        elif row_data.get('host_taxon_name'):
-            row_data['study_type'] = 'Host'
-        elif row_data.get('environmental_sample_type'):
-            row_data['study_type'] = 'Environmental'
-        else:
+        # Check only one meta data section filled in
+        has_lab_meta = (bool(row_data['lab_experiment_type']) or
+                        bool(row_data['lab_further_details']))
+        has_host_meta = (bool(row_data['host_taxon_name']) or
+                         bool(row_data['host_sample_type']) or
+                         bool(row_data['host_further_details']))
+        has_env_meta = (bool(row_data['environmental_sample_type']) or
+                        bool(row_data['env_further_details']))
+        if has_lab_meta + has_host_meta + has_env_meta != 1:
             errors.append(
-                {'row': row, 'message': " Meta data is required in one "
+                {'row': row, 'message': " Meta data is required in ONE "
                  "of the three coloured sections."})
             continue
 
+        # Set study_type, further details
+        if has_lab_meta:
+            row_data['study_type'] = 'Lab'
+            row_data['further_details'] = row_data['lab_further_details']
+        elif has_host_meta:
+            row_data['study_type'] = 'Host'
+            row_data['further_details'] = row_data['host_further_details']
+        elif has_env_meta:
+            row_data['study_type'] = 'Environmental'
+            row_data['further_details'] = row_data['env_further_details']
+
         # Pass row data to form
-        row_data['aliquottype_name'] = projectlines[sample_ref]['aliquottype_name']
+        row_data['aliquottype_name'] = (projectlines[sample_ref]
+                                        ['aliquottype_name'])
         form = ProjectLineForm(row_data)
         if form.is_valid():
             uuid = projectlines[sample_ref]['uuid']
