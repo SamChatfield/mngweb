@@ -138,7 +138,7 @@ def limsfm_request(rel_uri, method='get', params={}, json=None):
     s = requests.Session()
     prepped_request = requests.Request(
         method, uri, params=params, json=json).prepare()
-    response = s.send(prepped_request, timeout=5)
+    response = s.send(prepped_request, timeout=30)
     response.raise_for_status()
 
     return response
