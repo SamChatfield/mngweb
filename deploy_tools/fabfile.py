@@ -1,4 +1,4 @@
-from fabric.contrib.files import exists, sed
+from fabric.contrib.files import exists
 from fabric.api import env, local, run, put
 
 REPO_URL = 'https://github.com/MicrobesNG/mngweb'
@@ -10,7 +10,6 @@ def deploy():
     local_source_folder = '../source'
     _get_latest_source(site_folder)
     _create_directory_structure(site_folder)
-    _update_settings(source_folder, env.host)
     _copy_local_settings(local_source_folder, source_folder)
     _update_virtualenv(site_folder)
     _update_static_files(source_folder)
@@ -32,11 +31,6 @@ def _get_latest_source(site_folder):
         run('git clone %s %s' % (REPO_URL, site_folder))
     current_commit = local("git log -n 1 --format=%H", capture=True)
     run('cd %s && git reset --hard %s' % (site_folder, current_commit))
-
-
-def _update_settings(source_folder, site_name):
-    settings_path = source_folder + '/mngweb/settings/'
-    sed(settings_path + '__init__.py', ".dev", ".production")
 
 
 def _update_virtualenv(site_folder):
