@@ -28,6 +28,10 @@ class FaqIndexPage(Page):
 class FaqCategoryPage(Page):
     parent_page_types = ['faq.FaqIndexPage']
 
+    # exclude from sitemap
+    def get_sitemap_urls(self):
+        return []
+
     content_panels = Page.content_panels + [
         InlinePanel('questions', label="Questions"),
     ]

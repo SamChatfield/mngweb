@@ -27,6 +27,10 @@ class FormThankYouPage(Page):
         'quote.QuoteRequestFormPage',
     ]
 
+    # exclude from sitemap
+    def get_sitemap_urls(self):
+        return []
+
     content_panels = Page.content_panels + [
         FieldPanel('message', classname="full")
     ]
