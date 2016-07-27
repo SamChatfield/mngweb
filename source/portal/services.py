@@ -4,8 +4,6 @@ from datetime import datetime
 from django.conf import settings
 from django.utils.http import urlquote
 
-from urllib.parse import urljoin
-
 from .forms import ProjectLineForm
 
 
@@ -83,13 +81,14 @@ def project_from_limsfm(limsfm_project):
         if f in limsfm_project:
             project[d] = limsfm_project[f]
 
-    if not project['barcodes_sent_date']:
-        project['barcodes_sent_date'] = project['creation_datetime']
-
     date_from_fmstr(project, 'all_content_received_date')
-    date_from_fmstr(project, 'barcodes_sent_date')
     datetime_from_fmstr(project, 'creation_datetime')
     date_from_fmstr(project, 'data_sent_date')
+
+    if project['barcodes_sent_date']:
+        date_from_fmstr(project, 'barcodes_sent_date')
+    else:
+        project['barcodes_sent_date'] = project['creation_datetime'].date()
 
     return project
 
