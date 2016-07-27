@@ -24,13 +24,13 @@
     <tr>
       {% if project.all_content_received_date %}
         <th>Date all samples received</th>
-        <td>{{ project.all_content_received_date }}</td>
+        <td>{{ project.all_content_received_date|date:"SHORT_DATE_FORMAT" }}</td>
       {% endif %}
     </tr>
     <tr>
       {% if project.data_sent_date %}
         <th>Data sent date</th>
-        <td>{{ project.data_sent_date }}</td>
+        <td>{{ project.data_sent_date|date:"SHORT_DATE_FORMAT" }}</td>
       {% endif %}
     </tr>
     <tr>

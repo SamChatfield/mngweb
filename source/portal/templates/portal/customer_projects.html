@@ -37,6 +37,7 @@
               <th>Reference</th>
               <th>Plate barcode</th>
               <th>No. Samples</th>
+              <th>Samples Received Date</th>
               <th>Overall Status</th>
               <th></th>
             </thead>
@@ -52,6 +53,7 @@
                     {% endif %}
                   </td>
                   <td>{{ project.projectline_count }}</td>
+                  <td>{{ project.all_content_received_date|date:"SHORT_DATE_FORMAT" }}</td>
                   <td>{{ project.modal_queue_name }}</td>
                   <td><a href="{% url 'project_detail' project.uuid %}" class="btn btn-default pull-right"><i class="fa fa-arrow-circle-right"></i>View project page</a></td>
                 </tr>

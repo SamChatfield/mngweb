@@ -10,9 +10,12 @@ from .forms import ProjectLineForm
 
 
 PROJECT_DJANGO_TO_LIMSFM_MAP = {
+    'project_id': 'project_id',
     'uuid': 'uuid',
     'address_country_iso2': 'Address::country_iso2',
     'all_content_received_date': 'all_content_received_date',
+    'barcodes_sent_date': 'barcodes_sent_date',
+    'creation_datetime': 'creation_host_timestamp',
     'contact_name_full': 'Contact::name_full',
     'contact_uuid': 'Contact::uuid',
     'data_sent_date': 'data_sent_date',
@@ -59,6 +62,45 @@ PROJECTLINE_DJANGO_TO_LIMSFM_MAP = {
 
 PROJECTLINE_LIMSFM_TO_DJANGO_MAP = {
     v: k for k, v in PROJECTLINE_DJANGO_TO_LIMSFM_MAP.items()}
+
+
+def date_from_fmstr(dct, key):
+    """Convert a filemaker date string to a datetime.date object, in place"""
+    if dct[key]:
+        dct[key] = datetime.strptime(dct[key], '%m/%d/%Y')
+
+
+def datetime_from_fmstr(dct, key):
+    """Convert a filemaker date string to a datetime object, in place"""
+    if dct[key]:
+        dct[key] = datetime.strptime(dct[key], '%m/%d/%Y %H:%M:%S')
+
+
+def project_from_limsfm(limsfm_project):
+    project = {}
+
+    for d, f in PROJECT_DJANGO_TO_LIMSFM_MAP.items():
+        if f in limsfm_project:
+            project[d] = limsfm_project[f]
+
+    if not project['barcodes_sent_date']:
+        project['barcodes_sent_date'] = project['creation_datetime']
+
+    date_from_fmstr(project, 'all_content_received_date')
+    date_from_fmstr(project, 'barcodes_sent_date')
+    datetime_from_fmstr(project, 'creation_datetime')
+    date_from_fmstr(project, 'data_sent_date')
+
+    return project
+
+
+def projectline_from_limsfm(limsfm_projectline):
+    projectline = {}
+    for d, f in PROJECTLINE_DJANGO_TO_LIMSFM_MAP.items():
+        if f in limsfm_projectline:
+            projectline[d] = limsfm_projectline[f]
+    projectline['form'] = ProjectLineForm(initial=projectline)
+    return projectline
 
 
 def projectline_to_fm_dict(project_uuid, cleaned_data):
@@ -114,20 +156,23 @@ def limsfm_get_contact(uuid):
     contact = response.json()['data'][0]
 
     # Get related projects
-    contact['projects'] = []
     response = limsfm_request('layout/project_api', 'get', {
         'RFMsF1': 'contact_id',
         'RFMsV1': contact['contact_id'],
         'RFMmax': 0
     })
     project_records = response.json()['data']
+    contact['projects'] = []
     for record in project_records:
-        # Map LIMSfm project keys to django keys
-        project = {}
-        for d, f in PROJECT_DJANGO_TO_LIMSFM_MAP.items():
-            if f in record:
-                project[d] = record[f]
-        contact['projects'].append(project)
+        contact['projects'].append(project_from_limsfm(record))
+
+    contact['projects'].sort(
+        key=lambda k: (
+            0 - datetime.combine(
+                k['barcodes_sent_date'], datetime.min.time()).timestamp(),
+            k['first_plate_barcode'],
+            k['reference'],
+        ))
 
     return contact
 
@@ -141,47 +186,22 @@ def limsfm_get_project(uuid):
                'value': urlquote(uuid)
            })
     project_response = limsfm_request(uri, 'get')
-    project_raw = project_response.json()['data'][0]
+    project = project_from_limsfm(project_response.json()['data'][0])
     lines_response = limsfm_request('layout/projectline_api', 'get', {
         'RFMsF1': 'project_id',
-        'RFMsV1': project_raw['project_id'],
+        'RFMsV1': project['project_id'],
         'RFMmax': 0
     })
     projectlines_raw = lines_response.json()['data']
-
-    # Map filemaker project keys to django keys
-    project = {}
-    for d, f in PROJECT_DJANGO_TO_LIMSFM_MAP.items():
-        if f in project_raw:
-            project[d] = project_raw[f]
-
-    # Transformations
-    if project['results_path']:
-        project['results_url'] = urljoin(
-            settings.MNGRESULTS_BASE_URL, project['results_path'] + '/')
-
-    if project['all_content_received_date']:
-        date = project['all_content_received_date']
-        date = datetime.strptime(date, '%m/%d/%Y').strftime('%d-%b-%Y')
-        project['all_content_received_date'] = date
-
-    if project['data_sent_date']:
-        date = project['data_sent_date']
-        date = datetime.strptime(date, '%m/%d/%Y').strftime('%d-%b-%Y')
-        project['data_sent_date'] = date
 
     # Map filemaker projectline keys to django keys
     project['modal_queue_matches'] = 0
     projectlines = []
     for pl in projectlines_raw:
-        data = {}
-        for d, f in PROJECTLINE_DJANGO_TO_LIMSFM_MAP.items():
-            if f in pl:
-                data[d] = pl[f]
-        data['form'] = ProjectLineForm(initial=data)
-        if data['queue_name'] == project['modal_queue_name']:
+        projectline = projectline_from_limsfm(pl)
+        if projectline['queue_name'] == project['modal_queue_name']:
             project['modal_queue_matches'] += 1
-        projectlines.append(data)
+        projectlines.append(projectline)
 
     # Sort the projectlines and append to list project dict
     projectlines.sort(
