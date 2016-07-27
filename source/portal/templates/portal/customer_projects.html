@@ -47,7 +47,7 @@
                   <td>{{ project.reference }}</td>
                   <td>
                     {% if project.first_plate_barcode %}
-                      {{ project.first_plate_barcode }}
+                      <span class="label label-primary large-label">{{ project.first_plate_barcode }}</span>
                     {% else %}
                       N/A
                     {% endif %}

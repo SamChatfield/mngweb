@@ -295,3 +295,10 @@ label {
   font-size: 1.2em;
   font-weight: 400;
 }
+
+
+/* --- LABELS --- */
+
+.large-label {
+  font-size: 1.1em;
+}
