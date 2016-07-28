@@ -192,6 +192,7 @@ class ProjectLineForm(forms.Form):
         widget=forms.TextInput(),
         help_text="e.g. Soil")
     further_details = forms.CharField(
+        required=False,
         help_text="Further details about your sample",
         error_messages={
             'required': "'Further details' is a required field.",
