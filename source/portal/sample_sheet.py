@@ -3,6 +3,10 @@ import os
 from openpyxl import load_workbook
 from openpyxl.worksheet.datavalidation import DataValidation
 
+from country.models import Country
+from country.utils import update_countries
+from taxon.models import Taxon
+from taxon.utils import update_taxonomy
 from .forms import ProjectLineForm
 from .services import limsfm_get_project
 
@@ -185,3 +189,28 @@ def parse_sample_sheet(project, sheet):
         errors.append({'row': 0, 'message': "No rows to update."})
 
     return {'errors': errors, 'updates': updates}
+
+
+def update_sample_sheet_template():
+    """Update the sample sheet template (add lookup values)"""
+    update_countries()
+    update_taxonomy()
+
+    wb = load_workbook(os.path.join(
+        os.path.dirname(__file__),
+        'static/portal/excel/mng_excel_template_base.xlsx'))
+    ws = wb['Lookups']
+
+    print("Updating excel template taxonomy lookup")
+    taxonomy = Taxon.objects.all().order_by('name')
+    for r, taxon in enumerate(taxonomy):
+        ws.cell(row=r + 1, column=1).value = taxon.name
+
+    print("Updating excel template country lookup")
+    countries = Country.objects.all().order_by('name')
+    for r, country in enumerate(countries):
+        ws.cell(row=r + 1, column=2).value = country.name
+
+    wb.save(os.path.join(
+        os.path.dirname(__file__),
+        'static/portal/excel/mng_excel_template.xlsx'))

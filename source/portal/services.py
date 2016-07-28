@@ -255,6 +255,15 @@ def limsfm_get_taxonomy(data_set=None, q=None):
     return response.json()['data']
 
 
+def limsfm_get_countries():
+    """Return countries as a list of dictionaries"""
+    uri = ('layout/country_api')
+    request_args = {'RFMmax': 0}
+    response = limsfm_request(uri, 'get', request_args)
+
+    return response.json()['data']
+
+
 def limsfm_email_project_links(email_address):
     """Call a script to email project links to contact"""
     uri = 'script/contact_email_project_links/REST'

@@ -14,6 +14,7 @@ def deploy():
     _update_virtualenv(site_folder)
     _update_static_files(source_folder)
     _update_database(source_folder)
+    _update_portal_sample_sheet(source_folder)
     _restart_gunicorn(env.host)
     _restart_nginx()
 
@@ -55,6 +56,12 @@ def _update_static_files(source_folder):
 
 def _update_database(source_folder):
     run('cd %s && ../venv/bin/python3 manage.py migrate --noinput' % (
+        source_folder,
+    ))
+
+
+def _update_portal_sample_sheet(source_folder):
+    run('cd %s && ../venv/bin/python3 manage.py updatesamplesheet' % (
         source_folder,
     ))
 
