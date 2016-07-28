@@ -6,7 +6,7 @@ from .models import Taxon
 
 def update_taxonomy():
     """update taxon data via. the LIMSfm api"""
-    print("Fetchig latest taxonomy from LIMSfm...")
+    print("Fetching latest taxonomy from LIMSfm...")
     try:
         taxonomy = limsfm_get_taxonomy()
     except Exception as e:

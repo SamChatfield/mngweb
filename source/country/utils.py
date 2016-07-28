@@ -6,7 +6,7 @@ from .models import Country
 
 def update_countries():
     """update country data via. the LIMSfm api"""
-    print("Fetchig countries from LIMSfm...")
+    print("Fetching countries from LIMSfm...")
     try:
         countries = limsfm_get_countries()
     except Exception as e:

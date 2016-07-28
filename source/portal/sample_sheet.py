@@ -38,7 +38,7 @@ def create_sample_sheet(project_uuid):
     wb = load_workbook(os.path.join(
         os.path.dirname(__file__),
         'static/portal/excel/mng_excel_template.xlsx'))
-    ws = wb.active
+    ws = wb['Data']
 
     project = limsfm_get_project(project_uuid)
 
