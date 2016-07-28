@@ -117,7 +117,7 @@ class ProjectLineForm(forms.Form):
         label="Sample collection country",
         widget=forms.TextInput(),
         error_messages={
-            'required': "Sample collection country is required.",
+            'required': "'Sample collection country' is required.",
             'invalid_choice': "Please select a valid 'sample collection "
                               "country' from the list."
         })

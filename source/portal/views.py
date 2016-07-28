@@ -182,12 +182,15 @@ def upload_sample_sheet(request, uuid):
         # Errors found
         errors = parsed['errors']
         if errors:
-            for e in errors[0:3]:  # Only report first 3
-                m = ("Error on ROW %(row)d: %(message)s" %
+            for e in errors[0:10]:  # Only report first 10
+                m = ("Error on row %(row)d: %(message)s" %
                      {'row': e['row'] + 1, 'message': e['message']})
                 messages.error(request, m)
-            return HttpResponseRedirect(
-                reverse('project_detail', args=[uuid]))
+            if request.is_ajax():
+                return JsonResponse(messages_to_json(request), status=400)
+            else:
+                return HttpResponseRedirect(
+                    reverse('project_detail', args=[uuid]))
 
         # Bulk update via API
         try:
@@ -207,7 +210,13 @@ def upload_sample_sheet(request, uuid):
             "%(count)d rows successfully imported." %
             {'count': update_count}
         )
-        return HttpResponseRedirect(reverse('project_detail', args=[uuid]))
+
+        # Redirect
+        redirect_url = reverse('project_detail', args=[uuid])
+        if request.is_ajax():
+            return JsonResponse({'redirect_url': redirect_url})
+        else:
+            return HttpResponseRedirect(redirect_url)
 
     else:
         # Not POST

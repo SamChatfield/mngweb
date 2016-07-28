@@ -1,7 +1,10 @@
 $(function() {
 
-  // Tooltips
+  // Tooltips init
   $('[data-toggle="tooltip"]').tooltip()
+
+  // Modals init
+  $('.modal').modal({show: false})
 
   // Show/hide appropriate meta-data fields
   function hideMetaFields(context) {
@@ -67,9 +70,47 @@ $(function() {
     });
   });
 
-  // Excel upload submit
-  $(document).on('click', '.excel-upload-form button[type="submit"]', function(event){
-    $(this).html('<i class="fa fa-spin fa-spinner"></i> Please wait');
+  // AJAX sample sheet upload
+  $('#sample_sheet_form').on('submit', function(event){
+    event.preventDefault();
+    $('#upload_progress_modal').modal('show');
+
+    var formData = new FormData();
+    var file = document.getElementById('id_file').files[0];
+    formData.append('file', file, file.name);
+
+    $.ajax({
+      url: $(this).attr('action'),
+      type: 'POST',
+      data: formData,
+      cache: false,
+      dataType: 'json',
+      processData: false, // Don't process the files
+      contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+
+      success: function(json) {
+        $('#upload_progress_modal').modal('hide');
+        $('#sample_sheet_success_modal').modal('show');
+        setTimeout(function () {
+          window.location.href = json.redirect_url;
+        }, 500)
+      },
+
+      error: function(xhr,errmsg,err) {
+        console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+        var json = JSON.parse(xhr.responseText);
+        $('#upload_progress_modal').modal('hide');
+        if ('messages' in json) {
+          $('#sample_sheet_error_list').html('')
+          var messages = json.messages;
+          for (var i = 0; i < messages.length; i++) {
+            var m = messages[i];
+            $('#sample_sheet_error_list').append('<li>' + m.message + '</li>');
+          }
+        }
+        $('#sample_sheet_errors_modal').modal('show');
+      },
+    });
   });
 
   // EnvironmentalSampleType typeahead

@@ -21,15 +21,65 @@
       </ol>
     </div>
     <div class="col-md-3">
-      <form method="post" action="{% url 'upload_sample_sheet' project.uuid %}" enctype="multipart/form-data" class="excel-upload-form">
+      <form id="sample_sheet_form" method="post" action="{% url 'upload_sample_sheet' project.uuid %}" enctype="multipart/form-data">
         {% csrf_token %}
         {% bootstrap_form upload_sample_sheet_form %}
         {% buttons %}
-          <button type="submit" class="btn btn-success button-lg">
+          <button id="sample_sheet_submit" type="submit" class="btn btn-success button-lg">
             <i class="fa fa-cloud-upload"></i> Upload
           </button>
         {% endbuttons %}
       </form>
+    </div>
+  </div>
+</div>
+
+<!-- Sample Sheet Progress Modal -->
+<div id="upload_progress_modal" class="modal" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body text-center">
+        <i class="fa fa-spinner fa-pulse fa-4x fa-fw"></i>
+        <h3>Please wait...</h3>
+        <p>Your sample sheet is being uploaded and validated. This can take up to a minute.</p>
+        <p class="text-danger"><strong>Please do not close your browser or leave this page.</strong></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Sample Sheet Errors Modal -->
+<div id="sample_sheet_errors_modal" class="modal" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header text-center text-danger">
+        <i class="fa fa-exclamation-triangle fa-4x"></i>
+        <h3>Validation errors</h3>
+      </div>
+      <div class="modal-body">
+        <p>We found some errors in your sample sheet. Please correct these and try again.</p>
+        <h4>Issues to resolve:</h4>
+        <ul id="sample_sheet_error_list" class="text-danger"></ul>
+        <p><strong>Please note that no data has yet been accepted.</strong>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Sample Sheet Success Modal -->
+<div id="sample_sheet_success_modal" class="modal" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header text-center text-success">
+        <i class="fa fa-check-circle fa-4x"></i>
+        <h3>Data Accepted</h3>
+      </div>
+      <div class="modal-body">
+        <p class="text-center"><strong>Thanks! Please wait a moment while we reload your project.</strong>
+      </div>
     </div>
   </div>
 </div>
