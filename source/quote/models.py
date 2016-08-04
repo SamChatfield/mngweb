@@ -66,7 +66,7 @@ class QuoteRequestFormPage(Page):
             subject = self.subject
             if form.data['name_last']:
                 subject = '%s [%s]' % (subject, form.data['name_last'])
-            email = EmailMessage(self.subject, content, self.from_address,
+            email = EmailMessage(subject, content, self.from_address,
                                  [self.to_address], reply_to=reply_to)
             email.send(fail_silently=False)
 
