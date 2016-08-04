@@ -4,6 +4,8 @@ from datetime import datetime
 from django.conf import settings
 from django.utils.http import urlquote
 
+from urllib.parse import urljoin
+
 from .forms import ProjectLineForm
 
 
@@ -89,6 +91,11 @@ def project_from_limsfm(limsfm_project):
         date_from_fmstr(project, 'barcodes_sent_date')
     else:
         project['barcodes_sent_date'] = project['creation_datetime'].date()
+
+    if project['results_path']:
+        project['results_url'] = urljoin(
+            settings.MNGRESULTS_BASE_URL,
+            project['results_path'] + '/')
 
     return project
 
