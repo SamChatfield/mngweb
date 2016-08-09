@@ -14,9 +14,16 @@ def deploy():
     _update_virtualenv(site_folder)
     _update_static_files(source_folder)
     _update_database(source_folder)
-    _update_portal_sample_sheet(source_folder)
     _restart_gunicorn(env.host)
     _restart_nginx()
+
+
+def update_portal_sample_sheet():
+    site_folder = '/home/%s/sites/%s' % (env.user, env.host)
+    source_folder = site_folder + '/source'
+    run('cd %s && ../venv/bin/python3 manage.py updatesamplesheet' % (
+        source_folder,
+    ))
 
 
 def _create_directory_structure(site_folder):
@@ -58,13 +65,6 @@ def _update_database(source_folder):
     run('cd %s && ../venv/bin/python3 manage.py migrate --noinput' % (
         source_folder,
     ))
-
-
-def _update_portal_sample_sheet(source_folder):
-    run('cd %s && ../venv/bin/python3 manage.py updatesamplesheet' % (
-        source_folder,
-    ))
-
 
 def _restart_gunicorn(site_name):
     run('sudo systemctl restart gunicorn-%s' % (site_name,))
