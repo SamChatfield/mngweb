@@ -9,6 +9,7 @@ from wagtail.wagtaildocs import urls as wagtaildocs_urls
 from wagtail.wagtailcore import urls as wagtail_urls
 
 from country import urls as country_urls
+from organisation import urls as organisation_urls
 from portal import urls as portal_urls
 from taxon import urls as taxon_urls
 
@@ -27,6 +28,7 @@ urlpatterns = [
     url(r'^search/$', search_views.search, name='search'),
 
     url(r'country/', include(country_urls)),
+    url(r'organisation/', include(organisation_urls)),
     url(r'portal/', include(portal_urls)),
     url(r'taxon/', include(taxon_urls)),
 

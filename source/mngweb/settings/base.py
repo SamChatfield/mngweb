@@ -16,6 +16,7 @@ INSTALLED_APPS = [
     'faq',
     'formbuilder',
     'home',
+    'organisation',
     'portal',
     'quote',
     'search',

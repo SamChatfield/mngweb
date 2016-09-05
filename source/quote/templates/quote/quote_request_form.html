@@ -5,6 +5,7 @@
 
 {% block extra_js %}
   <script src="{% static 'country/js/typeahead.js' %}"></script>
+  <script src="{% static 'organisation/js/typeahead.js' %}"></script>
   <script src="{% static 'quote/js/quoterequest.js' %}"></script>
 {% endblock %}
 
@@ -68,7 +69,7 @@
           <h3 class="section-header">Postal address</h3>
           <p>Please make sure to include the building or relevant department.</p>
 
-          {% bootstrap_field form.organisation %}
+          {% bootstrap_field form.organisation field_class="organisation-typeahead" %}
           {% bootstrap_field form.department %}
           {% bootstrap_field form.street_line_1 label="Address lines" %}
           {% bootstrap_field form.street_line_2 show_label=False %}
