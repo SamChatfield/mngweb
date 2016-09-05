@@ -8,7 +8,7 @@ $(function() {
 
   function organisationShowAllOnEmpty(q, sync) {
     if (q === '') {
-      sync(organisation.index.all())
+      sync(organisation.index.all());
     }
 
     else {
