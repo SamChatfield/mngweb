@@ -6,7 +6,7 @@ $(function() {
     prefetch: '/organisation/typeahead/'
   });
 
-  function organisationWithDefaults(q, sync) {
+  function organisationShowAllOnEmpty(q, sync) {
     if (q === '') {
       sync(organisation.index.all())
     }
@@ -23,7 +23,7 @@ $(function() {
   },
   {
     name: 'organisation',
-    source: organisationWithDefaults,
+    source: organisationShowAllOnEmpty,
     limit: 100
   });
 });
