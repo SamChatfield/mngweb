@@ -58,7 +58,10 @@ class QuoteRequestFormPage(Page):
     ]
 
     def process_form_submission(self, form):
-        quote_ref = limsfm_create_quote(form.cleaned_data)
+        try:
+            quote_ref = limsfm_create_quote(form.cleaned_data)
+        except Exception:
+            quote_ref = ''
 
         # send email
         if self.to_address:
