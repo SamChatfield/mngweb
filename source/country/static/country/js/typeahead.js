@@ -1,9 +1,21 @@
  $(function() {
+
   var countries = new Bloodhound({
     datumTokenizer: Bloodhound.tokenizers.whitespace,
     queryTokenizer: Bloodhound.tokenizers.whitespace,
     prefetch: '/country/typeahead/'
   });
+
+  function countriesShowAllOnEmpty(q, sync) {
+    if (q === '') {
+      sync(countries.index.all());
+    }
+
+    else {
+      countries.search(q, sync);
+    }
+  }
+
   $('.country-typeahead input').typeahead({
     hint: true,
     highlight: true,
@@ -11,10 +23,7 @@
   },
   {
     name: 'countries',
-    source: countries,
-    limit: 10,
-    templates: {
-      empty: '<div class="tt-suggestion">Start typing and choose a country</div>'
-    }
+    source: countriesShowAllOnEmpty,
+    limit: 300
   });
 });
