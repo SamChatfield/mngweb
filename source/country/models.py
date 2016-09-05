@@ -11,5 +11,8 @@ class Country(models.Model):
     phone_trunk_code = models.CharField(max_length=1)
     updated = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ['name']
+
     def __str__(self):
         return self.name
