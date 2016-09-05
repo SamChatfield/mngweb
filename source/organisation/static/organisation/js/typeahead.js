@@ -1,9 +1,21 @@
 $(function() {
+
   var organisation = new Bloodhound({
     datumTokenizer: Bloodhound.tokenizers.whitespace,
     queryTokenizer: Bloodhound.tokenizers.whitespace,
     prefetch: '/organisation/typeahead/'
   });
+
+  function organisationWithDefaults(q, sync) {
+    if (q === '') {
+      sync(organisation.index.all())
+    }
+
+    else {
+      organisation.search(q, sync);
+    }
+  }
+
   $('.organisation-typeahead input').typeahead({
     hint: true,
     highlight: true,
@@ -11,7 +23,7 @@ $(function() {
   },
   {
     name: 'organisation',
-    source: organisation,
-    limit: 10
+    source: organisationWithDefaults,
+    limit: 100
   });
 });
