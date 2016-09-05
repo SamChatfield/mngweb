@@ -1,3 +1,4 @@
+import json
 import requests
 
 from datetime import datetime
@@ -275,3 +276,17 @@ def limsfm_email_project_links(email_address):
     """Call a script to email project links to contact"""
     uri = 'script/contact_email_project_links/REST'
     return limsfm_request(uri, 'get', params={'RFMscriptParam': email_address})
+
+
+def limsfm_create_quote(form_data):
+    """Call a script to create a new quote"""
+    str_data = {}
+    for k, v in form_data.items():
+        str_data[k] = str(v)
+    uri = 'script/quote_api_create/quote_api'
+    response = limsfm_request(
+        uri,
+        'get',
+        params={'RFMscriptParam': json.dumps(str_data)})
+    quote_ref = response.json()['data'][0]['reference']
+    return quote_ref

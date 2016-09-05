@@ -11,6 +11,7 @@ from wagtail.wagtailcore.fields import RichTextField
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, MultiFieldPanel,\
     PageChooserPanel
 
+from portal.services import limsfm_create_quote
 from .forms import QuoteRequestForm
 
 
@@ -57,15 +58,18 @@ class QuoteRequestFormPage(Page):
     ]
 
     def process_form_submission(self, form):
+        quote_ref = limsfm_create_quote(form.cleaned_data)
+
+        # send email
         if self.to_address:
-            content = '\n'.join(
+            content = 'Quote Ref: %s\n' % quote_ref
+            content += '\n'.join(
                 [(o.label if o.label else f) + ': ' + str(form.cleaned_data[f])
                     for f, o in form.fields.items()]
             )
             reply_to = ([form.data['email']] if 'email' in form.data else None)
-            subject = self.subject
-            if form.data['name_last']:
-                subject = '%s [%s]' % (subject, form.data['name_last'])
+            subject = '%s [%s %s]' % (
+                self.subject, quote_ref, form.data['name_last'])
             email = EmailMessage(subject, content, self.from_address,
                                  [self.to_address], reply_to=reply_to)
             email.send(fail_silently=False)
