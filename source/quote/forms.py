@@ -29,9 +29,23 @@ BATCH_TYPE_CHOICES = [
     ('batches', 'Sending in multiple batches')
 ]
 
+NAME_TITLE_CHOICES = [
+    ('Dr', 'Dr'),
+    ('Prof', 'Prof'),
+    ('Mr', 'Mr'),
+    ('Miss', 'Miss'),
+    ('Ms', 'Ms'),
+    ('Mrs', 'Mrs'),
+    ('Mx', 'Mx'),
+    ('Sir', 'Sir'),
+    ('Lord', 'Lord')
+]
+
 
 class QuoteRequestForm(forms.Form):
-    name_title = forms.CharField(max_length=10, label=_("Title"))
+    name_title = forms.ChoiceField(
+        choices=NAME_TITLE_CHOICES,
+        label=_("Title"))
     name_first = forms.CharField(max_length=50, label=_("First name"))
     name_last = forms.CharField(max_length=50, label=_("Last name"))
     email = forms.EmailField()
