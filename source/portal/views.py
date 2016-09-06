@@ -69,7 +69,7 @@ def project_detail(request, uuid):
         return handle_limsfm_request_exception(request, e)
     else:
         slack_message('portal/slack/limsfm_project_detail_access.slack',
-                      {'project': project})
+                      {'request': request, 'project': project})
         return render(
             request, 'portal/project.html',
             {

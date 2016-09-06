@@ -1,5 +1,5 @@
 {% extends django_slack %}
 
 {% block text %}
-    {% if project.address_country_iso2 %}:flag-{{ project.address_country_iso2|lower }}:{% endif %} *{{ project.contact_name_full }}* just accessed their project {{ project.reference }}!
+    {% if project.address_country_iso2 %}:flag-{{ project.address_country_iso2|lower }}:{% endif %} *{{ project.contact_name_full }}* just accessed their project <{{ request.build_absolute_uri }}|{{ project.reference }}>!
 {% endblock %}
