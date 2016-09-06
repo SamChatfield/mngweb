@@ -61,6 +61,7 @@ class ProjectLineForm(forms.Form):
     customers_ref = forms.CharField(
         max_length=100,
         label="Your sample reference",
+        help_text="e.g. MySample123",
         error_messages={
             'required': "'Customer's reference' (Sample name) is required.",
             'max_length': "'Customer's reference' (Sample name) cannot exceed"
