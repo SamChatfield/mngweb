@@ -65,11 +65,11 @@ class QuoteRequestFormPage(Page):
 
         # send email
         if self.to_address:
-            content = 'Quote Ref: %s\n' % quote_ref
-            content += '\n'.join(
-                [(o.label if o.label else f) + ': ' + str(form.cleaned_data[f])
-                    for f, o in form.fields.items()]
-            )
+            content = 'Quote Ref: {}\n{}'.format(
+                quote_ref,
+                '\n'.join(
+                    ['{}: {}'.format(boundfield.label, str(boundfield.data))
+                     for boundfield in form]))
             reply_to = ([form.data['email']] if 'email' in form.data else None)
             subject = '%s [%s %s]' % (
                 self.subject, quote_ref, form.data['name_last'])

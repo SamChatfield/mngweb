@@ -49,20 +49,20 @@ class QuoteRequestForm(forms.Form):
         label=_("Title"))
     name_first = forms.CharField(max_length=50, label=_("First name"))
     name_last = forms.CharField(max_length=50, label=_("Last name"))
-    email = forms.EmailField()
+    email = forms.EmailField(label=_("Email address"))
     phone = PhoneNumberField(
         label=_("Phone number"),
         help_text=_("International customers: please enter a country code "
-                    "e.g. +1-541-754-3010 for a US number"))
+                    "e.g. +1-541-754-3010 for a US number."))
     organisation = forms.CharField(
         max_length=50,
-        label=_("Organisation / Institution"))
+        label=_("Institution / Company"))
     department = forms.CharField(max_length=50, required=False)
     street_line_1 = forms.CharField(
         max_length=50,
         label=_("Address lines"),
         widget=forms.TextInput(
-            attrs={'placeholder': "e.g. Room W126, Biosciences building"}))
+            attrs={'placeholder': "e.g. Room W126, Biosciences building."}))
     street_line_2 = forms.CharField(
         max_length=50,
         label=_("Address line 2"),
