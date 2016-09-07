@@ -39,7 +39,7 @@ PROJECTLINE_DJANGO_TO_LIMSFM_MAP = {
     'collection_day': 'Sample::collection_day',
     'collection_month': 'Sample::collection_month',
     'collection_year': 'Sample::collection_year',
-    'container_position': 'Aliquot::unstored_container_position',
+    'container_position': 'Aliquot::container_position',
     'container_ref': 'Container::reference',
     'customers_ref': 'Sample::customers_ref',
     'dna_concentration_ng_ul': 'Aliquot::dna_concentration_ng_ul',
