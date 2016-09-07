@@ -164,6 +164,7 @@ class ProjectLineForm(forms.Form):
                          "1800 and the current year (leave blank if unknown).",
             'invalid': "Please enter a 'Sample collection year' between 1800 "
                        "and the current year (leave blank if unknown).",
+            'required': "'Sample collection year' is required."
         })
     study_type = forms.ChoiceField(
         choices=ISOLATE_TYPE_CHOICES,
