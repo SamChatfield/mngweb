@@ -291,7 +291,13 @@ def limsfm_create_quote(form_data):
     """Call a script to create a new quote"""
     str_data = {}
     for k, v in form_data.items():
-        str_data[k] = str(v)
+        if k == 'country':
+            str_data[k] = v.iso2
+        elif k == 'phone':
+            str_data['phone_country_code'] = v.country_code
+            str_data['phone_national_number'] = v.national_number
+        else:
+            str_data[k] = str(v)
     uri = 'script/quote_api_create/quote_api'
     response = limsfm_request(
         uri,

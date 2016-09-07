@@ -2,6 +2,7 @@ from django import forms
 
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
+from phonenumber_field.formfields import PhoneNumberField
 
 from country.models import Country
 
@@ -49,7 +50,10 @@ class QuoteRequestForm(forms.Form):
     name_first = forms.CharField(max_length=50, label=_("First name"))
     name_last = forms.CharField(max_length=50, label=_("Last name"))
     email = forms.EmailField()
-    phone = forms.CharField(max_length=20)
+    phone = PhoneNumberField(
+        label=_("Phone number"),
+        help_text=_("International customers: please enter a country code "
+                    "e.g. +1-541-754-3010 for a US number"))
     organisation = forms.CharField(
         max_length=50,
         label=_("Organisation / Institution"))

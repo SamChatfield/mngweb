@@ -205,6 +205,11 @@ FILE_UPLOAD_HANDLERS = ("django_excel.ExcelMemoryFileUploadHandler",
                         "django_excel.TemporaryExcelFileUploadHandler")
 
 
+# django-phonenumber-field settings
+
+PHONENUMBER_DEFAULT_REGION = 'GB'
+
+
 # django-bootstrap settings
 
 BOOTSTRAP3 = {
