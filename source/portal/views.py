@@ -7,6 +7,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseBadRequest,\
     HttpResponseRedirect, JsonResponse, Http404
 
+from netaddr import IPNetwork, IPAddress
 from openpyxl.writer.excel import save_virtual_workbook
 from django_slack import slack_message
 
@@ -69,7 +70,7 @@ def project_detail(request, uuid):
     except requests.RequestException as e:
         return handle_limsfm_request_exception(request, e)
     else:
-        if not request.META['REMOTE_ADDR'][:11] == settings.OFFICE_CIDR[:11]:
+        if IPAddress(request.META['REMOTE_ADDR']) not in IPNetwork(settings.OFFICE_CIDR):
             #  only slack for access outside the office
             slack_message('portal/slack/limsfm_project_detail_access.slack',
                           {'request': request, 'project': project})
