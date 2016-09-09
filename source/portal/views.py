@@ -1,5 +1,6 @@
 import requests
 
+from django.conf import settings
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.shortcuts import render
@@ -68,8 +69,10 @@ def project_detail(request, uuid):
     except requests.RequestException as e:
         return handle_limsfm_request_exception(request, e)
     else:
-        slack_message('portal/slack/limsfm_project_detail_access.slack',
-                      {'request': request, 'project': project})
+        if not request.META['REMOTE_ADDR'][:11] == settings.OFFICE_CIDR[:11]:
+            #  only slack for access outside the office
+            slack_message('portal/slack/limsfm_project_detail_access.slack',
+                          {'request': request, 'project': project})
         return render(
             request, 'portal/project.html',
             {
