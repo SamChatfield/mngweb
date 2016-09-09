@@ -26,6 +26,19 @@ server {
         return 444;
     }
 
+    ##
+    # Block the Slack LinkExpander robot from portal uris
+    ##
+    if ($request_uri ~* /portal/projects) {
+        set $slackrobot_test  "T";
+    }
+    if ($http_user_agent ~* (Slackbot-LinkExpanding)) {
+        set $slackrobot_test  "${slackrobot_test}T";
+    }
+    if ($slackrobot_test = TT) {
+        return 403;
+    }
+
     access_log                      /var/log/nginx/microbesng.uk.access.log;
     error_log                       /var/log/nginx/microbesng.uk.error.log;
 
