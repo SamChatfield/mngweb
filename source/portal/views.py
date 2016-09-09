@@ -1,15 +1,13 @@
 import requests
 
-from django.conf import settings
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseBadRequest,\
     HttpResponseRedirect, JsonResponse, Http404
 
-from netaddr import IPNetwork, IPAddress
-from openpyxl.writer.excel import save_virtual_workbook
 from django_slack import slack_message
+from openpyxl.writer.excel import save_virtual_workbook
 
 from .forms import EmailLinkForm, ProjectLineForm, UploadSampleSheetForm
 from .models import EnvironmentalSampleType, HostSampleType
@@ -17,7 +15,7 @@ from .sample_sheet import create_sample_sheet, parse_sample_sheet
 from .services import limsfm_email_project_links, limsfm_get_project,\
     limsfm_update_projectline, limsfm_bulk_update_projectlines,\
     limsfm_get_contact
-from .utils import messages_to_json
+from .utils import messages_to_json, request_should_post_to_slack
 
 
 def handle_limsfm_request_exception(request, e):
@@ -70,8 +68,7 @@ def project_detail(request, uuid):
     except requests.RequestException as e:
         return handle_limsfm_request_exception(request, e)
     else:
-        if IPAddress(request.META['REMOTE_ADDR']) not in IPNetwork(settings.OFFICE_CIDR):
-            #  only slack for access outside the office
+        if request_should_post_to_slack(request):
             slack_message('portal/slack/limsfm_project_detail_access.slack',
                           {'request': request, 'project': project})
         return render(

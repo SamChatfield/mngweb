@@ -1,7 +1,11 @@
 import csv
 
+from django.conf import settings
 from django.contrib import messages
 from django.template.loader import render_to_string
+
+from ipware.ip import get_real_ip
+from netaddr import IPNetwork, IPAddress
 
 from .models import EnvironmentalSampleType, HostSampleType
 
@@ -18,6 +22,17 @@ def messages_to_json(request):
         'includes/messages.html',
         {'messages': messages.get_messages(request)})
     return json
+
+
+def request_should_post_to_slack(request):
+    ip = get_real_ip(request)
+    if not ip:
+        return True  # do post for dev server (no 'real' external ip)
+    try:
+        ignore_networks = getattr(settings, 'SLACK_LOG_IGNORE_NETWORKS', None)
+    except AttributeError:
+        return True
+    return not any(IPAddress(ip) in IPNetwork(n) for n in ignore_networks)
 
 
 def load_environmentalsampletype_data(file_path):
