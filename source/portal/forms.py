@@ -99,7 +99,6 @@ class ProjectLineForm(forms.Form):
     dna_concentration_ng_ul = forms.DecimalField(
         required=False,
         min_value=1,
-        max_value=30,
         decimal_places=2,
         label="DNA concentration (ng/µl)",
         error_messages={
