@@ -84,32 +84,25 @@ class ProjectLineForm(forms.Form):
         required=False,
         min_value=30,
         max_value=100,
-        decimal_places=2,
         label="Volume (µl)",
         error_messages={
-            'max_decimal_places': "Volume (µl) should have a maximum of 2 "
-                                  "decimal places.",
-            'min_value': "A 'volume' within the range 30-100µl is required "
+            'min_value': "'Volume' within the range 30-100µl is required "
                          "for DNA samples.",
-            'max_value': "A 'volume' within the range 30-100µl is required "
+            'max_value': "'Volume' within the range 30-100µl is required "
                          "for DNA samples.",
-            'invalid': "A 'volume' within the range 30-100µl is required "
+            'invalid': "'Volume' within the range 30-100µl is required "
                          "for DNA samples.",
         })
     dna_concentration_ng_ul = forms.DecimalField(
         required=False,
         min_value=1,
-        decimal_places=2,
         label="DNA concentration (ng/µl)",
         error_messages={
-            'max_decimal_places': "'DNA Concentration (ng/µl)'' should have "
-                                  "a maximum of 2 decimal places.",
-            'min_value': "A 'DNA Concentration' within the range 1-30ng/µl is "
+            'min_value': "'DNA Concentration' within the range 1-30ng/µl is "
                          "required for DNA samples.",
-            'max_value': "A 'DNA Concentration' within the range 1-30ng/µl is "
+            'max_value': "'DNA Concentration' within the range 1-30ng/µl is "
                          "required for DNA samples.",
-            'invalid': "'DNA concentration (ng/µl)' must be a number (max. 2 "
-                       "decimal places).",
+            'invalid': "'DNA concentration (ng/µl)' must be a number.",
         })
     geo_country_name = forms.ModelChoiceField(
         queryset=Country.objects.all(),
@@ -214,6 +207,12 @@ class ProjectLineForm(forms.Form):
         host_taxon_name = cleaned_data.get('host_taxon_name')
         host_sample_type = cleaned_data.get('host_sample_type')
         environmental_sample_type = cleaned_data.get('environmental_sample_type')
+
+        if dna_concentration_ng_ul:
+            cleaned_data['dna_concentration_ng_ul'] = round(dna_concentration_ng_ul, 2)
+
+        if volume_ul:
+            cleaned_data['volume_ul'] = round(volume_ul, 2)
 
         if collection_year and collection_month and collection_day:
             try:
