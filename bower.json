@@ -5,6 +5,7 @@
     "bootstrap": "^3.3.6",
     "typeahead.js": "^0.11.1",
     "typeahead.js-bootstrap3.less": "typeahead.js-bootstrap-css#^1.2.1",
+    "datamaps": "^0.5.7",
     "flag-icon-css": "^2.3.1"
   }
 }
