@@ -6,3 +6,4 @@ __pycache__
 source/mngweb/settings/local.py
 media/
 /static/
+source/portal/static/portal/excel/mng_excel_template.xlsx
