@@ -1,6 +1,13 @@
 Provisioning
 ============
 
+## Filemaker server and RESTfm
+
+- Set php.ini max_execution_time = 60 for Filemaker PHP installation
+(otherwise full plate sample updates may time out)
+- For debugging, restfm verbose logs go to C:/Windows/Temp when enabled
+
+
 ## Required packages:
 
 * nginx
@@ -40,6 +47,11 @@ sudo npm -g install yuglify
 
 * see gunicorn-microbesng.uk.service template
 * replace SITENAME with, eg, microbesng.uk
+  
+save it as something.service in /etc/systemd/system/ 
+systemctl enable something 
+systemctl start something
+systemctl daemon-reload (before enable)
 
 ## Folder structure:
 Assume we have a user account at /home/username
