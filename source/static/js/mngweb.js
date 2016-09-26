@@ -1,5 +1,11 @@
 $(function() {
 
+  // Tooltips init
+  $('[data-toggle="tooltip"]').tooltip()
+
+  // Modals init
+  $('.modal').modal({show: false})
+
   /*
   Popovers
   */

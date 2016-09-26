@@ -1,11 +1,5 @@
 $(function() {
 
-  // Tooltips init
-  $('[data-toggle="tooltip"]').tooltip()
-
-  // Modals init
-  $('.modal').modal({show: false})
-
   // Show/hide appropriate meta-data fields
   function hideMetaFields(context) {
     $('.meta-data-lab', context).hide();

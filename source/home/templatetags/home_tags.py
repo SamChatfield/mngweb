@@ -43,14 +43,14 @@ def update_lims_sample_stats():
 
 def update_lims_project_stats():
     today = datetime.datetime.today()
-    start_date = (today - datetime.timedelta(180))
+    start_date = (today - datetime.timedelta(90))
     try:
         response = limsfm_request(
             'layout/project_api',
             'get',
             {
                 'RFMmax': 1,
-                'RFMsF1': 'all_content_received_date',
+                'RFMsF1': 'data_sent_date',
                 'RFMsV1': '>={}/{}'.format(start_date.month, start_date.year),
             })
         if response.status_code == 200:
