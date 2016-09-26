@@ -1,12 +1,15 @@
+import datetime
 import requests
 
 from django import template
 from django.conf import settings
 from django.core.cache import cache
+from django.utils.http import urlquote
 from statistics import median_low
 
 from ..models import NavigationMenu, ServicePrice, Testimonial,\
     PeoplePagePerson, PERSON_TEAM_CHOICES
+from portal.services import limsfm_request
 
 
 register = template.Library()
@@ -39,12 +42,17 @@ def update_lims_sample_stats():
 
 
 def update_lims_project_stats():
-    url = (settings.RESTFM_BASE_URL +
-           'layout/project_api.json?RFMkey=' +
-           settings.RESTFM_KEY +
-           '&RFMmax=1')
+    today = datetime.datetime.today()
+    start_date = (today - datetime.timedelta(180))
     try:
-        response = requests.get(url, timeout=3)
+        response = limsfm_request(
+            'layout/project_api',
+            'get',
+            {
+                'RFMmax': 1,
+                'RFMsF1': 'all_content_received_date',
+                'RFMsV1': '>={}/{}'.format(start_date.month, start_date.year),
+            })
         if response.status_code == 200:
             project_stats = {}
             wait_time_string = (response.json()['data'][0]
