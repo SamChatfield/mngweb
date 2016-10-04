@@ -130,6 +130,7 @@ def projectline_to_fm_dict(project_uuid, cleaned_data):
         if k in PROJECTLINE_DJANGO_TO_LIMSFM_MAP:
             fm_data[PROJECTLINE_DJANGO_TO_LIMSFM_MAP[k]] = str(v) if v else ''
     fm_data['Project::uuid_validation'] = project_uuid
+    fm_data['Sample::declared_dna_conc_ngul'] = fm_data['Aliquot::dna_concentration_ng_ul']
 
     return fm_data
 
