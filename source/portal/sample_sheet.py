@@ -96,7 +96,7 @@ def create_sample_sheet(project_uuid):
 
     # Environmental sample type list validation
     est_validator = DataValidation(
-        type='list', formula1='=Lookups!$C$1:$C$30', allow_blank=True)
+        type='list', formula1='=Lookups!$C$1:$C$31', allow_blank=True)
     est_validator.error = ("Please select a environmental sample type from "
                            "the list")
     est_validator.errorTitle = "Invalid environmental sample type"
@@ -105,7 +105,7 @@ def create_sample_sheet(project_uuid):
 
     # Host sample type list validation
     hst_validator = DataValidation(
-        type='list', formula1='=Lookups!$D$1:$D$66', allow_blank=True)
+        type='list', formula1='=Lookups!$D$1:$D$67', allow_blank=True)
     hst_validator.error = "Please select a host sample type from the list"
     hst_validator.errorTitle = "Invalid host sample type"
     ws.add_data_validation(hst_validator)
