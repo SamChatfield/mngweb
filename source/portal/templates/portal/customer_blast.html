@@ -1,0 +1,215 @@
+{% extends "portal/base.html" %}
+{% load bootstrap3 portal_tags static %}
+
+{% block global_js %}
+{% endblock %}
+
+{% block extra_js %}
+  <script src="http://147.188.173.70:8080/js/sequenceserver.min.js"></script>
+{% endblock %}
+
+{% block extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" type="text/css" href="{% static 'portal/css/sequenceserver.css' %}">
+{% endblock %}
+
+{% block title %}Your Projects{% endblock %}
+
+{% block full_jumbo %}
+  <div class="jumbotron bg-grey">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h1>Your BLAST server</h1>
+          <h2>Powered by SequenceServer</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block content %}
+
+  <div class="container">
+
+    <div class="row">
+      <div class="col-md-12">
+        {% bootstrap_messages %}
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        {% if customer.projects %}
+          <div class="dnd-overlay" style="display: none;">
+            <div class="container dnd-overlay-container">
+              <div class="row">
+                <div class="col-md-offset-2 col-md-10">
+                  <p class="dnd-overlay-drop" style="display: none;">
+                    <i class="fa fa-2x fa-file-o"></i>Drop query sequence file here
+                  </p>
+                  <p class="dnd-overlay-overwrite" style="display: none;">
+                    <i class="fa fa-2x fa-file-o"></i><span style="color: red;">Overwrite</span> query sequence file
+                  </p>
+
+                  <div class="dnd-errors">
+                    <div class="dnd-error row" id="dnd-multi-notification" style="display: none;">
+                      <div class="col-md-6 col-md-offset-3">One file at a time please.
+                      </div>
+                    </div>
+
+                    <div class="dnd-error row" id="dnd-large-file-notification" style="display: none;">
+                      <div class="col-md-6 col-md-offset-3">Too big a file. Can only do less than 10 MB. &gt;_&lt;</div>
+                    </div>
+
+                    <div class="dnd-error row" id="dnd-format-notification" style="display: none;">
+                      <div class="col-md-6 col-md-offset-3">Only FASTA files please.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="container">
+            <noscript>
+              <div class="nojs-error">
+                <h3>SequenceServer can't work without JavaScript.</h3>
+                <ul>
+                  <li>Please see if you can enable JavaScript in your browser's preferences.</li>
+                  <li>If your browser doesn't support JavaScript, please consider upgrading to the latest version or using Firefox or Chrome.</li>
+                </ul>
+              </div>
+            </noscript>
+
+            <form class="form-horizontal" id="blast" method="post" action="http://147.188.173.70:8080#result">
+              <div class="form-group">
+                <div class="col-md-12">
+                  <div class="sequence-controls hidden">
+                    <button type="button" class="btn btn-sm btn-default" id="btn-sequence-clear" title="Clear query sequence(s).">
+                      <span id="sequence-file"></span>
+                      <i class="fa fa-times"></i>
+                    </button>
+                  </div>
+                  <div class="sequence">
+                    <textarea 
+                      class="form-control text-monospace" name="sequence" id="sequence"
+                      rows="10"
+                      autofocus
+                      spellcheck="false"
+                      placeholder="Paste query sequence(s) or drag file containing query sequence(s) in FASTA format here ..." ></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <div class="notifications">
+                <div class="notification row" id="nucleotide-sequence-notification" style="display: none;">
+                  <div class="alert-info col-md-6 col-md-offset-3">
+                    Detected: nucleotide sequence(s).
+                  </div>
+                </div>
+
+                <div class="notification row" id="protein-sequence-notification" style="display: none;">
+                  <div class="alert-info col-md-6 col-md-offset-3">
+                    Detected: protein sequence(s).
+                  </div>
+                </div>
+
+                <div class="notification row" id="mixed-sequence-notification" style="display: none;">
+                  <div class="alert-danger col-md-10 col-md-offset-1">
+                    Detected: mixed nucleotide and protein sequences. We can't handle that. Please try one sequence at a time.
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="form-group databases-container">
+
+                <div class="col-md-6">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">
+                      <h4>Nucleotide databases</h4>
+                    </div>
+                    <ul class="list-group databases nucleotide">
+                      <li class="list-group-item">
+                        <div class="checkbox">
+                          <label>
+                            <input type="checkbox" name="databases[]" value="a1c3680396c25a553806dfe5c40b5c7f" data-type="nucleotide" />
+                            20160202_Ogara1
+                          </label>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                
+                <div class="col-md-6">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">
+                      <h4>Protein databases</h4>
+                    </div>
+                    <ul class="list-group databases protein">
+                      <li class="list-group-item">
+                        <div class="checkbox">
+                          <label>
+                            <input type="checkbox" name="databases[]" value="f60722d0c05ef231b07a1a861244e683" data-type="protein" />
+                            20160202_Ogara1
+                          </label>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                
+              </div>
+
+              <div class="form-group">
+                <div class="col-md-8">
+                  <div class="form-group">
+                    <div class="col-md-12">
+                      <div class="input-group">
+                        <div class="input-group-addon cursor-pointer" data-toggle="modal" data-target="#help">
+                          Advanced parameters
+                        </div>
+                        <input
+                          type="text"
+                          class="form-control" name="advanced" id="advanced"
+                          title="View, and enter advanced parameters."
+                          placeholder="eg: -evalue 1.0e-5 -num_alignments 100"/>
+                        <div class="input-group-addon cursor-pointer" data-toggle="modal" data-target="#help">
+                          <i class="fa fa-question"></i>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <div class="col-md-12">
+                      <div id="methods">
+                        <button type="submit" id="method" class="btn btn-primary form-control">
+                          BLAST!
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+
+            <div
+              class="result" id="result"
+              style="display: none;">
+            </div>
+
+          </div> <!-- /container -->
+
+          {% include 'portal/sequenceserver_includes/modals.html' %}
+        {% else %}
+          <p>You don't currently have any projects set up.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

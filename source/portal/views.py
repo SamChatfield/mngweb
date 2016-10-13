@@ -48,6 +48,18 @@ def handle_limsfm_http_exception(request, e):
         return render(request, 'portal/project.html')
 
 
+def customer_blast(request, customer_uuid):
+    try:
+        customer = limsfm_get_contact(customer_uuid)
+    except requests.HTTPError as e:
+        return handle_limsfm_http_exception(request, e)
+    except requests.RequestException as e:
+        return handle_limsfm_request_exception(request, e)
+    else:
+        return render(
+            request, 'portal/customer_blast.html', {'customer': customer})
+
+
 def customer_projects(request, customer_uuid):
     try:
         customer = limsfm_get_contact(customer_uuid)

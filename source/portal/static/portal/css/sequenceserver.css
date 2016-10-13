@@ -1,0 +1,25 @@
+#result .alignment,
+.hit-links {
+    letter-spacing: 1px
+}
+
+#result .alignment,
+.report-statistics {
+    white-space: pre;
+    font-family: monospace
+}
+
+#result .alignment {
+    margin-top: 8px;
+    line-height: 12px
+}
+
+#result .collapse {
+    display: none;
+    visibility: hidden;
+}
+
+#result .collapse.in {
+    display: block;
+    visibility: visible;
+}

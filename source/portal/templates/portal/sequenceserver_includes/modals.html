@@ -1,0 +1,243 @@
+<div
+    id="error"
+    class="modal fade"
+    tabindex="-1">
+  </div> <!-- error -->
+
+  <div
+    class="modal fade" id="error-no-response">
+    <div
+      class="modal-dialog">
+      <div
+        class="modal-content">
+        <div
+          class="modal-header">
+          <h3>Server didn't respond</h3>
+        </div>
+
+        <div
+          class="modal-body">
+          <p>
+            Could be a temporary network issue, or the service might be
+            configured to "time out" long requests.
+          </p>
+
+          <p>
+            Please try again
+            later, or report to the admin or <a
+              href="https://groups.google.com/forum/?fromgroups#!forum/sequenceserver">SequenceServer
+              Google Group</a> (if you are the admin) if problem persists.
+          </p>
+        </div>
+
+        <div
+          class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-danger"
+            data-dismiss="modal">
+            Okay
+          </button>
+        </div>
+      </div>
+    </div>
+  </div> <!-- error-no-response -->
+
+  <div
+    class="modal fade" id="help"
+    tabindex="-1">
+    <div
+      class="modal-dialog modal-lg">
+      <div
+        class="modal-content">
+        <div
+          class="modal-header">
+          <h3>Advanced Options</h3>
+        </div>
+        <div
+          class="modal-body">
+          
+
+<h5>General Search Options</h5>
+<ul class="list-unstyled">
+  <li>
+<pre>-evalue &lt;Real&gt;
+  Expectation value (E) threshold for saving hits
+  Default = &#39;10&#39;</pre>
+  </li>
+  <li>
+<pre>-word_size &lt;Integer, &gt;=2&gt;
+  Word size for wordfinder algorithm</pre>
+  </li>
+  <li>
+<pre>-gapopen &lt;Integer&gt;
+  Cost to open a gap</pre>
+  </li>
+  <li>
+<pre>-gapextend &lt;Integer&gt;
+  Cost to extend a gap</pre>
+  </li>
+  <li>
+<pre>-matrix &lt;String&gt;
+  Scoring matrix name (normally BLOSUM62)</pre>
+  </li>
+  <li>
+<pre>-threshold &lt;Real, &gt;=0&gt;
+  Minimum word score such that the word is added to the BLAST lookup
+  table</pre>
+  </li>
+  <li>
+<pre>-comp_based_stats &lt;String&gt;
+  Use composition-based statistics for blastp / tblastn:
+      D or d: default (equivalent to 2)
+      0 or F or f: no composition-based statistics
+      1: Composition-based statistics as in NAR 29:2994-3005, 2001
+      2 or T or t : Composition-based score adjustment as in
+      Bioinformatics 21:902-911, 2005, conditioned on sequence
+      properties
+      3: Composition-based score adjustment as in Bioinformatics
+      21:902-911, 2005, unconditionally
+  For programs other than tblastn, must either be absent or be D, F
+  or 0
+  Default = `2&#39;</pre>
+  </li>
+  <li>
+<pre>-num_descriptions &lt;Integer, &gt;=0&gt;
+  Number of database sequences to show one-line descriptions for
+  Default = `500&#39;</pre>
+  </li>
+  <li>
+<pre> -num_alignments &lt;Integer, &gt;=0&gt;
+  Number of database sequences to show alignments for
+  Default = `250&#39;</pre>
+  </li>
+</ul>
+
+<br/>
+
+<h5>Query filtering options</h5>
+<ul class="list-unstyled">
+  <li>
+<pre>-seg &lt;String&gt;
+  Filter query sequence with SEG (Format: &#39;yes&#39;, &#39;window locut hicut&#39;,
+  or &#39;no&#39; to disable)
+  Default = `no&#39;</pre>
+  </li>
+  <li>
+<pre>-soft_masking &lt;Boolean&gt;
+  Apply filtering locations as soft masks
+  Default = `false&#39;</pre>
+  </li>
+  <li>
+<pre>-lcase_masking
+  Use lower case filtering in query and subject sequence(s)?</pre>
+  </li>
+</ul>
+
+<br/>
+
+<h5>Restrict search or results</h5>
+<ul class="list-unstyled">
+  <li>
+<pre>-gilist &lt;String&gt;
+  Restrict search of database to list of GI&#39;s
+    * Incompatible with:  negative_gilist, seqidlist, remote, subject,
+  subject_loc</pre>
+  </li>
+  <li>
+<pre>-seqidlist &lt;String&gt;
+  Restrict search of database to list of SeqId&#39;s
+    * Incompatible with:  gilist, negative_gilist, remote, subject,
+  subject_loc</pre>
+  </li>
+  <li>
+<pre>-negative_gilist &lt;String&gt;
+  Restrict search of database to everything except the listed GIs
+    * Incompatible with:  gilist, seqidlist, remote, subject,
+      subject_loc</pre>
+  </li>
+  <li>
+<pre>-entrez_query &lt;String&gt;
+  Restrict search with the given Entrez query
+    * Requires:  remote</pre>
+  </li>
+  <li>
+<pre>-db_soft_mask &lt;String&gt;
+  Filtering algorithm ID to apply to the BLAST database as soft masking
+    * Incompatible with:  subject, subject_loc</pre>
+  </li>
+  <li>
+<pre>-culling_limit &lt;Integer, &gt;=0&gt;
+  If the query range of a hit is enveloped by that of at least this
+  many higher-scoring hits, delete the hit
+    * Incompatible with:  best_hit_overhang, best_hit_score_edge</pre>
+  </li>
+  <li>
+<pre>-best_hit_overhang &lt;Real, (&gt;0 and &lt;0.5)&gt;
+  Best Hit algorithm overhang value (recommended value: 0.1)
+    * Incompatible with:  culling_limit</pre>
+  </li>
+  <li>
+<pre>-best_hit_score_edge &lt;Real, (&gt;0 and &lt;0.5)&gt;
+  Best Hit algorithm score edge value (recommended value: 0.1)
+    * Incompatible with:  culling_limit</pre>
+  </li>
+  <li>
+<pre>-max_target_seqs &lt;Integer, &gt;=1&gt;
+  Maximum number of aligned sequences to keep</pre>
+  </li>
+</ul>
+
+        </div>
+
+<div
+    class="modal" id="spinner"
+    tabindex="-1"
+    data-backdrop="static" data-keyboard="false">
+    <div
+      class="modal-dialog">
+      <div
+        class="modal-content">
+        <div
+          class="modal-body text-center">
+          <h2>
+            BLAST-ing ...
+          </h2>
+          <i class="fa fa-spinner fa-5x fa-spin"></i>
+          <p>
+            <br>
+            This could take some time depending on the size of your query and
+            database(s).
+          </p>
+        </div>
+      </div>
+    </div>
+  </div> <!-- spinner -->
+
+  <div
+    id="sequence-viewer" class="modal"
+    tabindex=-1>
+    <div
+      class="modal-dialog">
+      <div
+        class="modal-content">
+        <div
+          class="modal-header">
+          <h3>View and download sequence</h3>
+        </div>
+
+        <div
+          class="modal-body">
+        </div>
+
+        <div
+          class="spinner">
+          <i class="fa fa-spinner fa-3x fa-spin"></i>
+        </div>
+
+        <div
+          class="modal-footer">
+        </div>
+      </div>
+    </div>
+  </div> <!-- sequence viewing -->
