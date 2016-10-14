@@ -2,6 +2,7 @@ import csv
 
 from django.conf import settings
 from django.contrib import messages
+from django.http import HttpResponseRedirect, JsonResponse
 from django.template.loader import render_to_string
 
 from ipware.ip import get_real_ip
@@ -22,6 +23,12 @@ def messages_to_json(request):
         'includes/messages.html',
         {'messages': messages.get_messages(request)})
     return json
+
+
+def json_messages_or_redirect(request, url, status=200):
+    if request.is_ajax():
+        return JsonResponse(messages_to_json(request), status=status)
+    return HttpResponseRedirect(url)
 
 
 def request_should_post_to_slack(request):

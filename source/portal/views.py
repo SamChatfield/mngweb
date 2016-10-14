@@ -15,7 +15,7 @@ from .sample_sheet import create_sample_sheet, parse_sample_sheet
 from .services import limsfm_email_project_links, limsfm_get_project,\
     limsfm_update_projectline, limsfm_bulk_update_projectlines,\
     limsfm_get_contact
-from .utils import messages_to_json, request_should_post_to_slack
+from .utils import messages_to_json, json_messages_or_redirect, request_should_post_to_slack
 
 
 def handle_limsfm_request_exception(request, e):
@@ -151,13 +151,19 @@ def download_sample_sheet(request, uuid):
 def upload_sample_sheet(request, uuid):
     if request.method == "POST":
         form = UploadSampleSheetForm(request.POST, request.FILES)
+        redirect_url = reverse('project_detail', args=[uuid])
 
         if not form.is_valid():
             messages.error(request, "No file uploaded.")
-            return HttpResponseRedirect(reverse('project_detail', args=[uuid]))
+            return json_messages_or_redirect(request, redirect_url, status=400)
 
         filehandle = request.FILES['file']
-        sheet = filehandle.get_sheet()
+
+        try:
+            sheet = filehandle.get_sheet()
+        except NotImplementedError as e:
+            messages.error(request, "Invalid file uploaded. Please download the Excel template for your project.")
+            return json_messages_or_redirect(request, redirect_url, status=400)
 
         # Check headers
         if not (
@@ -166,8 +172,7 @@ def upload_sample_sheet(request, uuid):
         ):
             messages.error(request, "Invalid sample sheet headers. "
                                     "Have you used the correct template?")
-            return HttpResponseRedirect(
-                reverse('project_detail', args=[uuid]))
+            return json_messages_or_redirect(request, redirect_url, status=400)
 
         # Get project, index lines by sample ref
         try:
@@ -187,11 +192,7 @@ def upload_sample_sheet(request, uuid):
                 m = ("Error on row %(row)d: %(message)s" %
                      {'row': e['row'] + 1, 'message': e['message']})
                 messages.error(request, m)
-            if request.is_ajax():
-                return JsonResponse(messages_to_json(request), status=400)
-            else:
-                return HttpResponseRedirect(
-                    reverse('project_detail', args=[uuid]))
+            return json_messages_or_redirect(request, redirect_url, status=400)
 
         # Bulk update via API
         try:
@@ -212,8 +213,7 @@ def upload_sample_sheet(request, uuid):
             {'count': update_count}
         )
 
-        # Redirect
-        redirect_url = reverse('project_detail', args=[uuid])
+        # Redirect on success
         if request.is_ajax():
             return JsonResponse({'redirect_url': redirect_url})
         else:
