@@ -1,102 +1,117 @@
-// AJAX post
-function ajaxPost(form, resetOnSuccess, afterSuccess) {
-  // optional resetOnSuccess=true
-  if (resetOnSuccess === undefined) {
-        var resetOnSuccess = true;
-  }
+(function (mngweb, $, undefined) {
+  'use strict';
 
-  // Remove errors before new request
-  $('.has-error', form).removeClass('has-error');
-  $('.help-block', form).remove();
+  var ajaxForms = mngweb.ajaxForms || {};
 
-  // Update button to show in-progress spinner
-  $('button[type="submit"] i', form).addClass('fa-spin fa-spinner');
-
-  // Make the ajax request
-  $.ajax({
-    url : $(form).attr('action'),
-    type : $(form).attr('method'),
-    data : $(form).serialize(),
-
-    success : function(json) {
-      if (resetOnSuccess) {
-        $(form).trigger("reset");
-      }
-      if (afterSuccess !== undefined) {
-        afterSuccess(form);
-      }
-    },
-
-    error : function(xhr,errmsg,err) {
-      console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-      var json = JSON.parse(xhr.responseText);
-      if ('errors' in json) {
-        for (var error in json.errors) {
-          var id = '#id_' + error;
-          var parent = $(id, form).parents('.form-group');
-          parent.addClass('has-error');
-          if ($('.help-block', parent).length) {
-            $('.help-block', parent).text(json.errors[error]);
-          } else {
-            parent.append('<span class="help-block">' + json.errors[error] + '</span>');
-          }
-        }
-      }
-    },
-
-    complete : function(xhr, status) {
-      $('button[type="submit"] i', form).removeClass('fa-spin fa-spinner');
-      var json = JSON.parse(xhr.responseText);
-      $('.form-messages', form).empty(); // clear messages div
-      if ('messages_html' in json) {
-        $('.form-messages', form).html(json.messages_html);
-      }
-      $('.form-messages', form).children().hide().fadeIn(500).delay(4000).fadeOut(500);
-    }
-  });
-}
-
-$(function() {
   /*
-  Ajax CSRF
+  ajaxForms: public methods, properties
   */
 
-  // Create a header with csrftoken
+  ajaxForms.formPOST = function (form, resetOnSuccess, afterSuccess) {
+    form = $(form);
+    var teamContainer = form.closest('.team-container');
 
-  function getCookie(name) {
+    // optional resetOnSuccess=true
+    if (resetOnSuccess === undefined) {
+      resetOnSuccess = true;
+    }
+
+    // Remove errors before new request
+    form.find('.has-error').removeClass('has-error');
+    form.find('.help-block').remove();
+
+    // Update button to show in-progress spinner
+    form.find('button[type="submit"] i').addClass('fa-spin fa-spinner');
+
+    // Make the ajax request
+    $.ajax({
+      url: form.attr('action'),
+      type: form.attr('method'),
+      data: form.serialize(),
+
+      success: function() {
+        if (resetOnSuccess) {
+          form.trigger('reset');
+        }
+        if (afterSuccess !== undefined) {
+          afterSuccess(form);
+        }
+      },
+
+      error: function(xhr) {
+        var json, error, field, formGroup, helpBlock;
+        console.log(xhr.status + ': ' + xhr.responseText); // provide a bit more info about the error to the console
+        json = JSON.parse(xhr.responseText);
+        if ('errors' in json) {
+          for (error in json.errors) {
+            field = form.find('[name="' + error + '"]');
+            formGroup = field.closest('.form-group');
+            formGroup.addClass('has-error');
+            helpBlock = formGroup.find('.help-block');
+            if (helpBlock.length) {
+              helpBlock.text(json.errors[error]);
+            } else {
+              formGroup.append('<span class="help-block">' + json.errors[error] + '</span>');
+            }
+          }
+        }
+      },
+
+      complete: function(xhr, status) {
+        var json = JSON.parse(xhr.responseText);
+        var messagesContainer = form.find('.form-messages');
+        form.find('button[type="submit"] i').removeClass('fa-spin fa-spinner');
+        if ('messages_html' in json) {
+          messagesContainer.html(json.messages_html);
+        }
+        messagesContainer.children().hide().fadeIn(500).delay(10000).fadeOut(500);
+      }
+    });
+  };
+
+  mngweb.ajaxForms = ajaxForms;
+
+
+  /*
+  AJAX CSRF setup
+  */
+
+  var getCookie = function (name) {
     var cookieValue = null;
-    if (document.cookie && document.cookie != '') {
-      var cookies = document.cookie.split(';');
+    if (document.cookie && document.cookie !== "") {
+      var cookies = document.cookie.split(";");
       for (var i = 0; i < cookies.length; i++) {
         var cookie = jQuery.trim(cookies[i]);
         // Does this cookie string begin with the name we want?
-        if (cookie.substring(0, name.length + 1) == (name + '=')) {
+        if (cookie.substring(0, name.length + 1) == (name + "=")) {
           cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
           break;
         }
       }
     }
     return cookieValue;
-  }
-  var csrftoken = getCookie('csrftoken');
+  };
 
-  function csrfSafeMethod(method) {
+  var csrfSafeMethod = function (method) {
     // these HTTP methods do not require CSRF protection
     return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-  }
-  function sameOrigin(url) {
+  };
+
+  var sameOrigin = function (url) {
     // test that a given url is a same-origin URL
     // url could be relative or scheme relative or absolute
     var host = document.location.host; // host + port
     var protocol = document.location.protocol;
-    var sr_origin = '//' + host;
+    var sr_origin = "//" + host;
     var origin = protocol + sr_origin;
     // Allow absolute or scheme relative URLs to same origin
-    return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
-      (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
-      // or any other URL that isn't scheme relative or absolute i.e relative.
+    return (url == origin || url.slice(0, origin.length + 1) == origin + "/") ||
+      (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + "/") ||
+      // or any other URL that isn"t scheme relative or absolute i.e relative.
       !(/^(\/\/|http:|https:).*/.test(url));
-  }
+  };
+
+  var csrftoken = getCookie("csrftoken");
 
   $.ajaxSetup({
     beforeSend: function(xhr, settings) {
@@ -104,19 +119,9 @@ $(function() {
         // Send the token to same-origin, relative URLs only.
         // Send the token only if the method warrants CSRF protection
         // Using the CSRFToken value acquired earlier
-        xhr.setRequestHeader('X-CSRFToken', csrftoken);
+        xhr.setRequestHeader("X-CSRFToken", csrftoken);
       }
     }
   });
 
-  // AJAX post on submit
-  $(document).on('submit', '#contact-form', function(event){
-    event.preventDefault();
-    ajaxPost(this);
-  });
-
-  $(document).on('submit', '#email-link-form', function(event){
-    event.preventDefault();
-    ajaxPost(this);
-  });
-});
+})(window.mngweb = window.mngweb || {}, jQuery);

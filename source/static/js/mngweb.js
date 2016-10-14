@@ -1,38 +1,56 @@
-$(function() {
-
-  // Tooltips init
-  $('[data-toggle="tooltip"]').tooltip()
-
-  // Modals init
-  $('.modal').modal({show: false})
+(function (mngweb, $, undefined) {
+  'use strict';
 
   /*
-  Popovers
+  Declare mngweb public methods, properties here.
+  e.g. mnweb.myMethod = function () { return 'something' };
   */
 
-  // Initialise popovers, take content from hidden child divs
-  $('[data-toggle="popover"]').popover({
-    container: 'body',
-    html : true,
-    content: function() {
-      var content = $(this).attr("data-popover-content");
-      return $(content).children(".popover-body").html();
-    },
-    title: function() {
-      var title = $(this).attr("data-popover-content");
-      return $(title).children(".popover-heading").html();
-    }
+
+  /*
+  AJAX form event handlers
+  */
+  $(document).on("submit", "#contact-form, #email-link-form", function(event){
+    event.preventDefault();
+    mngweb.ajaxForms.formPOST(this);
   });
 
-  // Close popovers when clicking outside
-  $('body').on('click', function (e) {
-    $('[data-toggle="popover"]').each(function () {
-        //the 'is' for buttons that trigger popups
-        //the 'has' for icons within a button that triggers a popup
-        if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
-            $(this).popover('hide');
-        }
+  /*
+  jQuery document ready:
+  */
+  $(document).ready(function () {
+
+    // Tooltips init
+    $("[data-toggle='tooltip']").tooltip();
+
+    // Modals init
+    $('.modal').modal({show: false});
+
+    // Initialise popovers, take content from hidden child divs
+    $('[data-toggle="popover"]').popover({
+      container: 'body',
+      html: true,
+      content: function () {
+        var content = $(this).attr('data-popover-content');
+        return $(content).children('.popover-body').html();
+      },
+      title: function() {
+        var title = $(this).attr('data-popover-content');
+        return $(title).children('.popover-heading').html();
+      }
     });
+
+    // Close popovers when clicking outside
+    $('body').on('click', function (e) {
+      $('[data-popover-content="#project-tracker-popover-content"]').each(function () {
+        //the "is" for buttons that trigger popups
+        //the "has" for icons within a button that triggers a popup
+        if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+          $(this).popover('hide');
+        }
+      });
+    });
+
   });
   
-});
+})(window.mngweb = window.mngweb || {}, jQuery);
