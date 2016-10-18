@@ -24,59 +24,54 @@ def handle_limsfm_request_exception(request, e):
     messages.error(request, ERROR_MESSAGE)
     slack_message('portal/slack/limsfm_request_exception.slack',
                   {'e': e, 'path': request.path})
-
-    if request.is_ajax():
-        return JsonResponse(messages_to_json(request), status=503)
-    else:
-        return render(request, 'portal/project.html')
+    print(e)
+    return 503  # http status
 
 
 def handle_limsfm_http_exception(request, e):
     ERROR_MESSAGE = ("An unexpected error has occured. "
                      "Please contact info@microbesng.uk")
-
     if e.response.status_code == 404:
         raise Http404
     else:
         messages.error(request, ERROR_MESSAGE)
         slack_message('portal/slack/limsfm_http_exception.slack',
                       {'e': e, 'path': request.path})
-
-    if request.is_ajax():
-        return JsonResponse(messages_to_json(request), status=500)
-    else:
-        return render(request, 'portal/project.html')
+    print(e)
+    return 500  # http status
 
 
 def customer_projects(request, customer_uuid):
+    customer = None
     try:
         customer = limsfm_get_contact(customer_uuid)
     except requests.HTTPError as e:
-        return handle_limsfm_http_exception(request, e)
+        handle_limsfm_http_exception(request, e)
     except requests.RequestException as e:
-        return handle_limsfm_request_exception(request, e)
-    else:
+        handle_limsfm_request_exception(request, e)
+    finally:
         return render(
             request, 'portal/customer_projects.html', {'customer': customer})
 
 
 def project_detail(request, uuid):
+    project = None
     try:
         project = limsfm_get_project(uuid)
     except requests.HTTPError as e:
-        return handle_limsfm_http_exception(request, e)
+        handle_limsfm_http_exception(request, e)
     except requests.RequestException as e:
-        return handle_limsfm_request_exception(request, e)
+        handle_limsfm_request_exception(request, e)
     else:
         if request_should_post_to_slack(request):
             slack_message('portal/slack/limsfm_project_detail_access.slack',
                           {'request': request, 'project': project})
-        return render(
-            request, 'portal/project.html',
-            {
-                'project': project,
-                'upload_sample_sheet_form': UploadSampleSheetForm()
-            })
+    return render(
+        request, 'portal/project.html',
+        {
+            'project': project,
+            'upload_sample_sheet_form': UploadSampleSheetForm()
+        })
 
 
 def projectline_update(request, project_uuid, projectline_uuid):
@@ -87,13 +82,16 @@ def projectline_update(request, project_uuid, projectline_uuid):
             try:
                 limsfm_update_projectline(project_uuid, projectline_uuid,
                                           form.cleaned_data)
+            except requests.HTTPError as e:
+                status = handle_limsfm_http_exception(request, e)
             except requests.RequestException as e:
-                return handle_limsfm_request_exception(request, e)
+                status = handle_limsfm_request_exception(request, e)
             else:
                 slack_message('portal/slack/limsfm_projectline_update.slack',
                               {'form': form})
                 messages.success(request, "Saved")
-                return JsonResponse(messages_to_json(request))
+                status = 200
+            return JsonResponse(messages_to_json(request), status=status)
         else:
             for nfe in form.non_field_errors():
                 messages.error(request, nfe)
@@ -120,11 +118,12 @@ def project_email_link(request):
             try:
                 limsfm_email_project_links(form.cleaned_data['email'])
             except requests.RequestException as e:
-                return handle_limsfm_request_exception(request, e)
-
-            messages.success(request, SUCCESS_MESSAGE)
+                status = handle_limsfm_request_exception(request, e)
+            else:
+                messages.success(request, SUCCESS_MESSAGE)
+                status = 200
             if request.is_ajax():
-                return JsonResponse(messages_to_json(request))
+                return JsonResponse(messages_to_json(request), status=status)
             else:
                 HttpResponseRedirect(reverse('project_email_link'))
 
@@ -178,9 +177,11 @@ def upload_sample_sheet(request, uuid):
         try:
             project = limsfm_get_project(uuid)
         except requests.HTTPError as e:
-            return handle_limsfm_http_exception(request, e)
+            status = handle_limsfm_http_exception(request, e)
+            return JsonResponse(messages_to_json(request), status=status)
         except requests.RequestException as e:
-            return handle_limsfm_request_exception(request, e)
+            status = handle_limsfm_request_exception(request, e)
+            return JsonResponse(messages_to_json(request), status=status)
 
         # Parse sample sheet
         parsed = parse_sample_sheet(project, sheet)
@@ -198,24 +199,28 @@ def upload_sample_sheet(request, uuid):
         try:
             limsfm_bulk_update_projectlines(uuid, parsed['updates'])
         except requests.HTTPError as e:
-            return handle_limsfm_http_exception(request, e)
+            status = handle_limsfm_http_exception(request, e)
         except requests.RequestException as e:
-            return handle_limsfm_request_exception(request, e)
+            status = handle_limsfm_request_exception(request, e)
+        else:
+            status = 200
+            update_count = len(parsed['updates'])
+            slack_message(
+                'portal/slack/limsfm_upload_sample_sheet_success.slack',
+                {'project': project, 'update_count': update_count})
+            messages.success(
+                request,
+                "%(count)d rows successfully imported." %
+                {'count': update_count}
+            )
 
-        # Report success
-        update_count = len(parsed['updates'])
-        slack_message(
-            'portal/slack/limsfm_upload_sample_sheet_success.slack',
-            {'project': project, 'update_count': update_count})
-        messages.success(
-            request,
-            "%(count)d rows successfully imported." %
-            {'count': update_count}
-        )
-
-        # Redirect on success
+        # Return
         if request.is_ajax():
-            return JsonResponse({'redirect_url': redirect_url})
+            if status == 200:
+                json_data = {'redirect_url': redirect_url}
+            else:
+                json_data = messages_to_json(request)
+            return JsonResponse(json_data, status=status)
         else:
             return HttpResponseRedirect(redirect_url)
 

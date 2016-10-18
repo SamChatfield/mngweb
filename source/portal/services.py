@@ -164,23 +164,31 @@ def limsfm_get_contact(uuid):
     contact = response.json()['data'][0]
 
     # Get related projects
-    response = limsfm_request('layout/project_api', 'get', {
-        'RFMsF1': 'contact_id',
-        'RFMsV1': contact['contact_id'],
-        'RFMmax': 0
-    })
-    project_records = response.json()['data']
-    contact['projects'] = []
-    for record in project_records:
-        contact['projects'].append(project_from_limsfm(record))
+    try:
+        response = limsfm_request('layout/project_api', 'get', {
+            'RFMsF1': 'contact_id',
+            'RFMsV1': contact['contact_id'],
+            'RFMmax': 0
+        })
+    except requests.HTTPError as e:
+        if (e.response.status_code == 500 and
+                e.response.headers['X-RESTfm-FM-Status'] == '401'):
+            contact['projects'] = []  # no projects found for contact
+        else:
+            raise  # unexpected
+    else:
+        project_records = response.json()['data']
+        contact['projects'] = []
+        for record in project_records:
+            contact['projects'].append(project_from_limsfm(record))
 
-    contact['projects'].sort(
-        key=lambda k: (
-            0 - datetime.combine(
-                k['barcodes_sent_date'], datetime.min.time()).timestamp(),
-            k['first_plate_barcode'],
-            k['reference'],
-        ))
+        contact['projects'].sort(
+            key=lambda k: (
+                0 - datetime.combine(
+                    k['barcodes_sent_date'], datetime.min.time()).timestamp(),
+                k['first_plate_barcode'],
+                k['reference'],
+            ))
 
     return contact
 
