@@ -1,12 +1,10 @@
 {% extends "quote/base.html" %}
-{% load bootstrap3 wagtailcore_tags static %}
+{% load bootstrap3 wagtailcore_tags static pipeline %}
 
 {% block title %}Quote Request Form{% endblock %}
 
 {% block extra_js %}
-  <script src="{% static 'country/js/typeahead.js' %}"></script>
-  <script src="{% static 'organisation/js/typeahead.js' %}"></script>
-  <script src="{% static 'quote/js/quoterequest.js' %}"></script>
+  {% javascript 'mngweb_quote' %}
 {% endblock %}
 
 {% block body_class %}template-quoterequestformpage{% endblock %}

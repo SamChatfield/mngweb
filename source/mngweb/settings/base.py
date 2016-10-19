@@ -180,7 +180,29 @@ PIPELINE = {
                 'bower_components/typeahead.js/dist/typeahead.bundle.js',
             ),
             'output_filename': 'js/libs.min.js'
-        }
+        },
+        'mngweb': {
+            'source_filenames': (
+                'js/mngweb.js',
+                'js/ajax-forms.js',
+                'country/js/typeahead.js',
+                'taxon/js/typeahead.js',
+                'organisation/js/typeahead.js',
+            ),
+            'output_filename': 'js/mngweb.min.js'
+        },
+        'mngweb_portal': {
+            'source_filenames': (
+                'portal/js/project.js',
+            ),
+            'output_filename': 'portal/js/portal.min.js'
+        },
+        'mngweb_quote': {
+            'source_filenames': (
+                'quote/js/quoterequest.js',
+            ),
+            'output_filename': 'quote/js/quote.min.js'
+        },
     }
 }
 

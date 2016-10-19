@@ -53,8 +53,7 @@
     {# Global javascript #}
     {% bootstrap_javascript jquery=1 %}
     {% javascript 'libraries' %}
-    <script src="{% static 'js/ajax-forms.js' %}"></script>
-    <script src="{% static 'js/mngweb.js' %}"></script>
+    {% javascript 'mngweb' %}
     <script src="https://use.fontawesome.com/ab6fe5d3cc.js"></script>
 
     {% block extra_js %}

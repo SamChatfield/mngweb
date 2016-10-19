@@ -1,11 +1,9 @@
 {% extends "portal/base.html" %}
-{% load bootstrap3 portal_tags static %}
+{% load bootstrap3 portal_tags static pipeline %}
 
 {% block extra_js %}
   {{ block.super }}
-  <script src="{% static 'portal/js/project.js' %}"></script>
-  <script src="{% static 'taxon/js/typeahead.js' %}"></script>
-  <script src="{% static 'country/js/typeahead.js' %}"></script>
+  {% javascript 'mngweb_portal' %}
 
   {% if project.results_url and project.data_sent_date %}
     <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
