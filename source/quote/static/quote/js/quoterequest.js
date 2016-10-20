@@ -16,7 +16,7 @@ $(function() {
       unitPrice = 100;
     } else {
       switch (fundingType) {
-        case 'Commercial':
+        case 'Industry':
           unitPrice = 100;
           break;
         case 'Non-commercial':
