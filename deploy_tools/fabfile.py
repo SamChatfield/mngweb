@@ -14,7 +14,7 @@ def deploy():
     _update_virtualenv(site_folder)
     _update_static_files(source_folder)
     _update_database(source_folder)
-    _update_organisations(source_folder)
+    #_update_organisations(source_folder)
     _restart_gunicorn(env.host)
     _restart_nginx()
 

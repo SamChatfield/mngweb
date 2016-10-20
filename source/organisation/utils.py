@@ -11,6 +11,7 @@ def update_organisations():
         organisations = limsfm_get_organisations()
     except Exception as e:
         print("An exception occured: %s" % e)
+        return
 
     print("Updating local database table...")
     created_count = 0

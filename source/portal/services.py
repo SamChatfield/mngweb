@@ -284,7 +284,11 @@ def limsfm_get_countries():
 def limsfm_get_organisations():
     """Return Organisations as a list of dictionaries"""
     uri = ('layout/organisation_api')
-    request_args = {'RFMmax': 0}
+    request_args = {
+        'RFMmax': 0,
+        'RFMsF1': 'organisationtype_id',
+        'RFMsV1': '1',
+    }
     response = limsfm_request(uri, 'get', request_args)
 
     return response.json()['data']
