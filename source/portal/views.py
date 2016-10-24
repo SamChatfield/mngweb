@@ -3,11 +3,12 @@ import requests
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseBadRequest,\
-    HttpResponseRedirect, JsonResponse, Http404
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, Http404
+from django.views.decorators.http import require_POST
 
 from django_slack import slack_message
 from openpyxl.writer.excel import save_virtual_workbook
+from mngweb.decorators import require_ajax
 
 from .forms import EmailLinkForm, ProjectLineForm, UploadSampleSheetForm
 from .models import EnvironmentalSampleType, HostSampleType
@@ -78,28 +79,31 @@ def projectline_update(request, project_uuid, projectline_uuid):
     if request.method == 'POST' and request.is_ajax():
         form = ProjectLineForm(request.POST)
 
-        if form.is_valid():
-            try:
-                limsfm_update_projectline(project_uuid, projectline_uuid,
-                                          form.cleaned_data)
-            except requests.HTTPError as e:
-                status = handle_limsfm_http_exception(request, e)
-            except requests.RequestException as e:
-                status = handle_limsfm_request_exception(request, e)
-            else:
-                slack_message('portal/slack/limsfm_projectline_update.slack',
-                              {'form': form})
-                messages.success(request, "Saved")
-                status = 200
-            return JsonResponse(messages_to_json(request), status=status)
+
+@require_POST
+@require_ajax
+def projectline_update(request, project_uuid, projectline_uuid):
+    form = ProjectLineForm(request.POST)
+    if form.is_valid():
+        try:
+            limsfm_update_projectline(project_uuid, projectline_uuid,
+                                      form.cleaned_data)
+        except requests.HTTPError as e:
+            status = handle_limsfm_http_exception(request, e)
+        except requests.RequestException as e:
+            status = handle_limsfm_request_exception(request, e)
         else:
-            for nfe in form.non_field_errors():
-                messages.error(request, nfe)
-            json = messages_to_json(request)
-            json['errors'] = form.errors
-            return JsonResponse(json, status=400)
+            slack_message('portal/slack/limsfm_projectline_update.slack',
+                          {'form': form})
+            messages.success(request, "Saved")
+            status = 200
+        return JsonResponse(messages_to_json(request), status=status)
     else:
-        return JsonResponse({'error': 'Bad request'}, status=400)
+        for nfe in form.non_field_errors():
+            messages.error(request, nfe)
+        json = messages_to_json(request)
+        json['errors'] = form.errors
+        return JsonResponse(json, status=400)
 
 
 def project_email_link(request):
@@ -147,86 +151,82 @@ def download_sample_sheet(request, uuid):
     return response
 
 
+@require_POST
 def upload_sample_sheet(request, uuid):
-    if request.method == "POST":
-        form = UploadSampleSheetForm(request.POST, request.FILES)
-        redirect_url = reverse('project_detail', args=[uuid])
+    form = UploadSampleSheetForm(request.POST, request.FILES)
+    redirect_url = reverse('project_detail', args=[uuid])
 
-        if not form.is_valid():
-            messages.error(request, "No file uploaded.")
-            return json_messages_or_redirect(request, redirect_url, status=400)
+    if not form.is_valid():
+        messages.error(request, "No file uploaded.")
+        return json_messages_or_redirect(request, redirect_url, status=400)
 
-        filehandle = request.FILES['file']
+    filehandle = request.FILES['file']
 
-        try:
-            sheet = filehandle.get_sheet()
-        except NotImplementedError as e:
-            messages.error(request, "Invalid file uploaded. Please download the Excel template for your project.")
-            return json_messages_or_redirect(request, redirect_url, status=400)
+    try:
+        sheet = filehandle.get_sheet()
+    except NotImplementedError as e:
+        messages.error(request, "Invalid file uploaded. Please download the Excel template for your project.")
+        return json_messages_or_redirect(request, redirect_url, status=400)
 
-        # Check headers
-        if not (
-            len(sheet.row[2]) == 18 and
-            sheet[2, 17] == 'Further details'
-        ):
-            messages.error(request, "Invalid sample sheet headers. "
-                                    "Have you used the correct template?")
-            return json_messages_or_redirect(request, redirect_url, status=400)
+    # Check headers
+    if not (
+        len(sheet.row[2]) == 18 and
+        sheet[2, 17] == 'Further details'
+    ):
+        messages.error(request, "Invalid sample sheet headers. "
+                                "Have you used the correct template?")
+        return json_messages_or_redirect(request, redirect_url, status=400)
 
-        # Get project, index lines by sample ref
-        try:
-            project = limsfm_get_project(uuid)
-        except requests.HTTPError as e:
-            status = handle_limsfm_http_exception(request, e)
-            return JsonResponse(messages_to_json(request), status=status)
-        except requests.RequestException as e:
-            status = handle_limsfm_request_exception(request, e)
-            return JsonResponse(messages_to_json(request), status=status)
+    # Get project, index lines by sample ref
+    try:
+        project = limsfm_get_project(uuid)
+    except requests.HTTPError as e:
+        status = handle_limsfm_http_exception(request, e)
+        return JsonResponse(messages_to_json(request), status=status)
+    except requests.RequestException as e:
+        status = handle_limsfm_request_exception(request, e)
+        return JsonResponse(messages_to_json(request), status=status)
 
-        # Parse sample sheet
-        parsed = parse_sample_sheet(project, sheet)
+    # Parse sample sheet
+    parsed = parse_sample_sheet(project, sheet)
 
-        # Errors found
-        errors = parsed['errors']
-        if errors:
-            for e in errors[0:10]:  # Only report first 10
-                m = ("Error on row %(row)d: %(message)s" %
-                     {'row': e['row'] + 1, 'message': e['message']})
-                messages.error(request, m)
-            return json_messages_or_redirect(request, redirect_url, status=400)
+    # Errors found
+    errors = parsed['errors']
+    if errors:
+        for e in errors[0:10]:  # Only report first 10
+            m = ("Error on row %(row)d: %(message)s" %
+                 {'row': e['row'] + 1, 'message': e['message']})
+            messages.error(request, m)
+        return json_messages_or_redirect(request, redirect_url, status=400)
 
-        # Bulk update via API
-        try:
-            limsfm_bulk_update_projectlines(uuid, parsed['updates'])
-        except requests.HTTPError as e:
-            status = handle_limsfm_http_exception(request, e)
-        except requests.RequestException as e:
-            status = handle_limsfm_request_exception(request, e)
-        else:
-            status = 200
-            update_count = len(parsed['updates'])
-            slack_message(
-                'portal/slack/limsfm_upload_sample_sheet_success.slack',
-                {'project': project, 'update_count': update_count})
-            messages.success(
-                request,
-                "%(count)d rows successfully imported." %
-                {'count': update_count}
-            )
-
-        # Return
-        if request.is_ajax():
-            if status == 200:
-                json_data = {'redirect_url': redirect_url}
-            else:
-                json_data = messages_to_json(request)
-            return JsonResponse(json_data, status=status)
-        else:
-            return HttpResponseRedirect(redirect_url)
-
+    # Bulk update via API
+    try:
+        limsfm_bulk_update_projectlines(uuid, parsed['updates'])
+    except requests.HTTPError as e:
+        status = handle_limsfm_http_exception(request, e)
+    except requests.RequestException as e:
+        status = handle_limsfm_request_exception(request, e)
     else:
-        # Not POST
-        return HttpResponseBadRequest()
+        status = 200
+        update_count = len(parsed['updates'])
+        slack_message(
+            'portal/slack/limsfm_upload_sample_sheet_success.slack',
+            {'project': project, 'update_count': update_count})
+        messages.success(
+            request,
+            "%(count)d rows successfully imported." %
+            {'count': update_count}
+        )
+
+    # Return
+    if request.is_ajax():
+        if status == 200:
+            json_data = {'redirect_url': redirect_url}
+        else:
+            json_data = messages_to_json(request)
+        return JsonResponse(json_data, status=status)
+    else:
+        return HttpResponseRedirect(redirect_url)
 
 
 def hostsampletype_typeahead(request):
