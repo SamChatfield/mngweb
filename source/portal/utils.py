@@ -25,6 +25,14 @@ def messages_to_json(request):
     return json
 
 
+def form_errors_to_json(request, form):
+    for nfe in form.non_field_errors():
+        messages.error(request, nfe)
+    json = messages_to_json(request)
+    json['errors'] = form.errors
+    return json
+
+
 def json_messages_or_redirect(request, url, status=200):
     if request.is_ajax():
         return JsonResponse(messages_to_json(request), status=status)
