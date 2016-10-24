@@ -15,8 +15,8 @@ from .models import EnvironmentalSampleType, HostSampleType
 from .sample_sheet import create_sample_sheet, parse_sample_sheet
 from .services import limsfm_email_project_links, limsfm_get_project,\
     limsfm_update_projectline, limsfm_bulk_update_projectlines,\
-    limsfm_get_contact
-from .utils import messages_to_json, json_messages_or_redirect, request_should_post_to_slack
+    limsfm_get_contact 
+from .utils import messages_to_json, json_messages_or_redirect, request_should_post_to_slack, form_errors_to_json
 
 
 def handle_limsfm_request_exception(request, e):
@@ -99,10 +99,7 @@ def projectline_update(request, project_uuid, projectline_uuid):
             status = 200
         return JsonResponse(messages_to_json(request), status=status)
     else:
-        for nfe in form.non_field_errors():
-            messages.error(request, nfe)
-        json = messages_to_json(request)
-        json['errors'] = form.errors
+        json = form_errors_to_json(request, form)
         return JsonResponse(json, status=400)
 
 
