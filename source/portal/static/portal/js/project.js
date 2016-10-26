@@ -101,6 +101,16 @@
   mngweb.portal = portal;
 
   /*
+  AJAX ENA form submission
+  */
+  $(document).on('submit', 'form.project-ena-form', function (event) {
+    event.preventDefault();
+    mngweb.ajaxForms.formPOST(this, false, function(form) {
+      console.log("Project ENA data submitted");
+    });
+  });
+
+  /*
   AJAX sample form submission
   */
   $(document).on('submit', 'form.projectline-form', function(event) {

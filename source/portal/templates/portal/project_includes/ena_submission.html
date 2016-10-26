@@ -1,0 +1,40 @@
+{% load bootstrap3 static %}
+
+<div class="row">
+  <div class="col-md-8">
+    <h2>ENA Submission</h2>
+    <div class="panel panel-danger">
+      
+      <div class="panel-body">
+        <p>The MicrobesNG project is committed to open science and a key component of our grant funding is that we will submit data to the European Nucleotide Archive following a 12 month embargo. This forms part of our terms for customers taking advantace of our discounted rates, but it does not apply to our full price confidential or industry rates.</p>
+        <p>We won't submit your data to the ENA until at least 12 months following data delivery, and we will forewarn you of submission closer to the time. We do require a project title and description before we can proceed with your project. This will form part of the ENA submission, and you will be able to update this at any time prior to publication.</p>
+      </div>
+    </div>
+    <form method="post" action="{% url 'project_update_ena' project.uuid %}" class="project-ena-form">
+      {% csrf_token %}
+      {% bootstrap_form project_ena_form %}
+      {% buttons %}
+        <button type="submit" class="btn btn-success button-lg">
+          <i class="fa fa-floppy-o"></i> Update
+        </button>
+      {% endbuttons %}
+      <div class="form-messages">
+        {# placeholder for ajax messages #}
+      </div>
+    </form>
+  </div>
+  <div class="col-md-4 ena-sidebar">
+    <div class="panel ena-key-points">
+      <div class="panel-body">
+        <h4>Key points</h4>
+        <ul>
+          <li>For projects paid for at BBSRC or Non-commercial discounted rates, your data will be eligible for automatic submission to the ENA at 12 months after data delivery.</li>
+          <li>You will be reminded by email at 30 days prior to submission and asked to review your meta-data.</li>
+          <li>You will have the opportunity to upgrade to a confidential status (at additional cost) prior to submission.</li>
+          <li>Confidential or industry projects will not be submitted unless requested.</li>
+          <li>We do require that all requested meta-data is completed in full.</li>
+      </div>
+    </div>
+    <img class="ena-logo" src="{% static 'images/ena-logo-288.png' %}" alt="European Nucleotide Archive logo" title="European Nucleotide Archive (ENA)">
+  </div>
+</div>

@@ -60,42 +60,59 @@
 
     {% if project %}
 
-      {% if project.results_url and project.data_sent_date %}
-        <div class="row">
-          <div class="col-md-12">
-            <h2>Your Results</h2>
+      <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#project-summary">Summary</a></li>
+        {% if project.show_results %}
+          <li><a data-toggle="tab" href="#project-results">Results</a></li>
+        {% endif %}
+        <li><a data-toggle="tab" href="#project-ena-submission">ENA Submission</a></li>
+      </ul>
+
+      <div class="tab-content">
+
+        {# project-summary tab content #}
+        <div id="project-summary" class="tab-pane fade in active">
+          <div class="row">
+            <div class="col-md-6">
+              {% include "portal/project_includes/summary.html" %}
+            </div>
+            <div class="col-md-6">
+              {% include "portal/project_includes/sample_preparation.html" %}
+            </div>
+          </div>
+
+          {% if project.meta_data_status == "Open" %}
+            <div class="row">
+              <div class="col-md-12">
+                {% include "portal/project_includes/sample_data_entry_panel.html" %}
+              </div>
+            </div>
+          {% endif %}
+
+          <div class="row">
+            <div class="col-md-12">
+              <h2>Your Samples</h2>
+              {% include "portal/project_includes/sample_info.html" %}
+            </div>
+          </div>
+        </div>
+        {# end project-summary tab content #}
+
+        {% if project.show_results %}
+          <div id="project-results" class="tab-pane fade">
             {% include "portal/project_includes/results.html" %}
           </div>
-        </div>
-      {% endif %}
-
-      <div class="row">
-        <div class="col-md-6">
-          {% include "portal/project_includes/summary.html" %}
-        </div>
-        {% if project.meta_data_status == "Open" %}
-          <div class="col-md-6">
-            {% include "portal/project_includes/sample_preparation.html" %}
-          </div>
         {% endif %}
-      </div>
 
-      {% if project.meta_data_status == "Open" %}
-        <div class="row">
-          <div class="col-md-12">
-            {% include "portal/project_includes/sample_data_entry_panel.html" %}
-          </div>
+        <div id="project-ena-submission" class="tab-pane fade">
+          {% include "portal/project_includes/ena_submission.html" %}
         </div>
-      {% endif %}
 
-
-      <div class="row">
-        <div class="col-md-12">
-          <h2>Your Samples</h2>
-          {% include "portal/project_includes/sample_info.html" %}
-        </div>
+      {# end tab-content #}
       </div>
     {% endif %}
 
+  {# end if project #}
   </div>
+  }
 {% endblock %}

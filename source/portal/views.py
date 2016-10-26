@@ -10,12 +10,12 @@ from django_slack import slack_message
 from openpyxl.writer.excel import save_virtual_workbook
 from mngweb.decorators import require_ajax
 
-from .forms import EmailLinkForm, ProjectLineForm, UploadSampleSheetForm
+from .forms import EmailLinkForm, ProjectEnaForm, ProjectLineForm, UploadSampleSheetForm
 from .models import EnvironmentalSampleType, HostSampleType
 from .sample_sheet import create_sample_sheet, parse_sample_sheet
 from .services import limsfm_email_project_links, limsfm_get_project,\
     limsfm_update_projectline, limsfm_bulk_update_projectlines,\
-    limsfm_get_contact 
+    limsfm_get_contact, limsfm_update_project
 from .utils import messages_to_json, json_messages_or_redirect, request_should_post_to_slack, form_errors_to_json
 
 
@@ -67,17 +67,35 @@ def project_detail(request, uuid):
         if request_should_post_to_slack(request):
             slack_message('portal/slack/limsfm_project_detail_access.slack',
                           {'request': request, 'project': project})
+    project_ena_form = ProjectEnaForm(initial=project)
     return render(
         request, 'portal/project.html',
         {
             'project': project,
+            'project_ena_form': project_ena_form,
             'upload_sample_sheet_form': UploadSampleSheetForm()
         })
 
 
-def projectline_update(request, project_uuid, projectline_uuid):
-    if request.method == 'POST' and request.is_ajax():
-        form = ProjectLineForm(request.POST)
+@require_POST
+@require_ajax
+def project_update_ena(request, uuid):
+    form = ProjectEnaForm(request.POST)
+    if form.is_valid():
+        try:
+            limsfm_update_project(uuid, form.cleaned_data)
+        except requests.HTTPError as e:
+            status = handle_limsfm_http_exception(request, e)
+        except requests.RequestException:
+            status = handle_limsfm_request_exception(request, e)
+        else:
+            slack_message('portal/slack/limsfm_project_ena_update.slack',
+                          {'uuid': uuid, 'form': form})
+            messages.success(request, "Saved")
+            status = 200
+        return JsonResponse(messages_to_json(request), status=status)
+    else:
+        return JsonResponse(form_errors_to_json(request, form), status=400)
 
 
 @require_POST

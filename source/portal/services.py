@@ -20,6 +20,8 @@ PROJECT_DJANGO_TO_LIMSFM_MAP = {
     'contact_name_full': 'Contact::name_full',
     'contact_uuid': 'Contact::uuid',
     'data_sent_date': 'data_sent_date',
+    'ena_abstract': 'ena_abstract',
+    'ena_title': 'ena_title',
     'first_plate_barcode': 'projectcontainer_Container::reference',
     'meta_data_status': 'meta_data_status',
     'modal_queue_name': 'unstored_modal_queue_name',
@@ -230,7 +232,28 @@ def limsfm_get_project(uuid):
     )
     project['projectlines'] = projectlines
 
+    # Additional logic
+    project['show_results'] = True if project['results_path'] and project['data_sent_date'] else False
+
     return project
+
+
+def limsfm_update_project(uuid, cleaned_data):
+    """ Update a project record"""
+
+    # Construct dict
+    fm_data = {}
+    for k, v in cleaned_data.items():
+        if k in PROJECT_DJANGO_TO_LIMSFM_MAP:
+            fm_data[PROJECT_DJANGO_TO_LIMSFM_MAP[k]] = str(v) if v else ''
+    json = {'data': [fm_data]}
+
+    uri = ('layout/project_api/%(field)s%(value)s' %
+           {
+               'field': urlquote('uuid==='),
+               'value': urlquote(uuid)
+           })
+    return limsfm_request(uri, 'put', json=json)
 
 
 def limsfm_update_projectline(project_uuid, projectline_uuid, cleaned_data):

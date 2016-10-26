@@ -57,6 +57,11 @@ class UploadSampleSheetForm(forms.Form):
     file = forms.FileField(label="Upload sample sheet file")
 
 
+class ProjectEnaForm(forms.Form):
+    ena_title = forms.CharField(label="Project title")
+    ena_abstract = forms.CharField(widget=forms.Textarea, label="Project description (abstract)")
+
+
 class ProjectLineForm(forms.Form):
     customers_ref = forms.CharField(
         max_length=100,

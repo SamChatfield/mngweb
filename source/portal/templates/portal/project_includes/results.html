@@ -1,112 +1,121 @@
-<div class="panel-group results-panels">
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h4 class="panel-title">
-        <a data-toggle="collapse" href="#trimmed-reads"><i class="fa fa-align-center"></i> Trimmed Reads</a>
-      </h4>
-    </div>
-    <div id="trimmed-reads" class="panel-collapse collapse">
-      <div class="panel-body">
-        <p>Below is a summary of your data, sample by sample. The reads were trimmed using <a href="https://www.usadellab.org/cms/?page=trimmomatic">Trimmomatic</a> and the quality was assessed using in-house scripts combined with the following software: <a href="https://samtools.sourceforge.net/">Samtools</a>, <a href="https://bedtools.readthedocs.org/en/latest/">BedTools</a> and <a href="https://bio-bwa.sourceforge.net/">bwa-mem</a></p>
-        <table id="trimmed_reads_table" class="table table-striped table-results-meta" style="width: 100%;">
-          <thead>
-            <tr>
-              <th>Sample id</th>
-              <th>Median insert size</th>
-              <th>Mean coverage</th>
-              <th>Mean coverage excluding 0s</th>
-              <th>Number of reads</th>
-              <th>Number of reads w/ insert size > 300</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
+<div id="project-results" class="tab-pane fade">
+  <div class="row">
+    <div class="col-md-12">
+      <h2>Your Results</h2>
 
-        <div class="clearfix"></div>
+      <div class="panel-group results-panels">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class="panel-title">
+              <a data-toggle="collapse" href="#trimmed-reads"><i class="fa fa-align-center"></i> Trimmed Reads</a>
+            </h4>
+          </div>
+          <div id="trimmed-reads" class="panel-collapse collapse">
+            <div class="panel-body">
+              <p>Below is a summary of your data, sample by sample. The reads were trimmed using <a href="https://www.usadellab.org/cms/?page=trimmomatic">Trimmomatic</a> and the quality was assessed using in-house scripts combined with the following software: <a href="https://samtools.sourceforge.net/">Samtools</a>, <a href="https://bedtools.readthedocs.org/en/latest/">BedTools</a> and <a href="https://bio-bwa.sourceforge.net/">bwa-mem</a></p>
+              <table id="trimmed_reads_table" class="table table-striped table-results-meta" style="width: 100%;">
+                <thead>
+                  <tr>
+                    <th>Sample id</th>
+                    <th>Median insert size</th>
+                    <th>Mean coverage</th>
+                    <th>Mean coverage excluding 0s</th>
+                    <th>Number of reads</th>
+                    <th>Number of reads w/ insert size > 300</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
 
-        <p><a class="btn btn-success" href="{{ project.results_url }}reads.zip"><i class="fa fa-download"></i>  Download Trimmed Reads</a></p>
+              <div class="clearfix"></div>
 
-        <p class="small">When you download your reads there will be four files for each sample, samplename_1_trimmed.fastq.gz (forward reads for sample), samplename_2_trimmed.fastq.gz (reverse reads for sample), samplename_U1_trimmed.fastq.gz (forward reads that are unpaired, the reverse read was lost during trimming), samplename_U2_trimmed.fastq.gz (reverse reads that are unpaired, the forward read was lost during trimming).</p>
+              <p><a class="btn btn-success" href="{{ project.results_url }}reads.zip"><i class="fa fa-download"></i>  Download Trimmed Reads</a></p>
+
+              <p class="small">When you download your reads there will be four files for each sample, samplename_1_trimmed.fastq.gz (forward reads for sample), samplename_2_trimmed.fastq.gz (reverse reads for sample), samplename_U1_trimmed.fastq.gz (forward reads that are unpaired, the reverse read was lost during trimming), samplename_U2_trimmed.fastq.gz (reverse reads that are unpaired, the forward read was lost during trimming).</p>
+            </div>
+          </div>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class="panel-title">
+              <a data-toggle="collapse" href="#assemblies"><i class="fa fa-circle-o-notch"></i> Assemblies</a>
+            </h4>
+          </div>
+          <div id="assemblies" class="panel-collapse collapse">
+            <div class="panel-body">
+              <p>This where you can find your assemblies and annotations, to download them please click on the button. The assemblies are in fasta format, you can open them in a genome browser such as <a href="https://www.sanger.ac.uk/resources/software/artemis/">Artemis</a> or <a href="https://www.broadinstitute.org/igv/">IGV</a>. The annotations are in genbank (gbk) and general feature format (gff), these can also be opened using the previously mentioned software (other formats are available upon request). The assembly metrics in the table below are calculated using <a href="https://bioinf.spbau.ru/quast">QUAST</a>, for further details about what they mean visit the <a href="https://quast.bioinf.spbau.ru/manual.html#sec3.1">quast manual</a></p>
+              
+              <p>Below are statistics for your assemblies:</p>
+
+              <table id="assemblies_table" class="table table-striped table-results-meta" style="width: 100%;">
+                <thead class="tablehead">
+                  <tr>
+                    <th>Sample id</th>
+                    <th># contigs (>= 0 bp)</th>
+                    <th># contigs (>= 1000 bp)</th>
+                    <th>Total length (>= 0 bp)</th>
+                    <th>Total length (>= 1000 bp)</th>
+                    <th># contigs</th>
+                    <th>Largest contig</th>
+                    <th>Total length</th>
+                    <th>GC (%)</th>
+                    <th>N50</th>
+                    <th>N75</th>
+                    <th>L50</th>
+                    <th>L75</th>
+                    <th># N's per 100 kbp</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+
+              <div class="clearfix"></div>
+
+              <p>
+                <a class="btn btn-success" href="{{ project.results_url }}contigs.zip"><i class="fa fa-download"></i> Download Annotation and Assemblies</a>
+                <a class="btn btn-info" href="{{ project.results_url }}report.html" target="_blank"><i class="fa fa-line-chart"></i> Assembly Quality Visualisation</a>
+              </p>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class="panel-title">
+              <a data-toggle="collapse" href="#taxonomic-distribution"><i class="fa fa-pie-chart"></i> Taxonomic Distribution</a>
+            </h4>
+          </div>
+          <div id="taxonomic-distribution" class="panel-collapse collapse">
+            <div class="panel-body">
+              <p>The table below shows the top families and genera that your reads map to, this has been calculated using the software <a href="https://ccb.jhu.edu/software/kraken/">Kraken</a>. This can be used to see if your samples are what you expect them to be.</p>
+              <table id="taxonomic_distribution_table" class="table table-striped table-results-meta" style="width: 100%;">
+                <thead>
+                  <tr>
+                    <th>Sample</th>
+                    <th>Unclassified (%)</th>
+                    <th>Unclassified</th>
+                    <th>Most frequent Family(%)</th>
+                    <th>Most frequent Family</th>
+                    <th>2nd most frequent Family (%)</th>
+                    <th>2nd most frequent Family</th>
+                    <th>Most frequent genus (%)</th>
+                    <th>Most frequent genus</th>
+                    <th>2nd Most frequent genus (%)</th>
+                    <th>2nd Most frequent genus</th>
+                    <th>Most frequent species (%)</th>
+                    <th>Most frequent species</th>
+                    <th>Escherichia coli (%)</th>
+                    <th>Escherichia coli</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h4 class="panel-title">
-        <a data-toggle="collapse" href="#assemblies"><i class="fa fa-circle-o-notch"></i> Assemblies</a>
-      </h4>
-    </div>
-    <div id="assemblies" class="panel-collapse collapse">
-      <div class="panel-body">
-        <p>This where you can find your assemblies and annotations, to download them please click on the button. The assemblies are in fasta format, you can open them in a genome browser such as <a href="https://www.sanger.ac.uk/resources/software/artemis/">Artemis</a> or <a href="https://www.broadinstitute.org/igv/">IGV</a>. The annotations are in genbank (gbk) and general feature format (gff), these can also be opened using the previously mentioned software (other formats are available upon request). The assembly metrics in the table below are calculated using <a href="https://bioinf.spbau.ru/quast">QUAST</a>, for further details about what they mean visit the <a href="https://quast.bioinf.spbau.ru/manual.html#sec3.1">quast manual</a></p>
-        
-        <p>Below are statistics for your assemblies:</p>
 
-        <table id="assemblies_table" class="table table-striped table-results-meta" style="width: 100%;">
-          <thead class="tablehead">
-            <tr>
-              <th>Sample id</th>
-              <th># contigs (>= 0 bp)</th>
-              <th># contigs (>= 1000 bp)</th>
-              <th>Total length (>= 0 bp)</th>
-              <th>Total length (>= 1000 bp)</th>
-              <th># contigs</th>
-              <th>Largest contig</th>
-              <th>Total length</th>
-              <th>GC (%)</th>
-              <th>N50</th>
-              <th>N75</th>
-              <th>L50</th>
-              <th>L75</th>
-              <th># N's per 100 kbp</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-
-        <div class="clearfix"></div>
-
-        <p>
-          <a class="btn btn-success" href="{{ project.results_url }}contigs.zip"><i class="fa fa-download"></i> Download Annotation and Assemblies</a>
-          <a class="btn btn-info" href="{{ project.results_url }}report.html" target="_blank"><i class="fa fa-line-chart"></i> Assembly Quality Visualisation</a>
-        </p>
-
-      </div>
-    </div>
-  </div>
-
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h4 class="panel-title">
-        <a data-toggle="collapse" href="#taxonomic-distribution"><i class="fa fa-pie-chart"></i> Taxonomic Distribution</a>
-      </h4>
-    </div>
-    <div id="taxonomic-distribution" class="panel-collapse collapse">
-      <div class="panel-body">
-        <p>The table below shows the top families and genera that your reads map to, this has been calculated using the software <a href="https://ccb.jhu.edu/software/kraken/">Kraken</a>. This can be used to see if your samples are what you expect them to be.</p>
-        <table id="taxonomic_distribution_table" class="table table-striped table-results-meta" style="width: 100%;">
-          <thead>
-            <tr>
-              <th>Sample</th>
-              <th>Unclassified (%)</th>
-              <th>Unclassified</th>
-              <th>Most frequent Family(%)</th>
-              <th>Most frequent Family</th>
-              <th>2nd most frequent Family (%)</th>
-              <th>2nd most frequent Family</th>
-              <th>Most frequent genus (%)</th>
-              <th>Most frequent genus</th>
-              <th>2nd Most frequent genus (%)</th>
-              <th>2nd Most frequent genus</th>
-              <th>Most frequent species (%)</th>
-              <th>Most frequent species</th>
-              <th>Escherichia coli (%)</th>
-              <th>Escherichia coli</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
     </div>
   </div>
 </div>

@@ -1,0 +1,5 @@
+{% extends django_slack %}
+
+{% block text %}
+    ENA project title & abstract update "{{ form.cleaned_data.ena_title }}" [{{ uuid }}]
+{% endblock %}

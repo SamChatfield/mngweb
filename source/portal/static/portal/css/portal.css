@@ -11,6 +11,13 @@
   padding: 10px 15px;
 }
 
+.ena-sidebar .ena-logo {
+  display: block;
+  height: 50px;
+  width: auto;
+  margin: 10px auto;
+}
+
 .table-results-meta {
   font-size: 0.8em;
 }
