@@ -1,0 +1,5 @@
+{% extends django_slack %}
+
+{% block text %}
+    {{ form.cleaned_data.submission_requirements_name }} accepted their project submission requirements [{{ uuid }}]
+{% endblock %}

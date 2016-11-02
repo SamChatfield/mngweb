@@ -23,12 +23,16 @@ PROJECT_DJANGO_TO_LIMSFM_MAP = {
     'ena_abstract': 'ena_abstract',
     'ena_title': 'ena_title',
     'first_plate_barcode': 'projectcontainer_Container::reference',
+    'has_dna_samples': 'uc_has_dna_samples',
+    'has_strain_samples': 'uc_has_strain_samples',
     'meta_data_status': 'meta_data_status',
+    'modal_queue_matches': 'uc_modal_queue_matches',
     'modal_queue_name': 'unstored_modal_queue_name',
     'projectline_count': 'unstored_projectline_count',
     'reference': 'reference',
     'results_path': 'results_path',
     'sample_sheet_url': 'sample_sheet_url',
+    'submission_requirements_name': 'submission_requirements_name',
     'wait_time_weeks': 'unstored_wait_time_weeks',
 }
 
@@ -79,6 +83,12 @@ def datetime_from_fmstr(dct, key):
         dct[key] = datetime.strptime(dct[key], '%m/%d/%Y %H:%M:%S')
 
 
+def bool_from_fmstr(dct, key):
+    """Convert a filemaker boolean value, in place"""
+    if dct[key]:
+        dct[key] = bool(int(dct[key]))
+
+
 def project_from_limsfm(limsfm_project):
     project = {}
 
@@ -89,6 +99,8 @@ def project_from_limsfm(limsfm_project):
     date_from_fmstr(project, 'all_content_received_date')
     datetime_from_fmstr(project, 'creation_datetime')
     date_from_fmstr(project, 'data_sent_date')
+    bool_from_fmstr(project, 'has_dna_samples')
+    bool_from_fmstr(project, 'has_strain_samples')
 
     if project['barcodes_sent_date']:
         date_from_fmstr(project, 'barcodes_sent_date')
@@ -213,12 +225,9 @@ def limsfm_get_project(uuid):
     projectlines_raw = lines_response.json()['data']
 
     # Map filemaker projectline keys to django keys
-    project['modal_queue_matches'] = 0
     projectlines = []
     for pl in projectlines_raw:
         projectline = projectline_from_limsfm(pl)
-        if projectline['queue_name'] == project['modal_queue_name']:
-            project['modal_queue_matches'] += 1
         projectlines.append(projectline)
 
     # Sort the projectlines and append to list project dict

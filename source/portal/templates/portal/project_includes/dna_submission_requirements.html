@@ -1,0 +1,44 @@
+{% load static %}
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel panel-danger">
+      <div class="panel-body text-center text-danger">
+        <h4>DNA Sample Submission Requirements</h4>
+        <strong><i class="fa fa-exclamation-triangle"></i> Please read and accept our packaging &amp; submission requirements below. We are unable to accept improperly prepared &amp; packaged samples</strong></div>
+      </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-7">
+    <h4>Key requirements</h4>
+    <ul>
+      <li>Please use EB buffer (i.e. 10 mM Tris-HCl pH 8.5) that <strong>does not contain EDTA</strong></li>
+      <li>DNA concentrations should be in the range 1-30 ng/µL (measured by Qubit/PicoGreen) or 10-100 ng/µL (measured by NanoDrop)</li>
+      <li>Samples volume should be at least 30 µl</li>
+      <li>Samples should be sent in 1.5 µl or 2.0 µl microcentrifuge tubes, either screw-cap or sealed with parafilm <strong>OR</strong> in a sealed 96-well plate (with prior-agreement, >20 samples)
+      <li>Sample barcodes should be attached to the tubes <strong>lengthways</strong></li>
+      <li>Packaging should be sufficient to protect the tubes from damage in transit.</li>
+    </ul>
+
+    <h4>DNA integrity control</h4>
+    <ul>
+      <li>We recommend that you check the DNA integrity before sending DNA to us.</li>
+      <li>To check integrity we recommend the samples are run on an electrophoresis system like the Bioanalyzer HS DNA chip or Tapestation gDNA Screentape. Alternatively, you can run your genomic DNA samples on a 0.75% e-gel or agarose gel with a molecular weight ladder to verify the integrity of the DNA.</li>
+      <li>Non-degraded genomic DNA will show a single band of High Molecular Weight (>40,000bp)</li>
+      <li>A smear between 100 - 40,000bp indicates DNA degradation, which may jeopardize the success of our NGS library preparation</li>
+      <li>If you do check integrity, please send us your Bioanalyzer/Tapestation/gel results to assess if your samples will be OK for our NGS library method</li>
+    </ul>
+
+    <p><strong>For full instructions, please see the <a href="/documents/2/MicrobesNG_preparing_your_DNA_samples.pdf"><i class="fa fa-file-pdf-o"></i> MicrobesNG DNA preparation guide.</a></strong></p>
+  </div>
+  <div class="col-md-5 text-center">
+    <div class="panel panel-info">
+      <div class="panel-body">
+        <img class="img-responsive" src="{% static 'portal/images/acceptable_microcentrifuge_tubes.png' %}" alt="Acceptable microcentrifuge tubes for DNA samples">
+        <img class="img-responsive" src="{% static 'portal/images/correct_barcode_placement.png' %}" alt="Correct barcode placement">
+      </div>
+    </div>
+  </div>
+</div>

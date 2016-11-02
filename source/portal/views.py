@@ -10,7 +10,7 @@ from django_slack import slack_message
 from openpyxl.writer.excel import save_virtual_workbook
 from mngweb.decorators import require_ajax
 
-from .forms import EmailLinkForm, ProjectEnaForm, ProjectLineForm, UploadSampleSheetForm
+from .forms import ProjectAcceptTermsForm, EmailLinkForm, ProjectEnaForm, ProjectLineForm, UploadSampleSheetForm
 from .models import EnvironmentalSampleType, HostSampleType
 from .sample_sheet import create_sample_sheet, parse_sample_sheet
 from .services import limsfm_email_project_links, limsfm_get_project,\
@@ -67,6 +67,8 @@ def project_detail(request, uuid):
         if request_should_post_to_slack(request):
             slack_message('portal/slack/limsfm_project_detail_access.slack',
                           {'request': request, 'project': project})
+    if not project['submission_requirements_name'] and project['meta_data_status'] == 'Open':
+        return HttpResponseRedirect(reverse(project_accept_submission_requirements, args=[uuid]))
     project_ena_form = ProjectEnaForm(initial=project)
     return render(
         request, 'portal/project.html',
@@ -74,6 +76,36 @@ def project_detail(request, uuid):
             'project': project,
             'project_ena_form': project_ena_form,
             'upload_sample_sheet_form': UploadSampleSheetForm()
+        })
+
+
+def project_accept_submission_requirements(request, uuid):
+    if request.method == 'POST':
+        form = ProjectAcceptTermsForm(request.POST)
+        if form.is_valid():
+            try:
+                limsfm_update_project(uuid, form.cleaned_data)
+            except requests.HTTPError as e:
+                handle_limsfm_http_exception(request, e)
+            except requests.RequestException:
+                handle_limsfm_request_exception(request, e)
+            else:
+                slack_message('portal/slack/limsfm_project_accepted_submission_requirements.slack',
+                              {'uuid': uuid, 'form': form})
+                return HttpResponseRedirect(reverse(project_detail, args=[uuid]))
+    # GET request, or invalid/failed POST
+    try:
+        project = limsfm_get_project(uuid)
+    except requests.HTTPError as e:
+        handle_limsfm_http_exception(request, e)
+    except requests.RequestException as e:
+        handle_limsfm_request_exception(request, e)
+    form = ProjectAcceptTermsForm()
+    return render(
+        request, 'portal/accept_submission_requirements.html',
+        {
+            'project': project,
+            'terms_form': form,
         })
 
 

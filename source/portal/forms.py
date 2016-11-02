@@ -57,6 +57,11 @@ class UploadSampleSheetForm(forms.Form):
     file = forms.FileField(label="Upload sample sheet file")
 
 
+class ProjectAcceptTermsForm(forms.Form):
+    submission_requirements_name = forms.CharField(label="Full name")
+    accepted = forms.BooleanField(required=True, label="I declare that I have read and understood MicrobesNG sample submission requirements and that failure to follow them may result in my samples being disposed of appropriately.")
+
+
 class ProjectEnaForm(forms.Form):
     ena_title = forms.CharField(label="Project title")
     ena_abstract = forms.CharField(widget=forms.Textarea, label="Project description (abstract)")

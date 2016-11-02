@@ -1,0 +1,50 @@
+{% extends "portal/base.html" %}
+{% load bootstrap3 static %}
+
+{% block title %}Your Project {{ project.reference }}{% endblock %}
+
+{% block full_jumbo %}
+  {% include "portal/project_includes/project_jumbo.html" %}
+{% endblock %}
+
+{% block content %}
+
+  <div class="container">
+
+    <div class="row">
+      <div class="col-md-12">
+        {% bootstrap_messages %}
+      </div>
+    </div>
+
+    {% if project.has_strain_samples %}
+      {% include 'portal/project_includes/strain_submission_requirements.html' %}
+    {% endif %}
+    {% if project.has_dna_samples %}
+      {% include 'portal/project_includes/dna_submission_requirements.html' %}
+    {% endif %}
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="panel panel-success">
+          <div class="panel-body">
+            <form method="post">
+              {% csrf_token %}
+              <div class="col-md-4">
+                {% bootstrap_field terms_form.submission_requirements_name %}
+              </div>
+              <div class="col-md-6">
+                {% bootstrap_field terms_form.accepted %}
+              </div>
+              <div class="col-md-2">
+                <button class="btn btn-success">Accept &amp; Proceed</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+{% endblock %}

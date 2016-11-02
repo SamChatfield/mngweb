@@ -5,7 +5,7 @@
   {{ block.super }}
   {% javascript 'mngweb_portal' %}
 
-  {% if project.results_url and project.data_sent_date %}
+  {% if project.show_results %}
     <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
     <script>
       $.fn.dataTableExt.sErrMode = '';
@@ -30,22 +30,7 @@
 {% block title %}Your Project {{ project.reference }}{% endblock %}
 
 {% block full_jumbo %}
-  <div class="jumbotron bg-grey">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-6">
-          <h1>Your project</h1>
-          {% if project %}
-            <h2>{{ project.reference }}</h2>
-            <a href="{% url 'customer_projects' project.contact_uuid %}" class="btn btn-default"><i class="fa fa-arrow-circle-left"></i> View all your projects</a>
-          {% endif %}
-        </div>
-        <div class="col-md-3 col-md-offset-3 hidden-sm hidden-xs text-right">
-          <img src="{% static "images/mng-logo-500.png" %}" class="img-responsive">
-        </div>
-      </div>
-    </div>
-  </div>
+  {% include "portal/project_includes/project_jumbo.html" %}
 {% endblock %}
 
 {% block content %}
@@ -61,10 +46,11 @@
     {% if project %}
 
       <ul class="nav nav-tabs">
-        <li class="active"><a data-toggle="tab" href="#project-summary">Summary</a></li>
         {% if project.show_results %}
           <li><a data-toggle="tab" href="#project-results">Results</a></li>
         {% endif %}
+        <li class="active"><a data-toggle="tab" href="#project-summary">Summary</a></li>
+        <li><a data-toggle="tab" href="#sample-submission-requirements">Sample Prep. &amp; Packaging</a></li>
         <li><a data-toggle="tab" href="#project-ena-submission">ENA Submission</a></li>
       </ul>
 
@@ -103,6 +89,15 @@
             {% include "portal/project_includes/results.html" %}
           </div>
         {% endif %}
+
+        <div id="sample-submission-requirements" class="tab-pane fade">
+          {% if project.has_strain_samples %}
+            {% include 'portal/project_includes/strain_submission_requirements.html' %}
+          {% endif %}
+          {% if project.has_dna_samples %}
+            {% include 'portal/project_includes/dna_submission_requirements.html' %}
+          {% endif %}
+        </div>
 
         <div id="project-ena-submission" class="tab-pane fade">
           {% include "portal/project_includes/ena_submission.html" %}
