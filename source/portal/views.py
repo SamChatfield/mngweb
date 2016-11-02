@@ -93,6 +93,8 @@ def project_accept_submission_requirements(request, uuid):
                 slack_message('portal/slack/limsfm_project_accepted_submission_requirements.slack',
                               {'uuid': uuid, 'form': form})
                 return HttpResponseRedirect(reverse(project_detail, args=[uuid]))
+    else:
+        form = ProjectAcceptTermsForm()
     # GET request, or invalid/failed POST
     try:
         project = limsfm_get_project(uuid)
@@ -100,7 +102,6 @@ def project_accept_submission_requirements(request, uuid):
         handle_limsfm_http_exception(request, e)
     except requests.RequestException as e:
         handle_limsfm_request_exception(request, e)
-    form = ProjectAcceptTermsForm()
     return render(
         request, 'portal/accept_submission_requirements.html',
         {
