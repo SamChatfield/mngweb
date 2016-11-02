@@ -47,24 +47,30 @@
 
       <ul class="nav nav-tabs">
         {% if project.show_results %}
-          <li><a data-toggle="tab" href="#project-results">Results</a></li>
+          <li class="active"><a data-toggle="tab" href="#project-results">Results</a></li>
+          <li><a data-toggle="tab" href="#project-summary">Summary</a></li>
+        {% else %}
+          <li class="active"><a data-toggle="tab" href="#project-summary">Summary</a></li>
         {% endif %}
-        <li class="active"><a data-toggle="tab" href="#project-summary">Summary</a></li>
-        <li><a data-toggle="tab" href="#sample-submission-requirements">Sample Prep. &amp; Packaging</a></li>
+        {% if project.meta_data_status == "Open" %}
+          <li><a data-toggle="tab" href="#sample-submission-requirements">Sample Prep. &amp; Packaging</a></li>
+        {% endif %}
         <li><a data-toggle="tab" href="#project-ena-submission">ENA Submission</a></li>
       </ul>
 
       <div class="tab-content">
 
         {# project-summary tab content #}
-        <div id="project-summary" class="tab-pane fade in active">
+        <div id="project-summary" class="tab-pane fade {% if not project.show_results %}in active{% endif %}">
           <div class="row">
             <div class="col-md-6">
               {% include "portal/project_includes/summary.html" %}
             </div>
-            <div class="col-md-6">
-              {% include "portal/project_includes/sample_preparation.html" %}
-            </div>
+            {% if project.meta_data_status == "Open" %}
+              <div class="col-md-6">
+                {% include "portal/project_includes/sample_preparation.html" %}
+              </div>
+            {% endif %}
           </div>
 
           {% if project.meta_data_status == "Open" %}
@@ -85,19 +91,21 @@
         {# end project-summary tab content #}
 
         {% if project.show_results %}
-          <div id="project-results" class="tab-pane fade">
+          <div id="project-results" class="tab-pane fade {% if project.show_results %}in active{% endif %}">
             {% include "portal/project_includes/results.html" %}
           </div>
         {% endif %}
 
-        <div id="sample-submission-requirements" class="tab-pane fade">
-          {% if project.has_strain_samples %}
-            {% include 'portal/project_includes/strain_submission_requirements.html' %}
-          {% endif %}
-          {% if project.has_dna_samples %}
-            {% include 'portal/project_includes/dna_submission_requirements.html' %}
-          {% endif %}
-        </div>
+        {% if project.meta_data_status == "Open" %}
+          <div id="sample-submission-requirements" class="tab-pane fade">
+            {% if project.has_strain_samples %}
+              {% include 'portal/project_includes/strain_submission_requirements.html' %}
+            {% endif %}
+            {% if project.has_dna_samples %}
+              {% include 'portal/project_includes/dna_submission_requirements.html' %}
+            {% endif %}
+          </div>
+        {% endif %}
 
         <div id="project-ena-submission" class="tab-pane fade">
           {% include "portal/project_includes/ena_submission.html" %}
