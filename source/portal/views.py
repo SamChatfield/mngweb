@@ -64,11 +64,11 @@ def project_detail(request, uuid):
     except requests.RequestException as e:
         handle_limsfm_request_exception(request, e)
     else:
+        if not project['submission_requirements_name'] and project['meta_data_status'] == 'Open':
+            return HttpResponseRedirect(reverse(project_accept_submission_requirements, args=[uuid]))
         if request_should_post_to_slack(request):
             slack_message('portal/slack/limsfm_project_detail_access.slack',
                           {'request': request, 'project': project})
-    if not project['submission_requirements_name'] and project['meta_data_status'] == 'Open':
-        return HttpResponseRedirect(reverse(project_accept_submission_requirements, args=[uuid]))
     project_ena_form = ProjectEnaForm(initial=project)
     return render(
         request, 'portal/project.html',
