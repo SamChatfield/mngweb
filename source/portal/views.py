@@ -64,7 +64,9 @@ def project_detail(request, uuid):
     except requests.RequestException as e:
         handle_limsfm_request_exception(request, e)
     else:
-        if not project['submission_requirements_name'] and project['meta_data_status'] == 'Open':
+        if not (project['submission_requirements_name'] or
+                project['meta_data_status'] == 'Accepted' or
+                project['all_content_received_date']):
             return HttpResponseRedirect(reverse(project_accept_submission_requirements, args=[uuid]))
         if request_should_post_to_slack(request):
             slack_message('portal/slack/limsfm_project_detail_access.slack',
