@@ -60,7 +60,10 @@ class UploadSampleSheetForm(forms.Form):
 
 class ProjectAcceptTermsForm(forms.Form):
     submission_requirements_name = forms.CharField(label="Full name")
-    accepted = forms.BooleanField(required=True, label="I declare that I have read and understood MicrobesNG sample submission requirements and that failure to follow them may result in my samples being disposed of appropriately.")
+    accepted = forms.BooleanField(
+        required=True,
+        label=("I declare that I have read and understood MicrobesNG sample submission requirements and that failure to"
+               " follow them may result in my samples being disposed of appropriately."))
 
 
 class ProjectEnaForm(forms.Form):
