@@ -21,7 +21,7 @@
     },
     queryTokenizer: Bloodhound.tokenizers.whitespace,
     remote: {
-      url: 'https://www.ebi.ac.uk/ebisearch/ws/rest/taxonomy',
+      url: '/taxon/ebi_typeahead/',
       prepare: function (query, settings) {
         settings.data = {
           query: ebiPrepareRemoteQuery(query),

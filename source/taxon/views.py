@@ -1,3 +1,5 @@
+import requests
+
 from django.http import JsonResponse
 
 from .models import Taxon
@@ -26,3 +28,13 @@ def taxon_prokaryotes_typeahead(request):
         matches = matches.values_list('name', flat=True)
     data = list(matches)
     return JsonResponse(data, safe=False)
+
+
+def ebi_typeahead(request):
+    try:
+        response = requests.get('https://www.ebi.ac.uk/ebisearch/ws/rest/taxonomy', params=request.GET)
+        print(response.request.url)
+    except requests.RequestException as e:
+        print(e)
+    else:
+        return JsonResponse(response.json())
