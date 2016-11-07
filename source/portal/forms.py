@@ -3,11 +3,12 @@ from datetime import datetime
 from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
+from requests import RequestException
 
 from country.models import Country
-from taxon.models import Taxon
-
+from .ebi_services import ebi_search_taxonomy_by_id
 from .models import EnvironmentalSampleType, HostSampleType
+
 
 ALIQUOTTYPE_NAME_CHOICES = [
     ('DNA', 'DNA'),
@@ -80,16 +81,16 @@ class ProjectLineForm(forms.Form):
     aliquottype_name = forms.ChoiceField(
         choices=ALIQUOTTYPE_NAME_CHOICES,
         widget=forms.HiddenInput())
-    taxon_name = forms.ModelChoiceField(
-        queryset=Taxon.objects.filter(data_set__in=['Prokaryotes', 'Other']),
-        to_field_name='name',
-        widget=forms.TextInput(),
-        label="Sample taxon",
-        help_text="e.g. Escherichia coli (choose the closest available)",
+    taxon_id = forms.CharField(
+        label="Sample Taxon Id (EBI/NCBI)",
+        help_text="Start typing and choose the closest available",
         error_messages={
-            'required': "'Taxon' is required.",
-            'invalid_choice': "Please select a valid 'taxon' from the list."
+            'required': "'Taxon id' is required."
         })
+    taxon_name = forms.CharField(
+        label="Sample Taxon Name",
+        required=False,
+        disabled=True)
     volume_ul = forms.DecimalField(
         required=False,
         min_value=30,
@@ -177,12 +178,17 @@ class ProjectLineForm(forms.Form):
         choices=LAB_EXPERIMENT_TYPE,
         required=False,
         label="Experiment type")
-    host_taxon_name = forms.ModelChoiceField(
+    host_taxon_id = forms.CharField(
         required=False,
-        queryset=Taxon.objects.all(),
-        to_field_name='name',
-        widget=forms.TextInput(),
-        help_text="e.g. Homo sapiens")
+        label="Host Taxon Id (EBI/NCBI)",
+        help_text="Start typing and choose the closest available",
+        error_messages={
+            'required': "'Host taxon id' is required."
+        })
+    host_taxon_name = forms.CharField(
+        label="Host Taxon Name",
+        required=False,
+        disabled=True)
     host_sample_type = forms.ModelChoiceField(
         required=False,
         queryset=HostSampleType.objects.all(),
@@ -213,10 +219,28 @@ class ProjectLineForm(forms.Form):
         volume_ul = cleaned_data.get('volume_ul')
         dna_concentration_ng_ul = cleaned_data.get('dna_concentration_ng_ul')
         study_type = cleaned_data.get('study_type')
+        taxon_id = cleaned_data.get('taxon_id')
         lab_experiment_type = cleaned_data.get('lab_experiment_type')
-        host_taxon_name = cleaned_data.get('host_taxon_name')
+        host_taxon_id = cleaned_data.get('host_taxon_id')
         host_sample_type = cleaned_data.get('host_sample_type')
         environmental_sample_type = cleaned_data.get('environmental_sample_type')
+
+        # EBI sample taxon id
+        ebi_connection_error = ValidationError(
+            _("We are temporarily unable to connect to the EBI to validate taxon ids. "
+              " This may be due to a service outage. Please try again after a few minutes, or contact "
+              " us if the problem persists."))
+        try:
+            ebi_response = ebi_search_taxonomy_by_id(taxon_id)
+        except RequestException:
+            non_field_errors.append(ebi_connection_error)
+        else:
+            if ebi_response:
+                cleaned_data['taxon_name'] = ebi_response[0]['fields']['name'][0]
+            else:
+                self.add_error(
+                    'taxon_id',
+                    ValidationError(_("Please enter a valid EBI/NCBI sample taxon id."), code='invalid'))
 
         if dna_concentration_ng_ul:
             cleaned_data['dna_concentration_ng_ul'] = round(dna_concentration_ng_ul, 2)
@@ -253,7 +277,7 @@ class ProjectLineForm(forms.Form):
                 self.add_error('lab_experiment_type', ValidationError(
                     _("'Lab experiment type' is required when selecting"
                       " study type 'Lab'."), code='required'))
-            if (host_taxon_name or host_sample_type or environmental_sample_type):
+            if (host_taxon_id or host_sample_type or environmental_sample_type):
                 non_field_errors.append(
                     ValidationError(
                         _("Please only enter meta data for one study type"
@@ -261,10 +285,24 @@ class ProjectLineForm(forms.Form):
                 )
 
         if study_type == 'Host':
-            if not host_taxon_name:
-                self.add_error('host_taxon_name', ValidationError(
-                    _("'Host taxon name' is required when selecting"
+            if not host_taxon_id:
+                self.add_error('host_taxon_id', ValidationError(
+                    _("'Host taxon id' is required when selecting"
                       " study type 'Host'."), code='required'))
+
+            # EBI host taxon id
+            try:
+                ebi_response = ebi_search_taxonomy_by_id(host_taxon_id)
+            except RequestException:
+                non_field_errors.append(ebi_connection_error)
+            else:
+                if ebi_response:
+                    cleaned_data['host_taxon_name'] = ebi_response[0]['fields']['name'][0]
+                else:
+                    self.add_error(
+                        'taxon_id',
+                        ValidationError(_("Please enter a valid EBI/NCBI host taxon id."), code='invalid'))
+
             if not host_sample_type:
                 self.add_error('host_sample_type', ValidationError(
                     _("'Host sample type' is required when selecting"
@@ -281,7 +319,7 @@ class ProjectLineForm(forms.Form):
                 self.add_error('environmental_sample_type', ValidationError(
                     _("'Environmental sample type' is required when selecting"
                       " study type 'Environmental'."), code='required'))
-            if (host_taxon_name or host_sample_type or lab_experiment_type):
+            if (host_taxon_id or host_sample_type or lab_experiment_type):
                 non_field_errors.append(
                     ValidationError(
                         _("Please only enter meta data for one study type"

@@ -55,14 +55,14 @@ PROJECTLINE_DJANGO_TO_LIMSFM_MAP = {
     'geo_country_name': 'sample_Country::name',
     'geo_specific_location': 'Sample::geo_specific_location',
     'host_sample_type': 'Sample::host_sample_type',
-    'host_taxon': 'Sample::host_taxon_id',
-    'host_taxon_name': 'sample_Taxon#host::name',
+    'host_taxon_id': 'Sample::host_taxon_id',
+    'host_taxon_name': 'Sample::host_taxon_name',
     'lab_experiment_type': 'Sample::lab_experiment_type',
     'queue_name': 'Queue::name',
     'sample_ref': 'Sample::reference',
     'study_type': 'Sample::study_type',
-    'taxon': 'Sample::taxon_id',
-    'taxon_name': 'Taxon::name',
+    'taxon_id': 'Sample::taxon_id',
+    'taxon_name': 'Sample::taxon_name',
     'volume_ul': 'Aliquot::volume_ul',
     'well_alpha': 'Aliquot::unstored_well_position_display',
 }
@@ -129,12 +129,6 @@ def projectline_to_fm_dict(project_uuid, cleaned_data):
        dict suitable to be used as a Filemaker RESTfm payload"""
 
     # Objects -> filemaker ids
-    taxon = cleaned_data.pop('taxon_name', None)
-    cleaned_data['taxon'] = taxon.fm_id if taxon else ''
-
-    host_taxon = cleaned_data.pop('host_taxon_name', None)
-    cleaned_data['host_taxon'] = host_taxon.fm_id if host_taxon else ''
-
     geo_country = cleaned_data.pop('geo_country_name', None)
     cleaned_data['geo_country'] = geo_country.iso2 if geo_country else ''
 

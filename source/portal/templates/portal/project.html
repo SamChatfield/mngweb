@@ -4,6 +4,7 @@
 {% block extra_js %}
   {{ block.super }}
   {% javascript 'mngweb_portal' %}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.13/clipboard.min.js"></script>
 
   {% if project.show_results %}
     <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
@@ -69,6 +70,18 @@
             {% if project.meta_data_status == "Open" %}
               <div class="col-md-6">
                 {% include "portal/project_includes/sample_preparation.html" %}
+                <div class="form-group">
+                  <div class="ebi-taxonomy-typeahead">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="fa fa-search"></i> EBI/NCBI Taxon ID Lookup Tool</span>
+                      <input class="form-control" id="taxon_search_tool" name="taxon_search_tool" type="text" />
+                      <span class="input-group-btn">
+                        <button class="btn btn-default" id="taxon_search_copy_btn" data-clipboard-target="#taxon_search_tool" type="button">
+                          <i class="fa fa-copy"></i></span> Copy
+                        </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             {% endif %}
           </div>

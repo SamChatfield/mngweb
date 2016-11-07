@@ -5,8 +5,6 @@ from openpyxl.worksheet.datavalidation import DataValidation
 
 from country.models import Country
 from country.utils import update_countries
-from taxon.models import Taxon
-from taxon.utils import update_taxonomy
 from .forms import ProjectLineForm
 from .services import limsfm_get_project
 
@@ -17,7 +15,7 @@ SAMPLE_SHEET_COL_ORDER = [
     'customers_ref',
     'dna_concentration_ng_ul',
     'volume_ul',
-    'taxon_name',
+    'taxon_id',
     'collection_day',
     'collection_month',
     'collection_year',
@@ -25,7 +23,7 @@ SAMPLE_SHEET_COL_ORDER = [
     'geo_specific_location',
     'lab_experiment_type',
     'lab_further_details',
-    'host_taxon_name',
+    'host_taxon_id',
     'host_sample_type',
     'host_further_details',
     'environmental_sample_type',
@@ -56,7 +54,7 @@ def create_sample_sheet(project_uuid):
                 row[3].value = float(pl['dna_concentration_ng_ul'])
             if pl['volume_ul']:
                 row[4].value = float(pl['volume_ul'])
-            row[5].value = pl['taxon_name']
+            row[5].value = pl['taxon_id']
             if pl['collection_day']:
                 row[6].value = int(pl['collection_day'])
             if pl['collection_month']:
@@ -70,21 +68,12 @@ def create_sample_sheet(project_uuid):
                 row[11].value = pl['lab_experiment_type']
                 row[12].value = pl['further_details']
             elif pl['study_type'] == "Host":
-                row[13].value = pl['host_taxon_name']
+                row[13].value = pl['host_taxon_id']
                 row[14].value = pl['host_sample_type']
                 row[15].value = pl['further_details']
             elif pl['study_type'] == "Environmental":
                 row[16].value = pl['environmental_sample_type']
                 row[17].value = pl['further_details']
-
-    # Taxon list validation
-    taxon_validator = DataValidation(type='list', formula1='=Lookups!$A:$A',
-                                     allow_blank=True)
-    taxon_validator.error = "Please select a taxon from the list"
-    taxon_validator.errorTitle = "Invalid taxon"
-    ws.add_data_validation(taxon_validator)
-    taxon_validator.ranges.append('F7:F102')
-    taxon_validator.ranges.append('N7:N102')
 
     # Country list validation
     country_validator = DataValidation(
@@ -102,14 +91,6 @@ def create_sample_sheet(project_uuid):
     est_validator.errorTitle = "Invalid environmental sample type"
     ws.add_data_validation(est_validator)
     est_validator.ranges.append('Q7:Q102')
-
-    # Host sample type list validation
-    hst_validator = DataValidation(
-        type='list', formula1='=Lookups!$D$1:$D$67', allow_blank=True)
-    hst_validator.error = "Please select a host sample type from the list"
-    hst_validator.errorTitle = "Invalid host sample type"
-    ws.add_data_validation(hst_validator)
-    hst_validator.ranges.append('O7:O102')
 
     # Lab experiment type
     lab_validator = DataValidation(
@@ -151,7 +132,7 @@ def parse_sample_sheet(project, sheet):
         # Check only one meta data section filled in
         has_lab_meta = (bool(row_data['lab_experiment_type']) or
                         bool(row_data['lab_further_details']))
-        has_host_meta = (bool(row_data['host_taxon_name']) or
+        has_host_meta = (bool(row_data['host_taxon_id']) or
                          bool(row_data['host_sample_type']) or
                          bool(row_data['host_further_details']))
         has_env_meta = (bool(row_data['environmental_sample_type']) or
@@ -194,17 +175,11 @@ def parse_sample_sheet(project, sheet):
 def update_sample_sheet_template():
     """Update the sample sheet template (add lookup values)"""
     update_countries()
-    update_taxonomy()
 
     wb = load_workbook(os.path.join(
         os.path.dirname(__file__),
         'static/portal/excel/mng_excel_template_base.xlsx'))
     ws = wb['Lookups']
-
-    print("Updating excel template taxonomy lookup")
-    taxonomy = Taxon.objects.all().order_by('name')
-    for r, taxon in enumerate(taxonomy):
-        ws.cell(row=r + 1, column=1).value = taxon.name
 
     print("Updating excel template country lookup")
     countries = Country.objects.all().order_by('name')

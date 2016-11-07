@@ -2,12 +2,6 @@
   'use strict';
 
   /*
-  Declare mngweb public methods, properties here.
-  e.g. mnweb.myMethod = function () { return 'something' };
-  */
-
-
-  /*
   AJAX form event handlers
   */
   $(document).on("submit", "#contact-form, #email-link-form", function(event){

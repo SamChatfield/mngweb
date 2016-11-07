@@ -39,7 +39,8 @@
 
                 <h3>Basic sample data</h3>
                 {% bootstrap_field pl.form.customers_ref %}
-                {% bootstrap_field pl.form.taxon_name field_class="taxon-pk-typeahead" %}
+                {% bootstrap_field pl.form.taxon_id field_class="ebi-taxonomy-typeahead" addon_before='<i class="fa fa-search"></i>' %}
+                {% bootstrap_field pl.form.taxon_name %}
                 {% if pl.aliquottype_name == "DNA" %}
                   {% bootstrap_field pl.form.dna_concentration_ng_ul %}
                   {% bootstrap_field pl.form.volume_ul %}
@@ -61,7 +62,8 @@
                 <h3>Extended meta data</h3>
                 {% bootstrap_field pl.form.study_type %}
                 <div class="meta-data-host">
-                  {% bootstrap_field pl.form.host_taxon_name field_class="taxon-typeahead" %}
+                  {% bootstrap_field pl.form.host_taxon_id field_class="ebi-taxonomy-typeahead" addon_before='<i class="fa fa-search"></i>' %}
+                  {% bootstrap_field pl.form.host_taxon_name %}
                   {% bootstrap_field pl.form.host_sample_type field_class="hostsampletype-typeahead" %}
                 </div>
                 <div class="meta-data-environmental">

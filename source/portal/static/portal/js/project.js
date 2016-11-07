@@ -93,12 +93,29 @@
     source: hostSampleTypesWithDefaults,
   });
 
-
   /*
-  Expose mngweb.portal object
+  EBI taxonomy selection
   */
+  function ebiTaxonomyOnChange (event, nameField) {
+    var taxid = event.target.value;
+    if (!/^[0-9]+$/.test(taxid)) return;
+    $.ajax({
+      url: 'https://www.ebi.ac.uk/ebisearch/ws/rest/taxonomy',
+      type: 'get',
+      data: {
+        query: 'id:' + taxid,
+        fields: 'name',
+        format: 'json'
+      },
 
-  mngweb.portal = portal;
+      success: function(json) {
+        $(nameField).val(json.entries[0].fields.name);
+      }
+    });
+  }
+  $(document).on('typeahead:change', 'input[name="taxon_id"]', function (event) { ebiTaxonomyOnChange(event, $('input[name="taxon_name"]')); });
+  $(document).on('typeahead:change', 'input[name="host_taxon_id"]', function (event) { ebiTaxonomyOnChange(event, $('input[name="host_taxon_name"]')); });
+  $(document).on('typeahead:select', 'input[name="taxon_id"], input[name="host_taxon_id"]', function (event, selection) { $(event.target).trigger('typeahead:change', [selection]).blur(); });
 
   /*
   AJAX ENA form submission
@@ -194,6 +211,13 @@
       portal.clearMetaFields(context);
       portal.showMetaFields(context);
     });
+
+    new Clipboard('#taxon_search_copy_btn');
   });
+
+  /*
+  Expose mngweb.portal object
+  */
+  mngweb.portal = portal;
 
 })(window.mngweb = window.mngweb || {}, jQuery);

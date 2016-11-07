@@ -254,7 +254,7 @@ label {
 /* --- TWITTER TYPEAHEAD --- */
 
 .tt-menu {
-  max-height: 150px;
+  max-height: 300px;
   overflow-y: auto;
 }
 
