@@ -100,16 +100,10 @@
     var taxid = event.target.value;
     if (!/^[0-9]+$/.test(taxid)) return;
     $.ajax({
-      url: 'https://www.ebi.ac.uk/ebisearch/ws/rest/taxonomy',
+      url: '/taxon/ebi_taxonomy/' + taxid + '/',
       type: 'get',
-      data: {
-        query: 'id:' + taxid,
-        fields: 'name',
-        format: 'json'
-      },
-
       success: function(json) {
-        $(nameField).val(json.entries[0].fields.name);
+        $(nameField).val(json.fields.name);
       }
     });
   }

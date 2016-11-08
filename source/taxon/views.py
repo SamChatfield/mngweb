@@ -4,6 +4,7 @@ from django.core.cache import cache
 from django.http import JsonResponse
 
 from .models import Taxon
+from portal.ebi_services import ebi_search_taxonomy_by_id
 
 
 def taxon_typeahead(request):
@@ -44,3 +45,15 @@ def ebi_typeahead(request):
         json = response.json()
         cache.set(cache_key, json)
         return JsonResponse(json)
+
+
+def ebi_taxonomy_detail(request, taxid):
+    try:
+        json = ebi_search_taxonomy_by_id(taxid)
+    except requests.RequestException:
+        JsonResponse({'error': 'An unspecified error occurred.'}, status=500)
+    else:
+        if json:
+            return JsonResponse(json[0])
+        else:
+            return JsonResponse({'error': 'Taxid {} not found'.format(taxid)}, status=404)
