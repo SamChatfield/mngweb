@@ -1,5 +1,6 @@
 import requests
 
+from django.core.cache import cache
 from django.http import JsonResponse
 
 from .models import Taxon
@@ -31,10 +32,15 @@ def taxon_prokaryotes_typeahead(request):
 
 
 def ebi_typeahead(request):
+    cache_key = "ebi_typeahead_?{}".format('&'.join('{}={}'.format(k, v) for k, v in sorted(request.GET.items())))
+    cached = cache.get(cache_key)
+    if cached:
+        return JsonResponse(cached)
     try:
         response = requests.get('https://www.ebi.ac.uk/ebisearch/ws/rest/taxonomy', params=request.GET)
-        print(response.request.url)
-    except requests.RequestException as e:
-        print(e)
+    except requests.RequestException:
+        JsonResponse({'error': 'An unspecified error occurred.'}, status=500)
     else:
-        return JsonResponse(response.json())
+        json = response.json()
+        cache.set(cache_key, json)
+        return JsonResponse(json)
