@@ -2,6 +2,13 @@
 
 <div class="row">
   <div class="col-md-8">
+    {% if project.is_confidential == True %}
+      <div class="panel panel-warning">
+        <div class="panel-body">
+          <i class="fa fa-lock"></i> <strong>Your project is fully confidential and will not be submitted to the ENA automatically.</strong>
+        </div>
+      </div>
+    {% endif %}
     <h2>Project title &amp; description</h2>
     <div class="panel panel-danger">
       <div class="panel-body">

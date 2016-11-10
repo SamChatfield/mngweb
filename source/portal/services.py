@@ -57,6 +57,7 @@ PROJECTLINE_DJANGO_TO_LIMSFM_MAP = {
     'host_sample_type': 'Sample::host_sample_type',
     'host_taxon_id': 'Sample::host_taxon_id',
     'host_taxon_name': 'Sample::host_taxon_name',
+    'is_confidential': 'Sample::is_confidential',
     'lab_experiment_type': 'Sample::lab_experiment_type',
     'queue_name': 'Queue::name',
     'sample_ref': 'Sample::reference',
@@ -120,6 +121,7 @@ def projectline_from_limsfm(limsfm_projectline):
     for d, f in PROJECTLINE_DJANGO_TO_LIMSFM_MAP.items():
         if f in limsfm_projectline:
             projectline[d] = limsfm_projectline[f]
+    bool_from_fmstr(projectline, 'is_confidential')
     projectline['form'] = ProjectLineForm(initial=projectline)
     return projectline
 
@@ -237,6 +239,7 @@ def limsfm_get_project(uuid):
 
     # Additional logic
     project['show_results'] = True if project['results_path'] and project['data_sent_date'] else False
+    project['is_confidential'] = any(pl['is_confidential'] for pl in projectlines)
 
     return project
 
