@@ -16,5 +16,4 @@ def ebi_get_taxonomy_by_id(taxid):
 
 def ebi_search_taxonomy_by_id(taxid):
     cache_key = 'ebi_search_taxonomy_by_id_{}'.format(taxid)
-    print(cache_key)
     return cache.get_or_set(cache_key, ebi_get_taxonomy_by_id(taxid))
