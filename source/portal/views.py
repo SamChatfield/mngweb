@@ -56,6 +56,27 @@ def customer_projects(request, customer_uuid):
 
 
 def project_detail(request, uuid):
+    # Handle POST
+    if request.method == 'POST':
+        project_ena_form = ProjectEnaForm(request.POST)
+        if project_ena_form.is_valid():
+            try:
+                limsfm_update_project(uuid, project_ena_form.cleaned_data)
+            except requests.HTTPError as e:
+                status = handle_limsfm_http_exception(request, e)
+            except requests.RequestException:
+                status = handle_limsfm_request_exception(request, e)
+            else:
+                slack_message('portal/slack/limsfm_project_ena_update.slack',
+                              {'uuid': uuid, 'form': project_ena_form})
+                messages.success(request, "Saved")
+                status = 200
+            if request.is_ajax():
+                return JsonResponse(messages_to_json(request), status=status)
+        elif request.is_ajax():
+            return JsonResponse(form_errors_to_json(request, project_ena_form), status=400)
+
+    # Fetch project from lims
     project = None
     try:
         project = limsfm_get_project(uuid)
@@ -66,19 +87,25 @@ def project_detail(request, uuid):
     else:
         if not (project['submission_requirements_name'] or
                 project['meta_data_status'] == 'Accepted' or
-                project['all_content_received_date']):
+                project['all_content_received_date']):  # Redirect to accept submission requirements
             return HttpResponseRedirect(reverse(project_accept_submission_requirements, args=[uuid]))
+
+    if request.method == 'GET':
+        project_ena_form = ProjectEnaForm(initial=project)
+
+    context = {'project': project, 'project_ena_form': project_ena_form}
+
+    if project['ena_title'] and project['ena_abstract']:  # Render full project portal
         if request_should_post_to_slack(request):
             slack_message('portal/slack/limsfm_project_detail_access.slack',
                           {'request': request, 'project': project})
-    project_ena_form = ProjectEnaForm(initial=project)
-    return render(
-        request, 'portal/project.html',
-        {
-            'project': project,
-            'project_ena_form': project_ena_form,
-            'upload_sample_sheet_form': UploadSampleSheetForm()
-        })
+        context['upload_sample_sheet_form'] = UploadSampleSheetForm()
+        return render(request, 'portal/project.html', context)
+    else:  # Collect ena title/abstract before proceeding to portal
+        if request_should_post_to_slack(request):
+            slack_message('portal/slack/limsfm_project_setup_access.slack',
+                          {'request': request, 'project': project})
+        return render(request, 'portal/project_setup.html', context)
 
 
 def project_accept_submission_requirements(request, uuid):
@@ -110,27 +137,6 @@ def project_accept_submission_requirements(request, uuid):
             'project': project,
             'terms_form': form,
         })
-
-
-@require_POST
-@require_ajax
-def project_update_ena(request, uuid):
-    form = ProjectEnaForm(request.POST)
-    if form.is_valid():
-        try:
-            limsfm_update_project(uuid, form.cleaned_data)
-        except requests.HTTPError as e:
-            status = handle_limsfm_http_exception(request, e)
-        except requests.RequestException:
-            status = handle_limsfm_request_exception(request, e)
-        else:
-            slack_message('portal/slack/limsfm_project_ena_update.slack',
-                          {'uuid': uuid, 'form': form})
-            messages.success(request, "Saved")
-            status = 200
-        return JsonResponse(messages_to_json(request), status=status)
-    else:
-        return JsonResponse(form_errors_to_json(request, form), status=400)
 
 
 @require_POST

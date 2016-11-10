@@ -1,0 +1,5 @@
+{% extends django_slack %}
+
+{% block text %}
+    :gun: *{{ project.contact_name_full }}* has been asked to enter a project title and description for <{{ request.build_absolute_uri }}|{{ project.reference }}>
+{% endblock %}

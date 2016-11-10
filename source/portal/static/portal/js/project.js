@@ -114,7 +114,7 @@
   /*
   AJAX ENA form submission
   */
-  $(document).on('submit', 'form.project-ena-form', function (event) {
+  $(document).on('submit', '#project-ena-submission form.project-ena-form', function (event) {
     event.preventDefault();
     mngweb.ajaxForms.formPOST(this, false, function(form) {
       console.log("Project ENA data submitted");

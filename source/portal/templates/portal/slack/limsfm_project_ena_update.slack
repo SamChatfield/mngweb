@@ -1,5 +1,5 @@
 {% extends django_slack %}
 
 {% block text %}
-    :pencil: ENA project title & abstract update "{{ form.cleaned_data.ena_title }}" [{{ uuid }}]
+    :pencil: ENA project title & abstract update: *{{ form.cleaned_data.ena_title }}* [{{ uuid }}]
 {% endblock %}

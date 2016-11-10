@@ -2,20 +2,19 @@
 
 <div class="row">
   <div class="col-md-8">
-    <h2>ENA Submission</h2>
+    <h2>Project title &amp; description</h2>
     <div class="panel panel-danger">
-      
       <div class="panel-body">
-        <p>The MicrobesNG project is committed to open science and a key component of our grant funding is that we will submit data to the European Nucleotide Archive following a 12 month embargo. This forms part of our terms for customers taking advantace of our discounted rates, but it does not apply to our full price confidential or industry rates.</p>
+        <p>The MicrobesNG project is committed to open science and a key component of our grant funding is that we will submit data to the European Nucleotide Archive following a 12-month embargo. This forms part of our terms for customers taking advantage of our discounted rates, but it does not apply to our full price confidential or industry rates.</p>
         <p>We won't submit your data to the ENA until at least 12 months following data delivery, and we will forewarn you of submission closer to the time. We do require a project title and description before we can proceed with your project. This will form part of the ENA submission, and you will be able to update this at any time prior to publication.</p>
       </div>
     </div>
-    <form method="post" action="{% url 'project_update_ena' project.uuid %}" class="project-ena-form">
+    <form method="post" action="?" class="project-ena-form">
       {% csrf_token %}
       {% bootstrap_form project_ena_form %}
       {% buttons %}
         <button type="submit" class="btn btn-success button-lg">
-          <i class="fa fa-floppy-o"></i> Update
+          <i class="fa fa-floppy-o"></i> Submit
         </button>
       {% endbuttons %}
       <div class="form-messages">
