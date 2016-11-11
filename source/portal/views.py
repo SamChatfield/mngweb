@@ -95,7 +95,7 @@ def project_detail(request, uuid):
 
     context = {'project': project, 'project_ena_form': project_ena_form}
 
-    if True:  # project['is_confidential'] or project['ena_title']:  # Render full project portal
+    if project['is_confidential'] or project['ena_title']:  # Render full project portal
         if request_should_post_to_slack(request):
             slack_message('portal/slack/limsfm_project_detail_access.slack',
                           {'request': request, 'project': project})
