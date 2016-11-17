@@ -45,15 +45,13 @@
     queryTokenizer: Bloodhound.tokenizers.whitespace,
     prefetch: '/portal/environmentalsampletype/typeahead/'
   });
-  function envSampleTypesWithDefaults(q, sync) {
+  portal.envSampleTypesWithDefaults = function (q, sync) {
     if (q === '') {
-      sync(envSampleTypes.index.all());
+      sync(portal.envSampleTypes.index.all());
+    } else {
+      portal.envSampleTypes.search(q, sync);
     }
-
-    else {
-      envSampleTypes.search(q, sync);
-    }
-  }
+  };
   $('.environmentalsampletype-typeahead input').typeahead({
     hint: true,
     highlight: true,
@@ -62,26 +60,24 @@
   {
     name: 'envSampleTypes',
     limit: Infinity,
-    source: envSampleTypesWithDefaults,
+    source: portal.envSampleTypesWithDefaults,
   });
 
   /*
   'Host sample type' typeahead
   */
-  var hostSampleTypes = new Bloodhound({
+  portal.hostSampleTypes = new Bloodhound({
     datumTokenizer: Bloodhound.tokenizers.whitespace,
     queryTokenizer: Bloodhound.tokenizers.whitespace,
     prefetch: '/portal/hostsampletype/typeahead/'
   });
-  function hostSampleTypesWithDefaults(q, sync) {
+  portal.hostSampleTypesWithDefaults = function (q, sync) {
     if (q === '') {
-      sync(hostSampleTypes.index.all());
+      sync(portal.hostSampleTypes.index.all());
+    } else {
+      portal.hostSampleTypes.search(q, sync);
     }
-
-    else {
-      hostSampleTypes.search(q, sync);
-    }
-  }
+  };
   $('.hostsampletype-typeahead input').typeahead({
     hint: true,
     highlight: true,
@@ -90,7 +86,7 @@
   {
     name: 'hostSampleTypes',
     limit: Infinity,
-    source: hostSampleTypesWithDefaults,
+    source: portal.hostSampleTypesWithDefaults,
   });
 
   /*
