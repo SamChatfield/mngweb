@@ -288,24 +288,6 @@ class ProjectLineForm(forms.Form):
                 )
 
         if study_type == 'Host':
-            if not host_taxon_id:
-                self.add_error('host_taxon_id', ValidationError(
-                    _("'Host taxon id' is required when selecting"
-                      " study type 'Host'."), code='required'))
-
-            # EBI host taxon id
-            try:
-                ebi_response = ebi_search_taxonomy_by_id(host_taxon_id)
-            except RequestException:
-                non_field_errors.append(ebi_connection_error)
-            else:
-                if ebi_response:
-                    cleaned_data['host_taxon_name'] = ebi_response[0]['fields']['name'][0]
-                else:
-                    self.add_error(
-                        'taxon_id',
-                        ValidationError(_("Please enter a valid EBI/NCBI host taxon id."), code='invalid'))
-
             if not host_sample_type:
                 self.add_error('host_sample_type', ValidationError(
                     _("'Host sample type' is required when selecting"
@@ -316,6 +298,22 @@ class ProjectLineForm(forms.Form):
                         _("Please only enter meta data for one study type"
                           " (lab, host or environmental)."))
                 )
+            if host_taxon_id:
+                try:
+                    ebi_response = ebi_search_taxonomy_by_id(host_taxon_id)
+                except RequestException:
+                    non_field_errors.append(ebi_connection_error)
+                else:
+                    if ebi_response:
+                        cleaned_data['host_taxon_name'] = ebi_response[0]['fields']['name'][0]
+                    else:
+                        self.add_error(
+                            'host_taxon_id',
+                            ValidationError(_("Please enter a valid EBI/NCBI host taxon id."), code='invalid'))
+            else:
+                self.add_error('host_taxon_id', ValidationError(
+                    _("'Host taxon id' is required when selecting"
+                      " study type 'Host'."), code='required'))
 
         if study_type == 'Environmental':
             if not environmental_sample_type:
