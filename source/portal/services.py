@@ -271,19 +271,27 @@ def limsfm_update_projectline(project_uuid, projectline_uuid, cleaned_data):
                'field': urlquote('uuid==='),
                'value': urlquote(projectline_uuid)
            })
-    return limsfm_request(uri, 'put', json=json)
+    update_response = limsfm_request(uri, 'put', json=json)
+    limsfm_project_auto_queue(project_uuid)
+    return update_response
 
 
 def limsfm_bulk_update_projectlines(project_uuid, projectlines):
     """Update LIMSfm ProjectLines in bulk"""
 
     json = {'meta': [], 'data': []}
-
     for k, v in projectlines.items():
         json['meta'].append({'recordID': ('uuid===%s' % k)})
         json['data'].append(projectline_to_fm_dict(project_uuid, v))
+    update_response = limsfm_request('bulk/projectline_api', 'put', json=json)
+    limsfm_project_auto_queue(project_uuid)
+    return update_response
 
-    return limsfm_request('bulk/projectline_api', 'put', json=json)
+
+def limsfm_project_auto_queue(project_uuid):
+    """Call a script to auto queue project lines after data submission, where appropriate"""
+    uri = 'script/project_auto_queue_after_data_submission/REST'
+    return limsfm_request(uri, 'get', params={'RFMscriptParam': project_uuid})
 
 
 def limsfm_get_taxonomy(data_set=None, q=None):
