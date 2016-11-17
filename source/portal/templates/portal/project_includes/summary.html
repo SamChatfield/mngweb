@@ -36,7 +36,7 @@
     <tr>
       {% if project.wait_time_weeks %}
         <th>Waiting time</th>
-        <td>{{ project.wait_time_weeks }} weeks</td>
+        <td>{{ project.wait_time_weeks }} week{{ project.wait_time_weeks|pluralize }}</td>
       {% endif %}
     </tr>
   </tbody>
