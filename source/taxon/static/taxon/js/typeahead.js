@@ -32,7 +32,7 @@
         return settings;
       },
       transform: function (response) {
-        return response.entries;
+        return response.entries.sort(function (a, b) { return a.fields.name[0].localeCompare(b.fields.name[0]); });
       }
     }
   });
@@ -73,7 +73,7 @@
           '</div>'
         ].join('\n'),
         suggestion: function (d) {
-          return '<div>' + d.fields.name + ' (<em>taxid: ' + d.id + ')</em></div>';
+          return '<div>' + d.fields.name[0] + ' (<em>taxid: ' + d.id + ')</em></div>';
         }
       }
     });
