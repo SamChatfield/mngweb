@@ -112,6 +112,9 @@ def project_from_limsfm(limsfm_project):
         project['results_url'] = urljoin(
             settings.MNGRESULTS_BASE_URL,
             project['results_path'] + '/')
+        project['results_url_secure'] = urljoin(
+            settings.MNGRESULTS_BASE_URL_SECURE,
+            project['results_path'] + '/')
 
     return project
 

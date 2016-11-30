@@ -12,15 +12,15 @@
       $.fn.dataTableExt.sErrMode = '';
       $(document).ready(function() {
         $('#trimmed_reads_table').DataTable({
-          ajax: "{{ project.results_url }}json_reads.txt",
+          ajax: "{{ project.results_url_secure }}json_reads.txt",
           responsive: true
         });
         $('#assemblies_table').DataTable({
-          ajax: "{{ project.results_url }}assembly_json.txt",
+          ajax: "{{ project.results_url_secure }}assembly_json.txt",
           responsive: true
         });
         $('#taxonomic_distribution_table').DataTable({
-          ajax: "{{ project.results_url }}json_cont.txt",
+          ajax: "{{ project.results_url_secure }}json_cont.txt",
           responsive: true
         });
       });

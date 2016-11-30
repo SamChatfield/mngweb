@@ -28,7 +28,7 @@
 
             <div class="clearfix"></div>
 
-            <p><a class="btn btn-success" href="{{ project.results_url }}reads.zip"><i class="fa fa-download"></i>  Download Trimmed Reads</a></p>
+            <p><a class="btn btn-success" href="{{ project.results_url_secure }}reads.zip"><i class="fa fa-download"></i>  Download Trimmed Reads</a></p>
 
             <p class="small">When you download your reads there will be four files for each sample, samplename_1_trimmed.fastq.gz (forward reads for sample), samplename_2_trimmed.fastq.gz (reverse reads for sample), samplename_U1_trimmed.fastq.gz (forward reads that are unpaired, the reverse read was lost during trimming), samplename_U2_trimmed.fastq.gz (reverse reads that are unpaired, the forward read was lost during trimming).</p>
           </div>
@@ -43,7 +43,7 @@
         <div id="assemblies" class="panel-collapse collapse">
           <div class="panel-body">
             <p>This where you can find your assemblies and annotations, to download them please click on the button. The assemblies are in fasta format, you can open them in a genome browser such as <a href="https://www.sanger.ac.uk/resources/software/artemis/">Artemis</a> or <a href="https://www.broadinstitute.org/igv/">IGV</a>. The annotations are in genbank (gbk) and general feature format (gff), these can also be opened using the previously mentioned software (other formats are available upon request). The assembly metrics in the table below are calculated using <a href="https://bioinf.spbau.ru/quast">QUAST</a>, for further details about what they mean visit the <a href="https://quast.bioinf.spbau.ru/manual.html#sec3.1">quast manual</a></p>
-            
+
             <p>Below are statistics for your assemblies:</p>
 
             <table id="assemblies_table" class="table table-striped table-results-meta" style="width: 100%;">
@@ -71,7 +71,7 @@
             <div class="clearfix"></div>
 
             <p>
-              <a class="btn btn-success" href="{{ project.results_url }}contigs.zip"><i class="fa fa-download"></i> Download Annotation and Assemblies</a>
+              <a class="btn btn-success" href="{{ project.results_url_secure }}contigs.zip"><i class="fa fa-download"></i> Download Annotation and Assemblies</a>
               <a class="btn btn-info" href="{{ project.results_url }}report.html" target="_blank"><i class="fa fa-line-chart"></i> Assembly Quality Visualisation</a>
             </p>
 
