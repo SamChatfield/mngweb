@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+import datetime
 
 from django.db import models
 from django.shortcuts import render
@@ -55,12 +56,16 @@ class FormPage(AbstractEmailForm):
     def process_form_submission(self, form):
         super(AbstractEmailForm, self).process_form_submission(form)
 
+        # Add timestamp to subject, to avoid gmail-style conversation views
+        time = str(datetime.datetime.now()).split('.')[0]
+        subject = '{} [{}]'.format(self.subject, time)
+
         if self.to_address:
             content = '\n'.join([x[1].label + ': ' +
                                 text_type(form.data.get(x[0]))
                                 for x in form.fields.items()])
             reply_to = ([form.data['email']] if 'email' in form.data else None)
-            email = EmailMessage(self.subject, content, self.from_address,
+            email = EmailMessage(subject, content, self.from_address,
                                  [self.to_address], reply_to=reply_to)
             email.send(fail_silently=False)
 
