@@ -4,20 +4,30 @@
   var typeahead = mngweb.typeahead || {};
 
   function ebiPrepareRemoteQuery (q) {
-    var tokens = q.split(' '),
+    var PRIORITY_RANKS = ['family', 'genus', 'species'],
+        tokens = q.split(' '),
         len = tokens.length,
         i,
-        t;
+        t,
+        nameQuery,
+        rank,
+        rankQueries = [];
     for (i = 0; i < len; i++) {
       t = tokens.shift();
       if (t.length >= 3) tokens.push(t + '*');
     }
-    return tokens.join(' AND ');
+    nameQuery = 'name:(' + tokens.join(' AND ') + ')';
+    for (i = 0; i < PRIORITY_RANKS.length; i++) {
+      rank = PRIORITY_RANKS[i];
+      rankQueries.push('(' + nameQuery + ' AND rank:(' + rank + '))');
+    }
+    rankQueries.push(nameQuery);
+    return rankQueries.join(' OR ');
   }
 
   typeahead.ebiTaxonomyBloodhound = new Bloodhound({
-    datumTokenizer: function(d) { 
-      return Bloodhound.tokenizers.whitespace(d.fields.name); 
+    datumTokenizer: function(d) {
+      return Bloodhound.tokenizers.whitespace(d.fields.name);
     },
     queryTokenizer: Bloodhound.tokenizers.whitespace,
     remote: {
@@ -27,7 +37,7 @@
           query: ebiPrepareRemoteQuery(query),
           fields: 'name',
           format: 'json',
-          size: 50
+          size: 100
         };
         return settings;
       },

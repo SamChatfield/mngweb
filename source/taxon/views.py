@@ -33,17 +33,12 @@ def taxon_prokaryotes_typeahead(request):
 
 
 def ebi_typeahead(request):
-    cache_key = "ebi_typeahead_?{}".format('&'.join('{}={}'.format(k, v) for k, v in sorted(request.GET.items())))
-    cached = cache.get(cache_key)
-    if cached:
-        return JsonResponse(cached)
     try:
         response = requests.get('https://www.ebi.ac.uk/ebisearch/ws/rest/taxonomy', params=request.GET)
     except requests.RequestException:
         JsonResponse({'error': 'An unspecified error occurred.'}, status=500)
     else:
         json = response.json()
-        cache.set(cache_key, json)
         return JsonResponse(json)
 
 
