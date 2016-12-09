@@ -42,10 +42,14 @@
   <body class="site-body {% block body_class %}{% endblock %}">
 
     <header class="site-header">
-        {% include "includes/top_menu.html" %}
-        {% block full_jumbo %}{% endblock %}
+      <div class="alert alert-success alert-topnav text-center" role="alert">
+      	<button type="button" class="close" data-dismiss="alert">×</button>
+      	<strong><i class="fa fa-tree"></i> It's almost Christmas!</strong> We will be closed during the Christmas shutdown from 21st December - 4th January.
+      </div>
+      {% include "includes/top_menu.html" %}
+      {% block full_jumbo %}{% endblock %}
     </header>
-   
+
     <main class="site-content clearfix">{% block content %}{% endblock %}</main>
 
     <footer class="site-footer">{% include "includes/footer.html" %}</footer>
@@ -54,7 +58,7 @@
     {% bootstrap_javascript jquery=1 %}
     {% javascript 'libraries' %}
     {% javascript 'mngweb' %}
-    <script src="https://use.fontawesome.com/45d9ec55ca.js"></script>
+    <script src="https://use.fontawesome.com/6bf117e731.js"></script>
 
     {% block extra_js %}
       {# Override this in templates to add extra javascript #}

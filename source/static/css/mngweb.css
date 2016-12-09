@@ -302,3 +302,19 @@ label {
 .large-label {
   font-size: 1.1em;
 }
+
+
+/* --- ALERTS --- */
+.alert-topnav {
+  margin-bottom:0;
+  border-radius: 0;
+}
+
+/* --- HELPERS --- */
+.row-gap-top {
+  margin-top: 10px;
+}
+
+.row-gap-bottom {
+  margin-bottom: 10px;
+}
