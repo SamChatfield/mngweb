@@ -12,14 +12,7 @@
 
     <div class="row">
       <div class="col-md-12">
-        <div class="panel panel-success">
-          <div class="panel-heading text-center">
-            Please complete your project title &amp; description in order to proceed to your portal.
-            {% if project.meta_data_status == "Accepted" %}
-              <a href="#" data-toggle="tooltip" title="We did not previously collect project title &amp; description as part of our initial setup process, so we need to request this data retrospectively. We appreciate your cooperation.">Why am I being asked for this now?</a>
-            {% endif %}
-          </div>
-        </div>
+        {% bootstrap_messages %}
       </div>
     </div>
 

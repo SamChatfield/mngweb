@@ -1,0 +1,10 @@
+Dear {{ form_data.first_name }} {{ form_data.last_name }},
+
+You have been added as a collaborator on a MicrobesNG sequencing project.
+
+You can access the project portal at {{ portal_url }}
+
+If the owner has made this project private, you may need to login or create a new account using the email address {{ form_data.email }}
+
+Kind regards,
+MicrobesNG Team

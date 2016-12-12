@@ -2,6 +2,14 @@
   'use strict';
 
   /*
+  Signout links, use POST
+  */
+  $(document).on('click', '.signout-link', function (e) {
+    e.preventDefault();
+    $('#signout-form').submit();
+  });
+
+  /*
   AJAX form event handlers
   */
   $(document).on("submit", "#contact-form, #email-link-form", function(event){
@@ -46,5 +54,5 @@
     });
 
   });
-  
+
 })(window.mngweb = window.mngweb || {}, jQuery);

@@ -203,6 +203,7 @@
     });
 
     new Clipboard('#taxon_search_copy_btn');
+    new Clipboard('#project_anon_url_copy_btn');
   });
 
   /*

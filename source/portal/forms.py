@@ -71,6 +71,16 @@ class ProjectEnaForm(forms.Form):
     ena_abstract = forms.CharField(widget=forms.Textarea, label="Project description (abstract)")
 
 
+class ProjectAddCollaboratorForm(forms.Form):
+    email = forms.EmailField()
+    first_name = forms.CharField()
+    last_name = forms.CharField()
+
+
+class ProjectPermissionsForm(forms.Form):
+    portal_login_required = forms.IntegerField(min_value=0, max_value=1)
+
+
 class ProjectLineForm(forms.Form):
     customers_ref = forms.CharField(
         max_length=100,
@@ -94,7 +104,7 @@ class ProjectLineForm(forms.Form):
         label="Sample Taxon Name",
         required=False,
         disabled=True)
-    volume_ul = forms.DecimalField(
+    volume_ul = forms.FloatField(
         required=False,
         min_value=30,
         max_value=100,
@@ -107,7 +117,7 @@ class ProjectLineForm(forms.Form):
             'invalid': "'Volume' within the range 30-100µl is required "
                          "for DNA samples.",
         })
-    dna_concentration_ng_ul = forms.DecimalField(
+    dna_concentration_ng_ul = forms.FloatField(
         required=False,
         min_value=1,
         label="DNA concentration (ng/µl)",

@@ -57,6 +57,7 @@
           <li><a data-toggle="tab" href="#sample-submission-requirements">Sample Prep. &amp; Packaging</a></li>
         {% endif %}
         <li><a data-toggle="tab" href="#project-ena-submission">ENA Submission</a></li>
+        <li><a data-toggle="tab" href="#project-sharing-and-security">Sharing &amp; Security</a></li>
       </ul>
 
       <div class="tab-content">
@@ -122,6 +123,10 @@
 
         <div id="project-ena-submission" class="tab-pane fade">
           {% include "portal/project_includes/ena_submission.html" %}
+        </div>
+
+        <div id="project-sharing-and-security" class="tab-pane fade">
+          {% include "portal/project_includes/sharing_and_security.html" %}
         </div>
 
       {# end tab-content #}

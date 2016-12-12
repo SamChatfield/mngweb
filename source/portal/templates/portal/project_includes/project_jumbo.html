@@ -7,7 +7,13 @@
         <h1>Your project</h1>
         {% if project %}
           <h2>{{ project.reference }}</h2>
-          <a href="{% url 'customer_projects' project.contact_uuid %}" class="btn btn-default"><i class="fa fa-arrow-circle-left"></i> View all your projects</a>
+            <a href="{% url 'customer_projects' %}" class="btn btn-default"><i class="fa fa-arrow-circle-left"></i>
+              {% if user.is_authenticated %}
+                View all your projects
+              {% else %}
+                Log in to view all your projects
+              {% endif %}
+            </a>
         {% endif %}
       </div>
       <div class="col-md-3 col-md-offset-3 hidden-sm hidden-xs text-right">

@@ -1,51 +1,42 @@
 import requests
 
+from django.conf import settings
 from django.contrib import messages
+from django.core.exceptions import PermissionDenied
+from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.shortcuts import render
+from django.template.loader import render_to_string
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, Http404
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_GET, require_POST, require_http_methods
 
+from allauth.account.decorators import verified_email_required
 from django_slack import slack_message
 from openpyxl.writer.excel import save_virtual_workbook
 from mngweb.decorators import require_ajax
 
-from .forms import ProjectAcceptTermsForm, EmailLinkForm, ProjectEnaForm, ProjectLineForm, UploadSampleSheetForm
+from .decorators import check_project_contact_permissions, check_project_owner_permissions
+from .forms import (ProjectAcceptTermsForm, EmailLinkForm, ProjectEnaForm,
+                    ProjectLineForm, ProjectPermissionsForm, UploadSampleSheetForm,
+                    ProjectAddCollaboratorForm)
 from .models import EnvironmentalSampleType, HostSampleType
 from .sample_sheet import create_sample_sheet, parse_sample_sheet
-from .services import limsfm_email_project_links, limsfm_get_project,\
-    limsfm_update_projectline, limsfm_bulk_update_projectlines,\
-    limsfm_get_contact, limsfm_update_project
-from .utils import messages_to_json, json_messages_or_redirect, request_should_post_to_slack, form_errors_to_json
+from .services import (limsfm_email_project_links, limsfm_get_project,
+                       limsfm_update_projectline, limsfm_bulk_update_projectlines,
+                       limsfm_get_contact, limsfm_update_project, limsfm_project_add_contact,
+                       limsfm_project_remove_contact)
+from .utils import (messages_to_json, json_messages_or_redirect,
+                    request_should_post_to_slack, form_errors_to_json,
+                    user_is_project_owner, user_is_project_contact,
+                    handle_limsfm_http_exception, handle_limsfm_request_exception)
 
 
-def handle_limsfm_request_exception(request, e):
-    ERROR_MESSAGE = ("The MicrobesNG customer portal is temporarily "
-                     "unavailable. Please try again later.")
-    messages.error(request, ERROR_MESSAGE)
-    slack_message('portal/slack/limsfm_request_exception.slack',
-                  {'e': e, 'path': request.path})
-    print(e)
-    return 503  # http status
-
-
-def handle_limsfm_http_exception(request, e):
-    ERROR_MESSAGE = ("An unexpected error has occured. "
-                     "Please contact info@microbesng.uk")
-    if e.response.status_code == 404:
-        raise Http404
-    else:
-        messages.error(request, ERROR_MESSAGE)
-        slack_message('portal/slack/limsfm_http_exception.slack',
-                      {'e': e, 'path': request.path})
-    print(e)
-    return 500  # http status
-
-
-def customer_projects(request, customer_uuid):
+@require_GET
+@verified_email_required
+def customer_projects(request):
     customer = None
     try:
-        customer = limsfm_get_contact(customer_uuid)
+        customer = limsfm_get_contact(request.user.email)
     except requests.HTTPError as e:
         handle_limsfm_http_exception(request, e)
     except requests.RequestException as e:
@@ -55,78 +46,73 @@ def customer_projects(request, customer_uuid):
             request, 'portal/customer_projects.html', {'customer': customer})
 
 
-def project_detail(request, uuid):
-    # Handle POST
-    if request.method == 'POST':
-        project_ena_form = ProjectEnaForm(request.POST)
-        if project_ena_form.is_valid():
-            try:
-                limsfm_update_project(uuid, project_ena_form.cleaned_data)
-            except requests.HTTPError as e:
-                status = handle_limsfm_http_exception(request, e)
-            except requests.RequestException:
-                status = handle_limsfm_request_exception(request, e)
-            else:
-                slack_message('portal/slack/limsfm_project_ena_update.slack',
-                              {'uuid': uuid, 'form': project_ena_form})
-                messages.success(request, "Saved")
-                status = 200
-            if request.is_ajax():
-                return JsonResponse(messages_to_json(request), status=status)
-        elif request.is_ajax():
-            return JsonResponse(form_errors_to_json(request, project_ena_form), status=400)
-
+@require_GET
+@check_project_contact_permissions
+def project_detail(request, project_uuid):
     # Fetch project from lims
     project = None
     try:
-        project = limsfm_get_project(uuid)
+        project = limsfm_get_project(project_uuid)
     except requests.HTTPError as e:
         handle_limsfm_http_exception(request, e)
     except requests.RequestException as e:
         handle_limsfm_request_exception(request, e)
-    else:
-        if not (project['submission_requirements_name'] or
-                project['meta_data_status'] == 'Accepted' or
-                project['all_content_received_date']):  # Redirect to accept submission requirements
-            return HttpResponseRedirect(reverse(project_accept_submission_requirements, args=[uuid]))
+    if not project:
+        # Template will report error messages
+        return render(request, 'portal/project.html', {'project': project})
 
-    if request.method == 'GET':
-        project_ena_form = ProjectEnaForm(initial=project)
+    # Check whether user needs to accept submission requirements
+    if not (project['submission_requirements_name'] or
+            project['meta_data_status'] == 'Accepted' or
+            project['all_content_received_date']):  # Redirect to accept submission requirements
+        return HttpResponseRedirect(reverse(project_accept_submission_requirements, args=[project_uuid]))
 
-    context = {'project': project, 'project_ena_form': project_ena_form}
+    context = {
+        'project': project,
+        'project_add_collaborator_form': ProjectAddCollaboratorForm(),
+        'project_ena_form': ProjectEnaForm(initial=project),
+        'upload_sample_sheet_form': UploadSampleSheetForm()
+    }
 
-    if project['is_confidential'] or project['ena_title']:  # Render full project portal
+    if project['is_confidential'] or project['ena_title']:
+        # Render full project portal
         if request_should_post_to_slack(request):
             slack_message('portal/slack/limsfm_project_detail_access.slack',
                           {'request': request, 'project': project})
-        context['upload_sample_sheet_form'] = UploadSampleSheetForm()
         return render(request, 'portal/project.html', context)
-    else:  # Collect ena title/abstract before proceeding to portal
+    else:
+        # Collect ena title/abstract before proceeding to portal
+        if project['meta_data_status'] == 'Accepted':
+            messages.warning(request, "We did not previously collect your project title & description as part of our initial setup process, "
+                                      "so we need to request this data retrospectively. We appreciate your cooperation.")
+        else:
+            messages.warning(request, "Please complete your project title & description in order to proceed to your portal.")
         if request_should_post_to_slack(request):
             slack_message('portal/slack/limsfm_project_setup_access.slack',
                           {'request': request, 'project': project})
-        return render(request, 'portal/project_setup.html', context)
+        return HttpResponseRedirect(reverse(project_ena_details, args=[project_uuid]))
 
 
-def project_accept_submission_requirements(request, uuid):
+@require_http_methods(['GET', 'POST'])
+def project_accept_submission_requirements(request, project_uuid):
     if request.method == 'POST':
         form = ProjectAcceptTermsForm(request.POST)
         if form.is_valid():
             try:
-                limsfm_update_project(uuid, form.cleaned_data)
+                limsfm_update_project(project_uuid, form.cleaned_data)
             except requests.HTTPError as e:
                 handle_limsfm_http_exception(request, e)
-            except requests.RequestException:
+            except requests.RequestException as e:
                 handle_limsfm_request_exception(request, e)
             else:
                 slack_message('portal/slack/limsfm_project_accepted_submission_requirements.slack',
-                              {'uuid': uuid, 'form': form})
-                return HttpResponseRedirect(reverse(project_detail, args=[uuid]))
+                              {'uuid': project_uuid, 'form': form})
+                return HttpResponseRedirect(reverse(project_detail, args=[project_uuid]))
     else:
         form = ProjectAcceptTermsForm()
     # GET request, or invalid/failed POST
     try:
-        project = limsfm_get_project(uuid)
+        project = limsfm_get_project(project_uuid)
     except requests.HTTPError as e:
         handle_limsfm_http_exception(request, e)
     except requests.RequestException as e:
@@ -140,7 +126,124 @@ def project_accept_submission_requirements(request, uuid):
 
 
 @require_POST
+@check_project_owner_permissions
+def project_add_collaborator(request, project_uuid):
+    form = ProjectAddCollaboratorForm(request.POST)
+    if form.is_valid():
+        try:
+            limsfm_project_add_contact(project_uuid, form.cleaned_data)
+        except requests.HTTPError as e:
+            status = handle_limsfm_http_exception(request, e)
+        except requests.RequestException as e:
+            status = handle_limsfm_request_exception(request, e)
+        else:
+            messages.success(
+                request,
+                "{} {} is now a project collaborator.".format(
+                    form.cleaned_data['first_name'],
+                    form.cleaned_data['last_name']))
+
+            # Notify new collaborator
+            context = {
+                'request': request,
+                'form_data': form.cleaned_data,
+                'portal_url': reverse(project_detail, args=[project_uuid])
+            }
+            subject = render_to_string('portal/email/add_collaborator_subject.txt', context)
+            text_content = render_to_string('portal/email/add_collaborator_message.txt', context)
+            html_content = render_to_string('portal/email/add_collaborator_message.html', context)
+            send_mail(subject, text_content, settings.DEFAULT_FROM_EMAIL, [form.cleaned_data['email']], html_message=html_content, fail_silently=True)
+
+        if request.is_ajax():
+            return JsonResponse(messages_to_json(request), status=status)
+    elif request.is_ajax():
+        return JsonResponse(form_errors_to_json(request, project_ena_form), status=400)
+    return HttpResponseRedirect(reverse(project_detail, args=[project_uuid]))
+
+
+@require_POST
+@check_project_owner_permissions
+def project_remove_collaborator(request, project_uuid, contact_uuid):
+    try:
+        limsfm_project_remove_contact(project_uuid, contact_uuid)
+    except requests.HTTPError as e:
+        status = handle_limsfm_http_exception(request, e)
+    except requests.RequestException as e:
+        status = handle_limsfm_request_exception(request, e)
+    else:
+        messages.success(request, "Project collaborator removed.")
+    if request.is_ajax():
+        return JsonResponse(messages_to_json(request), status=status)
+    return HttpResponseRedirect(reverse(project_detail, args=[project_uuid]))
+
+
+@require_http_methods(['GET', 'POST'])
+@check_project_contact_permissions
+def project_ena_details(request, project_uuid):
+    # Handle POST
+    if request.method == 'POST':
+        form = ProjectEnaForm(request.POST)
+        if form.is_valid():
+            try:
+                limsfm_update_project(project_uuid, form.cleaned_data)
+            except requests.HTTPError as e:
+                status = handle_limsfm_http_exception(request, e)
+            except requests.RequestException as e:
+                status = handle_limsfm_request_exception(request, e)
+            else:
+                slack_message('portal/slack/limsfm_project_ena_update.slack',
+                              {'uuid': project_uuid, 'form': form})
+                messages.success(request, "Project ENA details saved.")
+                status = 200
+            if request.is_ajax():
+                return JsonResponse(messages_to_json(request), status=status)
+            else:
+                return HttpResponseRedirect(reverse(project_detail, args=[project_uuid]))
+        elif request.is_ajax():
+            return JsonResponse(form_errors_to_json(request, project_ena_form), status=400)
+
+    # GET request, or invalid/failed POST
+    project = None
+    try:
+        project = limsfm_get_project(project_uuid)
+    except requests.HTTPError as e:
+        handle_limsfm_http_exception(request, e)
+    except requests.RequestException as e:
+        handle_limsfm_request_exception(request, e)
+    else:
+        form = ProjectEnaForm(initial=project)
+        if request_should_post_to_slack(request):
+            slack_message('portal/slack/limsfm_project_setup_access.slack',
+                          {'request': request, 'project': project})
+        context = {'project': project, 'project_ena_form': form}
+        return render(request, 'portal/project_setup.html', context)
+
+
+@require_POST
+@check_project_contact_permissions
+def project_permissions(request, project_uuid):
+    form = ProjectPermissionsForm(request.POST)
+    if form.is_valid():
+        try:
+            limsfm_update_project(project_uuid, form.cleaned_data)
+        except requests.HTTPError as e:
+            status = handle_limsfm_http_exception(request, e)
+        except requests.RequestException as e:
+            status = handle_limsfm_request_exception(request, e)
+        else:
+            messages.success(request, "Project access permissions have been updated.")
+            status = 200
+        if request.is_ajax():
+            return JsonResponse(messages_to_json(request), status=status)
+        else:
+            return HttpResponseRedirect(reverse(project_detail, args=[project_uuid]))
+    elif request.is_ajax():
+        return JsonResponse(form_errors_to_json(request, project_ena_form), status=400)
+
+
+@require_POST
 @require_ajax
+@check_project_contact_permissions
 def projectline_update(request, project_uuid, projectline_uuid):
     form = ProjectLineForm(request.POST)
     if form.is_valid():
@@ -197,7 +300,8 @@ def project_email_link(request):
 
     return render(request, 'portal/email_link.html', {'form': form})
 
-
+@require_GET
+@check_project_contact_permissions
 def download_sample_sheet(request, uuid):
     wb = create_sample_sheet(uuid)
     response = HttpResponse(
@@ -208,6 +312,7 @@ def download_sample_sheet(request, uuid):
 
 
 @require_POST
+@check_project_contact_permissions
 def upload_sample_sheet(request, uuid):
     form = UploadSampleSheetForm(request.POST, request.FILES)
     redirect_url = reverse('project_detail', args=[uuid])

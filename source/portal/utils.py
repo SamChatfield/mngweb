@@ -7,8 +7,31 @@ from django.template.loader import render_to_string
 
 from ipware.ip import get_real_ip
 from netaddr import IPNetwork, IPAddress
+from django_slack import slack_message
 
 from .models import EnvironmentalSampleType, HostSampleType
+
+def handle_limsfm_request_exception(request, e):
+    ERROR_MESSAGE = ("The MicrobesNG customer portal is temporarily "
+                     "unavailable. Please try again later.")
+    messages.error(request, ERROR_MESSAGE)
+    slack_message('portal/slack/limsfm_request_exception.slack',
+                  {'e': e, 'path': request.path})
+    print(e)
+    return 503  # http status
+
+
+def handle_limsfm_http_exception(request, e):
+    ERROR_MESSAGE = ("An unexpected error has occured. "
+                     "Please contact info@microbesng.uk")
+    if e.response.status_code == 404:
+        raise Http404
+    else:
+        messages.error(request, ERROR_MESSAGE)
+        slack_message('portal/slack/limsfm_http_exception.slack',
+                      {'e': e, 'path': request.path})
+    print(e)
+    return 500  # http status
 
 
 def messages_to_json(request):
@@ -48,6 +71,20 @@ def request_should_post_to_slack(request):
     except AttributeError:
         return True
     return not any(IPAddress(ip) in IPNetwork(n) for n in ignore_networks)
+
+
+def user_is_project_owner(user, project):
+    user_email = getattr(user, 'email', None)
+    if not user_email:
+        return False
+    return user_email.lower() == project['primary_contact']['email'].lower()
+
+
+def user_is_project_contact(user, project):
+    user_email = getattr(user, 'email', None)
+    if not user_email:
+        return False
+    return user_email.lower() in [c['email'].lower() for c in project['contacts']]
 
 
 def load_environmentalsampletype_data(file_path):

@@ -16,7 +16,7 @@
         <p>We won't submit your data to the ENA until at least 12 months following data delivery, and we will forewarn you of submission closer to the time. We do require a project title and description before we can proceed with your project. This will form part of the ENA submission, and you will be able to update this at any time prior to publication.</p>
       </div>
     </div>
-    <form method="post" action="?" class="project-ena-form">
+    <form method="post" action="{% url 'project_ena_details' project.uuid %}" class="project-ena-form">
       {% csrf_token %}
       {% bootstrap_form project_ena_form %}
       {% buttons %}

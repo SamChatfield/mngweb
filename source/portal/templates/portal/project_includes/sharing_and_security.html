@@ -1,0 +1,122 @@
+{% load bootstrap3 portal_tags %}
+
+{% user_is_project_owner user project as user_is_project_owner %}
+{% user_is_project_contact user project as user_is_project_contact %}
+
+<div class="row">
+  <div class="col-md-12">
+    {% if user_is_project_contact %}
+      <div class="col-md-6">
+
+        {% if project.portal_login_required %}
+          <h4><i class="fa fa-eye-slash"></i> This project is only visible to the project owner and registered collaborators</h4>
+          {% if user_is_project_owner %}
+            <form method="post" action="{% url 'project_permissions' project.uuid %}">
+              {% csrf_token %}
+              <input type="hidden" name="portal_login_required" value="0">
+              <button class="btn btn-success btn-block" type="submit">
+                <i class="fa fa-eye"></i> Share this project with an anonymised link
+              </button>
+            </form>
+          {% else %}
+            <p>Only the project owner can make this project accessible with an anonymised link.</p>
+          {% endif %}
+
+        {% else %}
+          <h4><i class="fa fa-eye"></i> This project is accessible to anyone with your project share link</h4>
+
+          <div class="form-group">
+            <label class="control-label" for="project_anon_url">Your project share link</label>
+            <div class="input-group">
+              <input id="project_anon_url" class="form-control" type="url" value="{{ request.build_absolute_uri }}" readonly>
+              <span class="input-group-btn">
+                <button id="project_anon_url_copy_btn" class="btn btn-default" data-clipboard-target="#project_anon_url"><i class="fa fa-copy"></i> Copy</button>
+              </span>
+            </div>
+          </div>
+
+          {% if user_is_project_owner %}
+            <form method="post" action="{% url 'project_permissions' project.uuid %}">
+              {% csrf_token %}
+              <input type="hidden" name="portal_login_required" value="1">
+              <button class="btn btn-warning btn-block" type="submit">
+                <i class="fa fa-eye-slash"></i> Make this project private
+              </button>
+            </form>
+          {% else %}
+            <p>Only the project owner can make this project private.</p>
+          {% endif %}
+
+        {% endif %}
+      </div>
+
+      <div class="col-md-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">Project Collaborators</div>
+          <div class="panel-body">
+            <table class="table">
+              {% for contact in project.contacts %}
+                {% if contact.is_primary %}
+                  <tr class="success">
+                    <td><strong>{{ contact.name }} (project owner)</strong></td>
+                    <td><strong>{{ contact.email }}</strong></td>
+                    <td></td>
+                  </tr>
+                {% else %}
+                  <tr>
+                    <td>{{ contact.name }}</td>
+                    <td>{{ contact.email }}</td>
+                    <td>{% if user_is_project_owner %}
+                      <form action="{% url 'project_remove_collaborator' project.uuid contact.uuid %}" method="POST">
+                        {% csrf_token %}
+                        <button class="btn btn-xs btn-danger" type="submit"><i class="fa fa-remove"></i> Remove</button>
+                      </form>
+                    {% endif %}</td>
+                  </tr>
+                {% endif %}
+              {% endfor %}
+            </table>
+
+            {% if user_is_project_owner %}
+              <h4>Add a new collaborator</h5>
+              <form action="{% url 'project_add_collaborator' project.uuid %}" method="POST">
+                {% csrf_token %}
+                <div class="col-md-6">{% bootstrap_field project_add_collaborator_form.first_name %}</div>
+                <div class="col-md-6">{% bootstrap_field project_add_collaborator_form.last_name %}</div>
+                <div class="col-md-12">{% bootstrap_field project_add_collaborator_form.email %}</div>
+                <div class="col-md-12"><button class="btn btn-info btn-block" type="submit"><i class="fa fa-plus"></i> Add Collaborator</button></div>
+              </form>
+            {% else %}
+              <h5>Only the project owner can add new collaborators</h5>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+    {# Not logged in / viewing anonymously #}
+    {% else %}
+      <h3>You are viewing this project anonymously</h3>
+      <p>If you are the project owner, please <a href="{% url 'account_login' %}" title="Sign In">sign in</a> to make changes to your privacy settings.</p>
+      <div class="row row-gap-top">
+        <div class="col-md-3">
+          <a class="btn btn-success btn-block" href="{% url 'account_login' %}">Sign In</a>
+        </div>
+        <div class="col-md-3">
+          <a class="btn btn-info btn-block" href="{% url 'account_signup' %}">Register</a>
+        </div>
+      </div>
+      <div class="row row-gap-top">
+        <div class="col-md-6">
+          <div class="panel panel-warning">
+            <div class="panel-body">
+              <strong>
+                Please register using the same email address that you have previously used to communicate with us.
+                <a href="#" data-toggle="tooltip" title="Once verified, we use your email address to link your account with any existing sequencing projects.">Why?</a>
+              </strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>

@@ -16,9 +16,8 @@ PROJECT_DJANGO_TO_LIMSFM_MAP = {
     'address_country_iso2': 'Address::country_iso2',
     'all_content_received_date': 'all_content_received_date',
     'barcodes_sent_date': 'barcodes_sent_date',
+    'contact_name_full': 'project_Contact#primary::name_full',
     'creation_datetime': 'creation_host_timestamp',
-    'contact_name_full': 'Contact::name_full',
-    'contact_uuid': 'Contact::uuid',
     'data_sent_date': 'data_sent_date',
     'ena_abstract': 'ena_abstract',
     'ena_title': 'ena_title',
@@ -28,6 +27,7 @@ PROJECT_DJANGO_TO_LIMSFM_MAP = {
     'meta_data_status': 'meta_data_status',
     'modal_queue_matches': 'uc_modal_queue_matches',
     'modal_queue_name': 'unstored_modal_queue_name',
+    'portal_login_required': 'portal_login_required',
     'projectline_count': 'unstored_projectline_count',
     'reference': 'reference',
     'results_path': 'results_path',
@@ -90,6 +90,20 @@ def bool_from_fmstr(dct, key):
         dct[key] = bool(int(dct[key]))
 
 
+def list_from_fmstr(dct, key):
+    """Convert a filemaker return-separated list, in place"""
+    if dct[key]:
+        dct[key] = dct[key].split('\n')
+
+
+def value_to_fm_type(value):
+    if value is None:
+        return ''
+    if isinstance(value, (int, float)):
+        return value
+    return str(value)
+
+
 def project_from_limsfm(limsfm_project):
     project = {}
 
@@ -102,6 +116,7 @@ def project_from_limsfm(limsfm_project):
     date_from_fmstr(project, 'data_sent_date')
     bool_from_fmstr(project, 'has_dna_samples')
     bool_from_fmstr(project, 'has_strain_samples')
+    bool_from_fmstr(project, 'portal_login_required')
 
     if project['barcodes_sent_date']:
         date_from_fmstr(project, 'barcodes_sent_date')
@@ -141,7 +156,7 @@ def projectline_to_fm_dict(project_uuid, cleaned_data):
     fm_data = {}
     for k, v in cleaned_data.items():
         if k in PROJECTLINE_DJANGO_TO_LIMSFM_MAP:
-            fm_data[PROJECTLINE_DJANGO_TO_LIMSFM_MAP[k]] = str(v) if v else ''
+            fm_data[PROJECTLINE_DJANGO_TO_LIMSFM_MAP[k]] = value_to_fm_type(v)
     fm_data['Project::uuid_validation'] = project_uuid
     fm_data['Sample::declared_dna_conc_ngul'] = fm_data['Aliquot::dna_concentration_ng_ul']
 
@@ -166,21 +181,21 @@ def limsfm_request(rel_uri, method='get', params={}, json=None):
     return response
 
 
-def limsfm_get_contact(uuid):
+def limsfm_get_contact(email):
     # Get LIMSfm contact data
     response = limsfm_request(
         'layout/contact_api/%(field)s%(value)s' %
         {
-            'field': urlquote('uuid==='),
-            'value': urlquote(uuid)
+            'field': urlquote('email_address==='),
+            'value': urlquote(email)
         }, 'get')
     contact = response.json()['data'][0]
 
     # Get related projects
     try:
         response = limsfm_request('layout/project_api', 'get', {
-            'RFMsF1': 'contact_id',
-            'RFMsV1': contact['contact_id'],
+            'RFMsF1': 'Contact::email_address',
+            'RFMsV1': '="{}"'.format(email),
             'RFMmax': 0
         })
     except requests.HTTPError as e:
@@ -206,9 +221,47 @@ def limsfm_get_contact(uuid):
     return contact
 
 
+def limsfm_get_project_permissions(uuid):
+    """
+    Return a project permissions dictionary (lightweight, single api call).
+    Can be merged with a full project dictionary via. dict.update()
+    """
+    permissions = {
+        'uuid': uuid,
+        'portal_login_required': False,
+        'contacts': [],
+    }
+    response = limsfm_request('layout/project_contact_api', 'get', {
+        'RFMsF1': 'Project::uuid',
+        'RFMsV1': uuid,
+        'RFMmax': 0
+    })
+    records = response.json()['data']
+
+    permissions['portal_login_required'] = records[0]['Project::portal_login_required']
+    bool_from_fmstr(permissions, 'portal_login_required')
+
+    for r in response.json()['data']:
+        c = {
+            'uuid': r['Contact::uuid'],
+            'email': r['Contact::email_address'],
+            'is_primary': r['unstored_is_primary'],
+            'name': r['Contact::name_full']
+        }
+        bool_from_fmstr(c, 'is_primary')
+        permissions['contacts'].append(c)
+        if c['is_primary']:
+            permissions['primary_contact'] = c
+
+    permissions['contacts'].sort(key=lambda c: (not c['is_primary'], c['name']))
+
+    return permissions
+
+
 def limsfm_get_project(uuid):
     """Return a Project dictionary, including ProjectLines, from LIMSfm"""
 
+    # Get project
     uri = ('layout/project_api/%(field)s%(value)s' %
            {
                'field': urlquote('uuid==='),
@@ -216,6 +269,11 @@ def limsfm_get_project(uuid):
            })
     project_response = limsfm_request(uri, 'get')
     project = project_from_limsfm(project_response.json()['data'][0])
+
+    # Get project permissions
+    project.update(limsfm_get_project_permissions(uuid))
+
+    # Get project lines
     lines_response = limsfm_request('layout/projectline_api', 'get', {
         'RFMsF1': 'project_id',
         'RFMsV1': project['project_id'],
@@ -248,13 +306,13 @@ def limsfm_get_project(uuid):
 
 
 def limsfm_update_project(uuid, cleaned_data):
-    """ Update a project record"""
+    """Update a project record"""
 
     # Construct dict
     fm_data = {}
     for k, v in cleaned_data.items():
         if k in PROJECT_DJANGO_TO_LIMSFM_MAP:
-            fm_data[PROJECT_DJANGO_TO_LIMSFM_MAP[k]] = str(v) if v else ''
+            fm_data[PROJECT_DJANGO_TO_LIMSFM_MAP[k]] = value_to_fm_type(v)
     json = {'data': [fm_data]}
 
     uri = ('layout/project_api/%(field)s%(value)s' %
@@ -338,6 +396,20 @@ def limsfm_email_project_links(email_address):
     """Call a script to email project links to contact"""
     uri = 'script/contact_email_project_links/REST'
     return limsfm_request(uri, 'get', params={'RFMscriptParam': email_address})
+
+
+def limsfm_project_add_contact(project_uuid, cleaned_data):
+    """Call a script to crate a new ProjecContact record"""
+    uri = 'script/project_add_contact/project_contact_api'
+    cleaned_data['project_uuid'] = project_uuid
+    return limsfm_request(uri, 'get', params={'RFMscriptParam': json.dumps(cleaned_data)})
+
+
+def limsfm_project_remove_contact(project_uuid, contact_uuid):
+    """Call a script to delete a ProjecContact record"""
+    uri = 'script/project_remove_contact/REST'
+    param = {'project_uuid': project_uuid, 'contact_uuid': contact_uuid}
+    return limsfm_request(uri, 'get', params={'RFMscriptParam': json.dumps(param)})
 
 
 def limsfm_create_quote(form_data):

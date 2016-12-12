@@ -1,0 +1,48 @@
+{% extends 'account/base.html' %}
+{% load i18n bootstrap3 %}
+
+{% block title %}{% trans "Create a user account" %}{% endblock %}
+
+{% block jumbo_header %}<i class="fa fa-user-circle"></i> {% trans "Sign up for a user account" %}{% endblock %}
+
+{% block content %}
+  {{ block.super }}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-5">
+        <p>{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}</p>
+
+        <div class="panel panel-warning">
+          <div class="panel-body">
+            <strong>
+              {% blocktrans %}
+                Existing customers: please use the same email address that you have previously used to communicate with us.
+                <a href="#" data-toggle="tooltip" title="Once verified, we use your email address to link your account with any existing sequencing projects.">Why?</a>
+              {% endblocktrans %}
+            </strong>
+          </div>
+        </div>
+
+        <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
+          {% csrf_token %}
+          {% bootstrap_field form.email %}
+          {% bootstrap_field form.password1 field_class="password-field" %}
+          <div class="checkbox">
+            <label><input class="show-hide-password" type="checkbox" name="show-hide-password" value="">{% trans "Show password" %}</label>
+          </div>
+          {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+          {% endif %}
+          <div id="signup_email_message" class="hidden panel panel-success">
+            <div class="panel-body">
+              {% blocktrans %}
+                We will send an email to <strong><span class="confirm-email-address"></span></strong> with a link to activate your account.
+              {% endblocktrans %}
+            </div>
+          </div>
+          <button class="btn btn-success btn-block" type="submit">{% trans "Sign up" %}</button>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

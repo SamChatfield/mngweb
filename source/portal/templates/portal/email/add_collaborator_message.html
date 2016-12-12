@@ -1,0 +1,12 @@
+{% extends 'email/html_email_base.html' %}
+
+{% block title %}{% include "portal/email/add_collaborator_subject.txt" %}{% endblock %}
+{% block subject %}{% include "portal/email/add_collaborator_subject.txt" %}{% endblock %}
+
+{% block content %}
+  <p>Dear {{ form_data.first_name }} {{ form_data.last_name }},</p>
+  <p>You have been added as a collaborator on a MicrobesNG sequencing project.</p>
+  <p>You can access the project portal at <a href="{{ request.scheme }}://{{ request.get_host }}{{ portal_url }}" title="Project portal">{{ request.scheme }}://{{ request.get_host }}{{ portal_url }}</a></p>
+  <p>If the owner has made this project private, you may need to login or create a new account <strong>using this email address</strong></p>
+  <p>Kind regards,<br>MicrobesNG team</p>
+{% endblock %}

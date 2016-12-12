@@ -32,6 +32,8 @@ urlpatterns = [
     url(r'portal/', include(portal_urls)),
     url(r'taxon/', include(taxon_urls)),
 
+    url(r'^accounts/', include('allauth.urls')),
+
     url(r'', include(wagtail_urls)),
 ]
 

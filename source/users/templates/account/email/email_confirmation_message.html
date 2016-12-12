@@ -1,0 +1,14 @@
+{% extends 'email/html_email_base.html' %}
+{% load account %}
+{% load i18n %}
+
+{% block title %}{% include "account/email/email_confirmation_subject.txt" %}{% endblock %}
+{% block subject %}{% include "account/email/email_confirmation_subject.txt" %}{% endblock %}
+
+{% block content %}
+  {% blocktrans %}
+    <p>A user account for MicrobeNG has been created using your email address.</p>
+    <p>To confirm this is correct and activate your account, go to <a href="{{ activate_url }}" title="Confirm your email address">{{ activate_url }}</a></p>
+    <p>Kind regards,<br>MicrobesNG team</p>
+  {% endblocktrans %}
+{% endblock %}
