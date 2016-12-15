@@ -299,6 +299,11 @@ label {
   font-weight: 400;
 }
 
+.nav-tabs > li > a > .label {
+  font-size: 60%;
+  vertical-align: middle;
+}
+
 
 /* --- LABELS --- */
 
