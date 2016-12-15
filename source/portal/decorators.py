@@ -3,7 +3,6 @@ import requests
 from functools import wraps
 
 from django.core.exceptions import PermissionDenied
-from django.http import HttpResponseBadRequest
 from django.shortcuts import render
 from allauth.account.decorators import verified_email_required
 from .services import limsfm_get_project_permissions

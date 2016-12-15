@@ -2,7 +2,6 @@ import requests
 
 from django.conf import settings
 from django.contrib import messages
-from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.shortcuts import render
@@ -27,7 +26,6 @@ from .services import (limsfm_email_project_links, limsfm_get_project,
                        limsfm_project_remove_contact)
 from .utils import (messages_to_json, json_messages_or_redirect,
                     request_should_post_to_slack, form_errors_to_json,
-                    user_is_project_owner, user_is_project_contact,
                     handle_limsfm_http_exception, handle_limsfm_request_exception)
 
 
