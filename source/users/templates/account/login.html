@@ -25,18 +25,13 @@
         </form>
       </div>
 
-      {% if redirect_field_value %}
-        <div class="col-md-5 col-md-offset-1">
-          <h4>Why do I have to sign in or create an account?</h4>
-          <p>In the interests of balancing security and ease-of-use, certain areas of the customer portal now require a login.
-             Projects can still be accessed via. an anonymised link, which can be disabled by the project owner.
-             Your customer page, where all your projects are listed, will now show both your own projects and any for which you are registered as a collaborator.
-             This page will now always require a login.</p>
-          <h4>I have existing projects, but I don't have an account</h4>
-          <p>Simply <a href="{{ signup_url }}">register for an account</a> using the same email address that we have on file for you. Once verified, you will immediately gain access to your existing projects.
-             In addition, you can still access your projects using their individual anonymised links.</p>
-        </div>
-      {% endif %}
+      <div class="col-md-5 col-md-offset-1">
+        <p><a class="btn btn-info btn-block" href="{{ signup_url }}" title="Sign up for a user account">Sign up for an account</a></p>
+        <p><strong>If you have existing projects, please register using the same email address that we have on file for you.</strong></p>
+        <p>Once verified, you will immediately gain access to your existing projects.
+        In addition, you can still access your projects using their individual anonymised links.</p>
+      </div>
+
     </div>
   </div>
 {% endblock %}

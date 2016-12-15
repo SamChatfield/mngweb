@@ -1,0 +1,18 @@
+{% extends 'account/base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Verify your email addresss" %}{% endblock %}
+{% block jumbo_header %}<i class="fa fa-envelope-open"></i> {% trans "Verify your email address" %}</h1>{% endblock %}
+
+{% block content %}
+  {{ block.super }}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h2>{% trans "Please check your email" %}</h2>
+        <p>{% blocktrans %}We have sent an email to you with a link to verify your address and finalise the signup process.{% endblocktrans %}</p>
+        <p>{% blocktrans %}Please contact us if you do not receive your link within a few minutes.{% endblocktrans %}</p>
+      </div>
+    </div>
+  </div>
+{% endblock %}
