@@ -79,6 +79,8 @@
 
             {% if user_is_project_owner %}
               <h4>Add a new collaborator</h5>
+              <p>Collaborators will receive a notification email to inform them that they have been added to a project.
+                 They will be able to access this project page, update sample metadata and will also receive automated status update notifications.</p>
               <form action="{% url 'project_add_collaborator' project.uuid %}" method="POST">
                 {% csrf_token %}
                 <div class="col-md-6">{% bootstrap_field project_add_collaborator_form.first_name %}</div>
