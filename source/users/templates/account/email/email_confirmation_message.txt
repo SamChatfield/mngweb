@@ -2,7 +2,7 @@
 
 You're receiving this email because user {{ user_display }} has given yours as an email address to connect their account.
 
-To confirm this is correct, go to {% endblocktrans %}{{ activate_url }}
+To confirm this is correct, go to {{ activate_url }}
 
-{% blocktrans %}Kind regards,
-The MicrobesNG team{% endblocktrans %}
+Kind regards,
+The MicrobesNG team{% endblocktrans %}{% endautoescape %}
