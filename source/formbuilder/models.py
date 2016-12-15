@@ -2,19 +2,20 @@ from __future__ import unicode_literals
 import datetime
 
 from django.db import models
-from django.shortcuts import render
+from django.conf import settings
 from django.contrib import messages
+from django.core.mail import EmailMessage, get_connection
 from django.http import JsonResponse, HttpResponseRedirect
-from django.utils.six import text_type
-from django.core.mail import EmailMessage
+from django.shortcuts import render
 from django.template.loader import render_to_string
+from django.utils.six import text_type
 
+from modelcluster.fields import ParentalKey
+from wagtail.wagtailadmin.edit_handlers import (FieldPanel, PageChooserPanel,
+                                                MultiFieldPanel, InlinePanel)
 from wagtail.wagtailcore.fields import RichTextField
 from wagtail.wagtailcore.models import Page
-from wagtail.wagtailadmin.edit_handlers import FieldPanel, PageChooserPanel, \
-    MultiFieldPanel, InlinePanel
 from wagtail.wagtailforms.models import AbstractEmailForm, AbstractFormField
-from modelcluster.fields import ParentalKey
 
 
 class FormField(AbstractFormField):
@@ -65,8 +66,10 @@ class FormPage(AbstractEmailForm):
                                 text_type(form.data.get(x[0]))
                                 for x in form.fields.items()])
             reply_to = ([form.data['email']] if 'email' in form.data else None)
-            email = EmailMessage(subject, content, self.from_address,
-                                 [self.to_address], reply_to=reply_to)
+            connection = get_connection(username=settings.EMAIL_HOST_USER_INTERNAL,
+                                        password=settings.EMAIL_HOST_PASSWORD_INTERNAL)
+            email = EmailMessage(subject, content, self.from_address, [self.to_address],
+                                 connection=connection, reply_to=reply_to)
             email.send(fail_silently=False)
 
     # Override serve method to enable ajax

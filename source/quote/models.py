@@ -1,15 +1,16 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.conf import settings
 from django.contrib import messages
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMessage, get_connection
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
+from wagtail.wagtailadmin.edit_handlers import (FieldPanel, MultiFieldPanel,
+                                                PageChooserPanel)
 from wagtail.wagtailcore.models import Page
 from wagtail.wagtailcore.fields import RichTextField
-from wagtail.wagtailadmin.edit_handlers import FieldPanel, MultiFieldPanel,\
-    PageChooserPanel
 
 from portal.services import limsfm_create_quote
 from .forms import QuoteRequestForm
@@ -71,10 +72,11 @@ class QuoteRequestFormPage(Page):
                     ['{}: {}'.format(boundfield.label, str(boundfield.data))
                      for boundfield in form]))
             reply_to = ([form.data['email']] if 'email' in form.data else None)
-            subject = '%s [%s %s]' % (
-                self.subject, quote_ref, form.data['name_last'])
-            email = EmailMessage(subject, content, self.from_address,
-                                 [self.to_address], reply_to=reply_to)
+            subject = '%s [%s %s]' % (self.subject, quote_ref, form.data['name_last'])
+            connection = get_connection(username=settings.EMAIL_HOST_USER_INTERNAL,
+                                        password=settings.EMAIL_HOST_PASSWORD_INTERNAL)
+            email = EmailMessage(subject, content, self.from_address, [self.to_address],
+                                 connection=connection, reply_to=reply_to)
             email.send(fail_silently=False)
 
     def serve(self, request):
