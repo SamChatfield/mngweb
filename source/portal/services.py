@@ -333,7 +333,6 @@ def limsfm_update_projectline(project_uuid, projectline_uuid, cleaned_data):
                'value': urlquote(projectline_uuid)
            })
     update_response = limsfm_request(uri, 'put', json=json)
-    limsfm_project_auto_queue(project_uuid)
     return update_response
 
 
@@ -345,7 +344,6 @@ def limsfm_bulk_update_projectlines(project_uuid, projectlines):
         json['meta'].append({'recordID': ('uuid===%s' % k)})
         json['data'].append(projectline_to_fm_dict(project_uuid, v))
     update_response = limsfm_request('bulk/projectline_api', 'put', json=json)
-    limsfm_project_auto_queue(project_uuid)
     return update_response
 
 
