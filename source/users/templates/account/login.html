@@ -8,10 +8,25 @@
 {% block content %}
   {{ block.super }}
   <div class="container">
+
+    {% if redirect_field_value %}
+      <div class="row">
+        <div class="col-md-12">
+          <div class="panel panel-warning">
+            <div class="panel-body text-center">
+              {% blocktrans %}
+                The page that you are trying to access requires a login.
+                <a href="#" data-toggle="tooltip" title="We have added some new security and collaboration features to our customer portal. Certain areas of the site will now require a login.">Why has this changed?</a>
+              {% endblocktrans %}
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
     <div class="row">
       <div class="col-md-5">
-        <p>{% blocktrans %}If you have not created an account yet, then please
-        <a href="{{ signup_url }}">sign up</a> first.{% endblocktrans %}</p>
+        <h3>{% trans "Sign in" %}</h3>
 
         <form class="login" method="POST" action="{% url 'account_login' %}">
           {% csrf_token %}
@@ -26,10 +41,13 @@
       </div>
 
       <div class="col-md-5 col-md-offset-1">
-        <p><a class="btn btn-info btn-block" href="{{ signup_url }}" title="Sign up for a user account">Sign up for an account</a></p>
-        <p><strong>If you have existing projects, please register using the same email address that we have on file for you.</strong></p>
-        <p>Once verified, you will immediately gain access to your existing projects.
-        In addition, you can still access your projects using their individual anonymised links.</p>
+        <h3>{% trans "Register for an account" %}</h3>
+        {% blocktrans %}
+          <p><a class="btn btn-info btn-block" href="{{ signup_url }}" title="Sign up">Sign up</a></p>
+          <p><strong>If you have existing projects, please register using the same email address that we have on file for you.</strong></p>
+          <p>Once verified, you will immediately gain access to your existing projects.
+          In addition, you can still access your projects using their individual anonymised links.</p>
+        {% endblocktrans %}
       </div>
 
     </div>
