@@ -225,6 +225,24 @@ PIPELINE = {
             ),
             'output_filename': 'css/libs.min.css',
         },
+        'mngweb': {
+            'source_filenames': (
+                'css/mngweb.css',
+            ),
+            'output_filename': 'css/mngweb.min.css',
+        },
+        'mngweb_portal': {
+            'source_filenames': (
+                'portal/css/portal.css',
+            ),
+            'output_filename': 'portal/css/portal.min.css',
+        },
+        'mngweb_home': {
+            'source_filenames': (
+                'home/css/home.css',
+            ),
+            'output_filename': 'home/css/home.min.css',
+        },
     },
     'JAVASCRIPT': {
         'libraries': {

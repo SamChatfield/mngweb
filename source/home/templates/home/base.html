@@ -1,5 +1,6 @@
 {% extends "base.html" %}
-{% load static %}
+{% load pipeline static %}
+
 {% block extra_css %}
-  <link rel="stylesheet" type="text/css" href="{% static 'home/css/home.css' %}">
+  {% stylesheet 'mngweb_home' %}
 {% endblock %}
