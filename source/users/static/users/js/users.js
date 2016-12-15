@@ -13,17 +13,17 @@
   PasswordToggler.prototype = {
     toggle: function() {
       var self = this;
-      self.element.addEventListener("click", function() {
+      self.element.addEventListener('click', function() {
         if( self.element.checked ) {
-          self.field.setAttribute("type", "text");
+          self.field.setAttribute('type', 'text');
         } else {
-          self.field.setAttribute("type", "password");
+          self.field.setAttribute('type', 'password');
         }
       }, false);
     }
   };
 
-  $(function () {
+  $(function() {
     /*
     Init. password show/hide togglers
     */
