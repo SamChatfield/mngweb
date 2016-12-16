@@ -1,0 +1,9 @@
+#!/bin/sh
+
+PYTHON=/usr/bin/python3
+SCRIPT=~/scripts/sqlite_backup.py
+DBPATH=~/sites/microbesng.uk/database/db.sqlite3
+BACKUPDIR=~/backups/microbesng.uk/db/
+DAYSTOKEEP=30
+
+$PYTHON $SCRIPT $DBPATH $BACKUPDIR --days-to-keep $DAYSTOKEEP

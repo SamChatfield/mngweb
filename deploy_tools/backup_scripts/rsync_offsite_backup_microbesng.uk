@@ -1,0 +1,9 @@
+#!/bin/sh
+
+RSYNC=/usr/bin/rsync
+RUSER=ubuntu
+RHOST=123.123.123.123
+RPATH=~/backups/microbesng.uk/
+LPATH=~/backups/microbesng.uk/
+
+$RSYNC -avz --delete $LPATH $RUSER@$RHOST:$RPATH
