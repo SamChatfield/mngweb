@@ -14,7 +14,7 @@ from django_slack import slack_message
 from openpyxl.writer.excel import save_virtual_workbook
 from mngweb.decorators import require_ajax
 
-from .decorators import check_project_contact_permissions, check_project_owner_permissions
+from .decorators import check_project_permissions
 from .forms import (ProjectAcceptTermsForm, EmailLinkForm, ProjectEnaForm,
                     ProjectLineForm, ProjectPermissionsForm, UploadSampleSheetForm,
                     ProjectAddCollaboratorForm)
@@ -45,7 +45,7 @@ def customer_projects(request):
 
 
 @require_GET
-@check_project_contact_permissions
+@check_project_permissions
 def project_detail(request, project_uuid):
     # Fetch project from lims
     project = None
@@ -124,7 +124,7 @@ def project_accept_submission_requirements(request, project_uuid):
 
 
 @require_POST
-@check_project_owner_permissions
+@check_project_permissions(owner=True)
 def project_add_collaborator(request, project_uuid):
     form = ProjectAddCollaboratorForm(request.POST)
     if form.is_valid():
@@ -160,7 +160,7 @@ def project_add_collaborator(request, project_uuid):
 
 
 @require_POST
-@check_project_owner_permissions
+@check_project_permissions(owner=True)
 def project_remove_collaborator(request, project_uuid, contact_uuid):
     try:
         limsfm_project_remove_contact(project_uuid, contact_uuid)
@@ -176,7 +176,7 @@ def project_remove_collaborator(request, project_uuid, contact_uuid):
 
 
 @require_http_methods(['GET', 'POST'])
-@check_project_contact_permissions
+@check_project_permissions
 def project_ena_details(request, project_uuid):
     # Handle POST
     if request.method == 'POST':
@@ -218,7 +218,7 @@ def project_ena_details(request, project_uuid):
 
 
 @require_POST
-@check_project_contact_permissions
+@check_project_permissions(owner=True)
 def project_permissions(request, project_uuid):
     form = ProjectPermissionsForm(request.POST)
     if form.is_valid():
@@ -241,7 +241,7 @@ def project_permissions(request, project_uuid):
 
 @require_POST
 @require_ajax
-@check_project_contact_permissions
+@check_project_permissions
 def projectline_update(request, project_uuid, projectline_uuid):
     form = ProjectLineForm(request.POST)
     if form.is_valid():
@@ -299,7 +299,7 @@ def project_email_link(request):
     return render(request, 'portal/email_link.html', {'form': form})
 
 @require_GET
-@check_project_contact_permissions
+@check_project_permissions
 def download_sample_sheet(request, uuid):
     wb = create_sample_sheet(uuid)
     response = HttpResponse(
@@ -310,7 +310,7 @@ def download_sample_sheet(request, uuid):
 
 
 @require_POST
-@check_project_contact_permissions
+@check_project_permissions
 def upload_sample_sheet(request, uuid):
     form = UploadSampleSheetForm(request.POST, request.FILES)
     redirect_url = reverse('project_detail', args=[uuid])
