@@ -4,5 +4,5 @@ from . import views
 
 
 urlpatterns = [
-    url(r'^$', views.map, name='map'),
+    url(r'^$', views.countries_served, name='countries_served'),
 ]

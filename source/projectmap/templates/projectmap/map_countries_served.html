@@ -1,0 +1,29 @@
+{% extends "projectmap/base.html" %}
+{% load static projectmap_tags %}
+
+{% block title %}Project Map{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h2 class="text-center">MicrobesNG: Countries served to date</h2>
+        <div id="projectmap_container"></div>
+      </div>
+    </div>
+    <div class="row">
+      {% countries_served as countries %}
+      <div class="col-md-12">
+        <ul class="list-inline">
+          {% for c in countries %}
+            <li class="col-sm-2"><span class="flag-icon flag-icon-{{ c.iso2|lower }}"></span> {{ c.name }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+  {% map_countries_served container_id='projectmap_container' responsive=True %}
+{% endblock %}

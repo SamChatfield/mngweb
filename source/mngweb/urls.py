@@ -31,7 +31,7 @@ urlpatterns = [
     url(r'country/', include(country_urls)),
     url(r'organisation/', include(organisation_urls)),
     url(r'portal/', include(portal_urls)),
-    url(r'projectmap/', include(projectmap_urls)),
+    url(r'projectmap/', include(projectmap_urls, namespace='projectmap')),
     url(r'taxon/', include(taxon_urls)),
 
     url(r'^accounts/', include('allauth.urls')),

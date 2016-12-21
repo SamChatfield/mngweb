@@ -424,20 +424,17 @@ def limsfm_create_quote(form_data):
     return quote_ref
 
 
-def limsfm_get_project_country_codes():
+def limsfm_get_project_countries_served():
     """Return project country codes for mapping"""
-
-    response = limsfm_request('layout/project_map_api', 'get', {
-        'RFMsF1': 'address_id',
+    response = limsfm_request('layout/country_api', 'get', {
+        'RFMsF1': 'address_Project::project_id',
         'RFMsV1': '>0',
         'RFMmax': 0
     })
-
-    # uniquify
     countries = []
-    for record in response.json()['data']:
-        iso3 = record['Country::iso3']
-        if iso3 not in countries:
-            countries.append(iso3)
-
+    for r in response.json()['data']:
+        countries.append({
+            'name': r['name'],
+            'iso2': r['iso2_id'],
+            'iso3': r['iso3']})
     return countries

@@ -1,0 +1,42 @@
+{% load static %}
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
+<script src="{% static "bower_components/datamaps/dist/datamaps.world.min.js" %}"></script>
+<script>
+  var map_countries_served = new Datamap({
+    element: document.getElementById("{{ container_id }}"),
+    projection: '{{ projection }}',
+    {% if projection = "orthographic" %}
+      projectionConfig: {
+        rotation: [0,-30]
+      },
+    {% endif %}
+    {% if height %}height: {{ height}},{% endif %}
+    responsive: {{ responsive|lower }},
+    fills: {
+      defaultFill: "#ccc",
+      served: "#00bbe3"
+    },
+    geographyConfig: {
+      hideAntarctica: true,
+      borderWidth: 1,
+      borderOpacity: 1,
+      borderColor: '#FDFDFD',
+      popupTemplate: function(geography, data) { //this function should just return a string
+        return '<div class="hoverinfo"><strong>' + geography.properties.name + '</strong></div>';
+      },
+      popupOnHover: true, //disable the popup while hovering
+      highlightOnHover: true,
+      highlightFillColor: '#006792',
+      highlightBorderColor: '#fff',
+      highlightBorderWidth: 2,
+      highlightBorderOpacity: 1
+    },
+    data: {{ map_json }},
+  });
+  {% if arc_data %}
+    map_countries_served.arc({{ arc_json }}, {strokeWidth: 1, arcSharpness: 1, strokeColor: '#ff7f00'});
+  {% endif %}
+  window.addEventListener('resize', function(event) { map_countries_served.resize(); });
+</script>
