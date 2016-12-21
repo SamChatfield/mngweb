@@ -62,6 +62,7 @@ PROJECTLINE_DJANGO_TO_LIMSFM_MAP = {
     'queue_name': 'Queue::name',
     'sample_ref': 'Sample::reference',
     'study_type': 'Sample::study_type',
+    'target_depth_of_coverage': 'target_depth_of_coverage',
     'taxon_id': 'Sample::taxon_id',
     'taxon_name': 'Sample::taxon_name',
     'volume_ul': 'Aliquot::volume_ul',

@@ -4,6 +4,7 @@
   <thead>
     <th>Barcode <span data-toggle="tooltip" title="Our internal identifier for your sample"><i class="fa fa-question-circle"></i></span></th>
     <th>Type</th>
+    <th>Coverage <span data-toggle="tooltip" title="Target depth of coverage for this service"><i class="fa fa-question-circle"></i></span></th>
     <th>Customer's Ref</th>
     <th>Taxon</th>
     <th>Current Queue (Status)</th>
@@ -14,6 +15,7 @@
       <tr class="vert-middle">
         <td>{{ pl.sample_ref }}</td>
         <td>{{ pl.aliquottype_name  }}</td>
+        <td>{{ pl.target_depth_of_coverage }}x</td>
         <td class="pl-customers-ref">{{ pl.customers_ref  }}</td>
         <td class="pl-taxon">{{ pl.taxon_name  }}</td>
         <td>{{ pl.queue_name  }}</td>
