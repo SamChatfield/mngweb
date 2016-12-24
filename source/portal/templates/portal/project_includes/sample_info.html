@@ -31,7 +31,7 @@
       </tr>
       {% if project.meta_data_status == "Open" %}
         <tr class="collapse bg-grey" id="edit-row-{{ forloop.counter0 }}">
-          <td colspan="6">
+          <td colspan="7">
             <form method="post" action="{% url 'projectline_update' project.uuid pl.uuid %}" class="projectline-form">
               <div class="col-md-4">
                 {# Include hidden fields #}
