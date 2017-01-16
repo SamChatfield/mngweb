@@ -1,4 +1,7 @@
 $(function() {
+  /*
+  Quote estimator
+  */
   function setQuoteEstimate() {
     var isConfidential = $('#id_is_confidential').prop('checked');
     var fundingType = $('#id_funding_type').val();
@@ -37,6 +40,21 @@ $(function() {
     setQuoteEstimate();
   });
 
+  /*
+  Show/hide principal investigator contact fields
+  */
+  $('#id_primary_contact_is_pi').on('change', function (e) {
+    var piContactFields = $('.pi-contact-fields');
+    if (e.target.checked) {
+      piContactFields.hide();
+    } else {
+      piContactFields.show();
+    }
+  });
+
+  /*
+  Show/hide BBSRC grant code field
+  */
   $('#id_funding_type').change(function() {
     if ($(this).val() == 'BBSRC funded') {
       $('#id_bbsrc_code').parent().show();
@@ -46,6 +64,9 @@ $(function() {
     setQuoteEstimate();
   });
 
+  /*
+  Show/hide strain quantity, depending on country selection
+  */
   $(".country-typeahead").on("typeahead:change", "input", function() {
     if ($(this).val().toLowerCase() == 'united kingdom') {
       $('#id_num_strain_samples').prop('disabled', false);
@@ -58,7 +79,9 @@ $(function() {
     }
   });
 
-  // scroll to first error on page
+  /*
+  Scroll to first error on page
+  */
   (function() {
     var firstError = document.getElementsByClassName('has-error')[0];
     if (firstError !== undefined) {

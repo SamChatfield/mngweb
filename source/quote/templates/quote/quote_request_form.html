@@ -41,7 +41,9 @@
           {% csrf_token %}
           {% include 'includes/honeypot_form_field.html' %}
 
-          <h3 class="section-header">Contact details</h3>
+          <h3 class="section-header">Primary contact details</h3>
+
+          <p>Please enter the details of the individual primarily responsible for the day-to-day management of this sequencing project.</p>
 
           <div class="row">
             <div class="col-md-2">
@@ -63,6 +65,34 @@
               {% bootstrap_field form.phone %}
             </div>
           </div>
+
+          <h3 class="section-header">Principal investigator (grant holder)</h3>
+          <p>Please enter the details of the principal investigator (grant holder) for this project.</p>
+
+          <div class="row">
+            <div class="col-md-7">
+              {% bootstrap_field form.primary_contact_is_pi %}
+            </div>
+          </div>
+
+          <div class="row pi-contact-fields">
+            <div class="col-md-2">
+              {% bootstrap_field form.pi_name_title %}
+            </div>
+            <div class="col-md-5">
+              {% bootstrap_field form.pi_name_first %}
+            </div>
+            <div class="col-md-5">
+              {% bootstrap_field form.pi_name_last %}
+            </div>
+          </div>
+
+          <div class="row pi-contact-fields">
+            <div class="col-md-7">
+              {% bootstrap_field form.pi_email %}
+            </div>
+          </div>
+
 
           <h3 class="section-header">Postal address</h3>
           <p>Please make sure to include the building or relevant department.</p>
@@ -141,7 +171,7 @@
           {% bootstrap_field form.referral_type %}
           {% bootstrap_field form.comments %}
 
-          {% buttons %}   
+          {% buttons %}
             <button type="submit" class="btn btn-success button-lg">
               <i class="fa fa-envelope"></i> Request quote
             </button>

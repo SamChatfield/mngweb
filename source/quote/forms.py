@@ -54,6 +54,22 @@ class QuoteRequestForm(forms.Form):
         label=_("Phone number"),
         help_text=_("International customers: please enter a country code "
                     "e.g. +1-541-754-3010 for a US number."))
+    primary_contact_is_pi = forms.BooleanField(
+        label="Same as primary contact",
+        required=False)
+    pi_name_title = forms.ChoiceField(
+        choices=NAME_TITLE_CHOICES,
+        label=_("Title"),
+        required=False)
+    pi_name_first = forms.CharField(
+        label=_("First name"),
+        max_length=50,
+        required=False)
+    pi_name_last = forms.CharField(
+        label=_("Last name"),
+        max_length=50,
+        required=False)
+    pi_email = forms.EmailField(label=_("Email address"), required=False)
     organisation = forms.CharField(
         max_length=50,
         label=_("Institution / Company"))
@@ -122,9 +138,36 @@ class QuoteRequestForm(forms.Form):
         num_strain_samples = cleaned_data.get('num_strain_samples')
         confirm_strain_bsl2 = cleaned_data.get('confirm_strain_bsl2')
         country = cleaned_data.get('country')
+        primary_contact_is_pi = cleaned_data.get('primary_contact_is_pi')
+        pi_name_title = cleaned_data.get('pi_name_title')
+        pi_name_first = cleaned_data.get('pi_name_first')
+        pi_name_last = cleaned_data.get('pi_name_last')
+        pi_email = cleaned_data.get('pi_email')
 
         if num_strain_samples is None:
             num_strain_samples = 0
+
+        if not primary_contact_is_pi:
+            if not pi_name_title:
+                self.add_error(
+                    'pi_name_title',
+                    ValidationError(_("Principal investigator (name) title is required."),
+                        code='required'))
+            if not pi_name_first:
+                self.add_error(
+                    'pi_name_first',
+                    ValidationError(_("Principal investigator first name is required."),
+                    code='required'))
+            if not pi_name_last:
+                self.add_error(
+                    'pi_name_last',
+                    ValidationError(_("Principal investigator last name is required."),
+                    code='required'))
+            if not pi_email:
+                self.add_error(
+                    'pi_email',
+                    ValidationError(_("Principal investigator email is required."),
+                    code='required'))
 
         if (funding_type == 'BBSRC funded' and not bbsrc_code):
             bbsrc_error = ValidationError(_("BBSRC code is required."))
