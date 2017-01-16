@@ -27,8 +27,7 @@
     /*
     Init. password show/hide togglers
     */
-    $('.show-hide-password').each(function (i, e) {
-      var checkbox = e;
+    $('.show-hide-password').each(function (i, checkbox) {
       var pwd = $(checkbox).closest('form').find('.password-field > input')[0];
       new PasswordToggler(checkbox, pwd);
     });
