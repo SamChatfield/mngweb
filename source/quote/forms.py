@@ -147,7 +147,12 @@ class QuoteRequestForm(forms.Form):
         if num_strain_samples is None:
             num_strain_samples = 0
 
-        if not primary_contact_is_pi:
+        if primary_contact_is_pi:
+            cleaned_data['pi_name_title'] = ''
+            cleaned_data['pi_name_first'] = ''
+            cleaned_data['pi_name_last'] = ''
+            cleaned_data['email'] = ''
+        else:
             if not pi_name_title:
                 self.add_error(
                     'pi_name_title',
