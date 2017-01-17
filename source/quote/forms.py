@@ -31,6 +31,7 @@ BATCH_TYPE_CHOICES = [
 ]
 
 NAME_TITLE_CHOICES = [
+    ('', ''),
     ('Dr', 'Dr'),
     ('Prof', 'Prof'),
     ('Mr', 'Mr'),
@@ -46,7 +47,8 @@ NAME_TITLE_CHOICES = [
 class QuoteRequestForm(forms.Form):
     name_title = forms.ChoiceField(
         choices=NAME_TITLE_CHOICES,
-        label=_("Title"))
+        label=_("Title"),
+        required=False)
     name_first = forms.CharField(max_length=50, label=_("First name"))
     name_last = forms.CharField(max_length=50, label=_("Last name"))
     email = forms.EmailField(label=_("Email address"))
@@ -151,13 +153,8 @@ class QuoteRequestForm(forms.Form):
             cleaned_data['pi_name_title'] = ''
             cleaned_data['pi_name_first'] = ''
             cleaned_data['pi_name_last'] = ''
-            cleaned_data['email'] = ''
+            cleaned_data['pi_email'] = ''
         else:
-            if not pi_name_title:
-                self.add_error(
-                    'pi_name_title',
-                    ValidationError(_("Principal investigator (name) title is required."),
-                        code='required'))
             if not pi_name_first:
                 self.add_error(
                     'pi_name_first',
