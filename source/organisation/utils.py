@@ -5,7 +5,7 @@ from .models import Organisation
 
 
 def update_organisations():
-    """update Organisation data via. the LIMSfm api"""
+    """update Organisation data via the LIMSfm api"""
     print("Fetching Organisations from LIMSfm...")
     try:
         organisations = limsfm_get_organisations()

@@ -225,7 +225,7 @@ def limsfm_get_contact(email):
 def limsfm_get_project_permissions(uuid):
     """
     Return a project permissions dictionary (lightweight, single api call).
-    Can be merged with a full project dictionary via. dict.update()
+    Can be merged with a full project dictionary via dict.update()
     """
     permissions = {
         'uuid': uuid,

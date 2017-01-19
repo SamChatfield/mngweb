@@ -5,7 +5,7 @@ from .models import Country
 
 
 def update_countries():
-    """update country data via. the LIMSfm api"""
+    """update country data via the LIMSfm api"""
     print("Fetching countries from LIMSfm...")
     try:
         countries = limsfm_get_countries()
