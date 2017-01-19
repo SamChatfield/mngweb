@@ -92,13 +92,21 @@ def create_sample_sheet(project_uuid):
     ws.add_data_validation(est_validator)
     est_validator.ranges.append('Q7:Q102')
 
-    # Lab experiment type
+    # Lab experiment type list validation
     lab_validator = DataValidation(
         type='list', formula1='=Lookups!$E$1:$E$5', allow_blank=True)
-    lab_validator.error = "Please select a host sample type from the list"
-    lab_validator.errorTitle = "Invalid host sample type"
+    lab_validator.error = "Please select a lab experiment type from the list"
+    lab_validator.errorTitle = "Invalid lab experiment type"
     ws.add_data_validation(lab_validator)
     lab_validator.ranges.append('L7:L102')
+
+    # Host sample type list validation
+    hst_validator = DataValidation(
+        type='list', formula1='=Lookups!$D$1:$D$67', allow_blank=True)
+    hst_validator.error = "Please select a host sample type from the list"
+    hst_validator.errorTitle = "Invalid host sample type"
+    ws.add_data_validation(hst_validator)
+    hst_validator.ranges.append('O7:O102')
 
     return wb
 
