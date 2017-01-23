@@ -243,15 +243,14 @@ class ProjectLineForm(forms.Form):
             _("We are temporarily unable to connect to the EBI to validate taxon ids. "
               " This may be due to a service outage. Please try again after a few minutes, or contact "
               " us if the problem persists."))
-        ebi_no_taxon_found_error = ValidationError(
-            _("Please enter a valid EBI/NCBI sample taxon id."),
-            code='invalid')
         try:
             ebi_response = ebi_search_taxonomy_by_id(taxon_id)
         except RequestException:
             non_field_errors.append(ebi_connection_error)
         except NoTaxonFoundException:
-            self.add_error('taxon_id', ebi_no_taxon_found_error)
+            self.add_error('taxon_id', ValidationError(
+                _("Please enter a valid EBI/NCBI sample taxon id."),
+                code='invalid'))
         else:
             cleaned_data['taxon_name'] = ebi_response[0]['fields']['name'][0]
 
@@ -313,13 +312,12 @@ class ProjectLineForm(forms.Form):
                     ebi_response = ebi_search_taxonomy_by_id(host_taxon_id)
                 except RequestException:
                     non_field_errors.append(ebi_connection_error)
+                except NoTaxonFoundException:
+                    self.add_error(
+                        'host_taxon_id',
+                        ValidationError(_("Please enter a valid EBI/NCBI host taxon id."), code='invalid'))
                 else:
-                    if ebi_response:
                         cleaned_data['host_taxon_name'] = ebi_response[0]['fields']['name'][0]
-                    else:
-                        self.add_error(
-                            'host_taxon_id',
-                            ValidationError(_("Please enter a valid EBI/NCBI host taxon id."), code='invalid'))
             else:
                 self.add_error('host_taxon_id', ValidationError(
                     _("'Host taxon id' is required when selecting"
