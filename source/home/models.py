@@ -300,34 +300,6 @@ class StandardPage(Page):
     ]
 
 
-# News Page
-
-class NewsPage(Page):
-
-    # Database fields
-
-    body = RichTextField()
-    date = models.DateField("Post date")
-    feed_image = models.ForeignKey(
-        'wagtailimages.Image',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='+'
-    )
-
-    # Editor panels configuration
-
-    conent_panels = Page.content_panels + [
-        FieldPanel('date'),
-        FieldPanel('body', classname="full"),
-    ]
-
-    promote_panels = [
-        ImageChooserPanel('feed_image'),
-    ]
-
-
 # People Page
 
 PERSON_TEAM_CHOICES = (
