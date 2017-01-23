@@ -4,6 +4,7 @@
 __pycache__
 *.sublime-*
 source/mngweb/settings/local.py
-media/
+/media/
 /static/
+/database/
 source/portal/static/portal/excel/mng_excel_template.xlsx
