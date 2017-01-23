@@ -12,6 +12,7 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 # Application definition
 
 INSTALLED_APPS = [
+    'blog',
     'country',
     'faq',
     'formbuilder',
@@ -232,17 +233,23 @@ PIPELINE = {
             ),
             'output_filename': 'css/mngweb.min.css',
         },
-        'mngweb_portal': {
+        'mngweb_blog': {
             'source_filenames': (
-                'portal/css/portal.css',
+                'blog/css/blog.css',
             ),
-            'output_filename': 'portal/css/portal.min.css',
+            'output_filename': 'home/css/blog.min.css',
         },
         'mngweb_home': {
             'source_filenames': (
                 'home/css/home.css',
             ),
             'output_filename': 'home/css/home.min.css',
+        },
+        'mngweb_portal': {
+            'source_filenames': (
+                'portal/css/portal.css',
+            ),
+            'output_filename': 'portal/css/portal.min.css',
         },
     },
     'JAVASCRIPT': {

@@ -1,0 +1,11 @@
+.blog-meta {
+  background-color: rgba(143, 211, 239, 0.2)
+}
+
+.blog-meta dl {
+  margin-top: 15px;
+}
+
+.blog-meta dt {
+  font-weight: bold;
+}
