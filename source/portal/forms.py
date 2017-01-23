@@ -119,7 +119,7 @@ class ProjectLineForm(forms.Form):
         })
     dna_concentration_ng_ul = forms.FloatField(
         required=False,
-        min_value=0,
+        min_value=0.0,
         label="DNA concentration (ng/µl)",
         error_messages={
             'min_value': "'DNA Concentration' within the range 0-30ng/µl is "
@@ -280,7 +280,7 @@ class ProjectLineForm(forms.Form):
                     _("'Volume (µl)' is required for DNA samples."),
                     code='required'))
 
-            if not dna_concentration_ng_ul:
+            if dna_concentration_ng_ul is None:
                 self.add_error('dna_concentration_ng_ul', ValidationError(
                     _("'DNA Concentration (ng/µl)' is required for DNA "
                       "samples."), code='required'))
