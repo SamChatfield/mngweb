@@ -33,10 +33,10 @@ class BlogPage(Page):
     date = models.DateField("Post date")
     intro = models.CharField(max_length=250)
 
-    search_fields = Page.search_fields + (
+    search_fields = Page.search_fields + [
         index.SearchField('intro'),
         index.SearchField('body'),
-    )
+    ]
 
     parent_page_types = ['BlogIndexPage']
 
