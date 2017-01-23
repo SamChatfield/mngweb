@@ -16,15 +16,19 @@
 <div class="container">
   <div class="row">
     <div class="col-md-8">
+      <p class="blog-leader">{{ page.intro }}</p>
       {{ page.body|richtext }}
     </div>
 
     <div class="col-md-3 col-md-offset-1 blog-meta">
       <dl>
         <dt>Published:</dt>
-        <dd>{{ page.date }}</dd>
+          <dd>{{ page.date }}</dd>
+        {% if page.author.first_name %}
+        <dt>Author:</dt>
+          <dd>{{ page.author.first_name }} {{ page.author.last_name }}</dd>
+        {% endif %}
       </dl>
-      <p>{{ page.intro }}</p>
       <p><a href="{{ page.get_parent.url }}">Return to blog…</a></p>
     </div>
   </div>

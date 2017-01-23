@@ -2,10 +2,12 @@
   background-color: rgba(143, 211, 239, 0.2)
 }
 
-.blog-meta dl {
+.blog-meta dt {
   margin-top: 15px;
+  font-weight: bold;
 }
 
-.blog-meta dt {
-  font-weight: bold;
+.blog-leader {
+  font-style: italic;
+  font-size: 1.8em;
 }

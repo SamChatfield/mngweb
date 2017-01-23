@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 from wagtail.wagtailcore.models import Page
@@ -24,9 +25,13 @@ class BlogIndexPage(Page):
 
 
 class BlogPage(Page):
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True,
+        on_delete=models.SET_NULL
+    )
+    body = RichTextField(blank=True)
     date = models.DateField("Post date")
     intro = models.CharField(max_length=250)
-    body = RichTextField(blank=True)
 
     search_fields = Page.search_fields + [
         index.SearchField('intro'),
@@ -36,6 +41,7 @@ class BlogPage(Page):
     parent_page_types = ['BlogIndexPage']
 
     content_panels = Page.content_panels + [
+        FieldPanel('author'),
         FieldPanel('date'),
         FieldPanel('intro'),
         FieldPanel('body', classname="full"),
