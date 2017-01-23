@@ -274,7 +274,7 @@ class ProjectLineForm(forms.Form):
                 )
 
         if aliquottype_name == 'DNA':
-            if not volume_ul:
+            if volume_ul is None:
                 self.add_error('volume_ul', ValidationError(
                     _("'Volume (µl)' is required for DNA samples."),
                     code='required'))
@@ -289,7 +289,7 @@ class ProjectLineForm(forms.Form):
                 self.add_error('lab_experiment_type', ValidationError(
                     _("'Lab experiment type' is required when selecting"
                       " study type 'Lab'."), code='required'))
-            if (host_taxon_id or host_sample_type or environmental_sample_type):
+            if any(v for v in [host_taxon_id, host_sample_type, environmental_sample_type]):
                 non_field_errors.append(
                     ValidationError(
                         _("Please only enter meta data for one study type"
@@ -301,7 +301,7 @@ class ProjectLineForm(forms.Form):
                 self.add_error('host_sample_type', ValidationError(
                     _("'Host sample type' is required when selecting"
                       " study type 'Host'."), code='required'))
-            if (lab_experiment_type or environmental_sample_type):
+            if any(v for v in [lab_experiment_type, environmental_sample_type]):
                 non_field_errors.append(
                     ValidationError(
                         _("Please only enter meta data for one study type"
@@ -328,7 +328,7 @@ class ProjectLineForm(forms.Form):
                 self.add_error('environmental_sample_type', ValidationError(
                     _("'Environmental sample type' is required when selecting"
                       " study type 'Environmental'."), code='required'))
-            if (host_taxon_id or host_sample_type or lab_experiment_type):
+            if any(v for v in [host_taxon_id, host_sample_type, lab_experiment_type]):
                 non_field_errors.append(
                     ValidationError(
                         _("Please only enter meta data for one study type"
