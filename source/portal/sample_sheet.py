@@ -126,7 +126,7 @@ def parse_sample_sheet(project, sheet):
         sample_ref = str(row_data['sample_ref'])
 
         # Skip 'blank' rows
-        if not row_data['customers_ref']:
+        if not len(row_data['customers_ref']):
             continue
 
         # Check sample ref in project
