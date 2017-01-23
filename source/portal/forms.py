@@ -119,7 +119,7 @@ class ProjectLineForm(forms.Form):
         })
     dna_concentration_ng_ul = forms.FloatField(
         required=False,
-        min_value=1,
+        min_value=0,
         label="DNA concentration (ng/µl)",
         error_messages={
             'min_value': "'DNA Concentration' within the range 1-30ng/µl is "
