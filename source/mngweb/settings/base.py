@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'bootstrap3',
     'django_slack',
     'pipeline',
+    'wagtailtinymce',
 
     'wagtail.contrib.settings',
     'wagtail.wagtailforms',
@@ -294,6 +295,11 @@ PIPELINE = {
 # Wagtail settings
 
 WAGTAIL_SITE_NAME = "MicrobesNG"
+WAGTAILADMIN_RICH_TEXT_EDITORS = {
+    'default': {
+        'WIDGET': 'wagtailtinymce.rich_text.TinyMCERichTextArea'
+    },
+}
 
 
 # Cache settings
