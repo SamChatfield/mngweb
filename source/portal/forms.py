@@ -6,7 +6,7 @@ from django.utils.translation import ugettext as _
 from requests import RequestException
 
 from country.models import Country
-from .ebi_services import ebi_search_taxonomy_by_id
+from .ebi_services import ebi_search_taxonomy_by_id, NoTaxonFoundException
 from .models import EnvironmentalSampleType, HostSampleType
 
 
@@ -243,17 +243,17 @@ class ProjectLineForm(forms.Form):
             _("We are temporarily unable to connect to the EBI to validate taxon ids. "
               " This may be due to a service outage. Please try again after a few minutes, or contact "
               " us if the problem persists."))
+        ebi_no_taxon_found_error = ValidationError(
+            _("Please enter a valid EBI/NCBI sample taxon id."),
+            code='invalid')
         try:
             ebi_response = ebi_search_taxonomy_by_id(taxon_id)
         except RequestException:
             non_field_errors.append(ebi_connection_error)
+        except NoTaxonFoundException:
+            self.add_error('taxon_id', ebi_no_taxon_found_error)
         else:
-            if ebi_response:
-                cleaned_data['taxon_name'] = ebi_response[0]['fields']['name'][0]
-            else:
-                self.add_error(
-                    'taxon_id',
-                    ValidationError(_("Please enter a valid EBI/NCBI sample taxon id."), code='invalid'))
+            cleaned_data['taxon_name'] = ebi_response[0]['fields']['name'][0]
 
         if dna_concentration_ng_ul:
             cleaned_data['dna_concentration_ng_ul'] = round(dna_concentration_ng_ul, 2)

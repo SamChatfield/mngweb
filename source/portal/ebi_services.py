@@ -3,6 +3,10 @@ import requests
 from django.core.cache import cache
 
 
+class NoTaxonFoundException(Exception):
+    pass
+
+
 def ebi_get_taxonomy_by_id(taxid):
     payload = {
         'query': 'id:{}'.format(taxid),
@@ -11,7 +15,10 @@ def ebi_get_taxonomy_by_id(taxid):
     }
     payload_str = "&".join('%s=%s' % (k, v) for k, v in payload.items())
     response = requests.get('https://www.ebi.ac.uk/ebisearch/ws/rest/taxonomy', params=payload_str)
-    return response.json()['entries']
+    if 'entries' in response.json():
+        return response.json()['entries']
+    else:
+        raise NoTaxonFoundException("No entries returned for taxid '{}'".format(taxid))
 
 
 def ebi_search_taxonomy_by_id(taxid):
