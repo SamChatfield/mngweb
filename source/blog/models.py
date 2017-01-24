@@ -29,7 +29,7 @@ class BlogPage(Page):
         settings.AUTH_USER_MODEL, null=True, blank=True,
         on_delete=models.SET_NULL
     )
-    body = RichTextField(blank=True)
+    body = RichTextField(blank=True, editor='tinymce')
     date = models.DateField("Post date")
     intro = models.CharField(max_length=250)
 
