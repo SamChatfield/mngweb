@@ -17,7 +17,7 @@
 <div class="container">
   <div class="row">
     <div class="col-md-12">
-      {% for post in page.get_children %}
+      {% for post in blogpages %}
         {% with post=post.specific %}
           <h2><a href="{% pageurl post %}">{{ post.title }}</a></h2>
           {{ post.intro }}
