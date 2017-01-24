@@ -53,24 +53,29 @@ class FormPage(AbstractEmailForm):
 
     subpage_types = ['formbuilder.FormThankYouPage']
 
-    # Override process_form_submission method to add 'reply-to' header
-    def process_form_submission(self, form):
-        super(AbstractEmailForm, self).process_form_submission(form)
+
+    # Override send_mail method to add 'reply-to' header, timestamp subject
+    def send_mail(self, form):
+        addresses = [x.strip() for x in self.to_address.split(',')]
+        content = []
+        reply_to = ([form.data['email']] if 'email' in form.data else None)
 
         # Add timestamp to subject, to avoid gmail-style conversation views
         time = str(datetime.datetime.now()).split('.')[0]
         subject = '{} [{}]'.format(self.subject, time)
 
-        if self.to_address:
-            content = '\n'.join([x[1].label + ': ' +
-                                text_type(form.data.get(x[0]))
-                                for x in form.fields.items()])
-            reply_to = ([form.data['email']] if 'email' in form.data else None)
-            connection = get_connection(username=settings.EMAIL_HOST_USER_INTERNAL,
-                                        password=settings.EMAIL_HOST_PASSWORD_INTERNAL)
-            email = EmailMessage(subject, content, self.from_address, [self.to_address],
-                                 connection=connection, reply_to=reply_to)
-            email.send(fail_silently=False)
+        for field in form:
+            value = field.value()
+            if isinstance(value, list):
+                value = ', '.join(value)
+            content.append('{}: {}'.format(field.label, value))
+        content = '\n'.join(content)
+        connection = get_connection(username=settings.EMAIL_HOST_USER_INTERNAL,
+                                    password=settings.EMAIL_HOST_PASSWORD_INTERNAL)
+        email = EmailMessage(subject, content, self.from_address, addresses,
+                             connection=connection, reply_to=reply_to)
+        email.send(fail_silently=False)
+
 
     # Override serve method to enable ajax
     def serve(self, request):
