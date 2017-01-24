@@ -162,7 +162,7 @@ LANGUAGE_CODE = 'en-GB'
 
 TIME_ZONE = 'GMT'
 
-USE_I18N = True
+USE_I18N = False
 
 USE_L10N = True
 
