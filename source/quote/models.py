@@ -18,8 +18,8 @@ from .forms import QuoteRequestForm
 
 class QuoteRequestFormPage(Page):
     """
-    A Quote Request Form Page that sends email and creates a
-    FormSubmission record.
+    A Quote Request Form Page that sends an email and calls LIMSfm API to create
+    a draft quote.
     """
 
     intro = RichTextField(blank=True)
@@ -58,6 +58,7 @@ class QuoteRequestFormPage(Page):
         PageChooserPanel('thank_you_page'),
     ]
 
+
     def process_form_submission(self, form):
         try:
             quote_ref = limsfm_create_quote(form.cleaned_data)
@@ -66,11 +67,17 @@ class QuoteRequestFormPage(Page):
 
         # send email
         if self.to_address:
-            content = 'Quote Ref: {}\n{}'.format(
-                quote_ref,
-                '\n'.join(
-                    ['{}: {}'.format(boundfield.label, str(boundfield.data))
-                     for boundfield in form]))
+            addresses = [x.strip() for x in self.to_address.split(',')]
+            content = []
+            content.append('Quote Ref: {}'.format(quote_ref))
+
+            for field in form:
+                value = field.value()
+                if isinstance(value, list):
+                    value = ', '.join(value)
+                content.append('{}: {}'.format(field.label, value))
+            content = '\n'.join(content)
+
             reply_to = ([form.data['email']] if 'email' in form.data else None)
             subject = '%s [%s %s]' % (self.subject, quote_ref, form.data['name_last'])
             connection = get_connection(username=settings.EMAIL_HOST_USER_INTERNAL,
@@ -78,6 +85,7 @@ class QuoteRequestFormPage(Page):
             email = EmailMessage(subject, content, self.from_address, [self.to_address],
                                  connection=connection, reply_to=reply_to)
             email.send(fail_silently=False)
+
 
     def serve(self, request):
         if request.method == 'POST':
