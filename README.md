@@ -12,8 +12,8 @@ MicrobesNG Website & Customer Portal
 * Grab local.py, either from the server or wherever it is kept in-house and move
   it to `source/mngweb/settings`
 * You should now be able to start Django local server:
-** `cd source`
-** `python manage.py runserver`
+  - `cd source`
+  - `python manage.py runserver`
 * Access the local site at `http://localhost:8000`
 
 
