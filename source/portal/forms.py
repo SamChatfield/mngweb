@@ -117,10 +117,6 @@ class ProjectLineForm(forms.Form):
         min_value=0.0,
         label="DNA concentration (ng/µl)",
         error_messages={
-            'min_value': "'DNA Concentration' within the range 0-30ng/µl is "
-                         "required for DNA samples.",
-            'max_value': "'DNA Concentration' within the range 0-30ng/µl is "
-                         "required for DNA samples.",
             'invalid': "'DNA concentration (ng/µl)' must be a number.",
         })
     geo_country_name = forms.ModelChoiceField(
