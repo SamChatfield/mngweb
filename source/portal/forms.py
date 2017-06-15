@@ -107,15 +107,10 @@ class ProjectLineForm(forms.Form):
     volume_ul = forms.FloatField(
         required=False,
         min_value=30,
-        max_value=100,
         label="Volume (µl)",
         error_messages={
-            'min_value': "'Volume' within the range 30-100µl is required "
-                         "for DNA samples.",
-            'max_value': "'Volume' within the range 30-100µl is required "
-                         "for DNA samples.",
-            'invalid': "'Volume' within the range 30-100µl is required "
-                         "for DNA samples.",
+            'min_value': "'Volume' greater than 30µl is required "
+                         "for DNA samples."
         })
     dna_concentration_ng_ul = forms.FloatField(
         required=False,
