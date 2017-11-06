@@ -6,7 +6,20 @@
 {% block extra_js %}
   {% javascript 'mngweb_quote' %}
 {% endblock %}
+{% block extra_css %}
+<style>
+  .dateText {
+    font-weight: bolder;
+    font-size: 16px;
+    color: coral;
+  }
 
+  #dangerWell {
+    background-color: #fc6767;
+    font-size: 16px;
+  }
+</style>
+{% endblock %}
 {% block body_class %}template-quoterequestformpage{% endblock %}
 
 {% block full_jumbo %}
@@ -18,6 +31,40 @@
 {% endblock %}
 
 {% block content %}
+
+<div id="notificationModal" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h2 class="modal-title">Important Notice</h2>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="container-fluid">
+                        <div class="col-md-12">
+                            
+                            Due to university closure around the christmas period,
+                            any samples received after the <span class="dateText">15th December</span> will not be processed
+                            untill after christmas.
+                        
+
+                            <h4>The last sequencing run for this year is due for early December.</h4>
+                            
+                            <div class="col-md-12"><hr></div>
+                            <div class="col-md-12" align="right">
+                                <p>Thank you, MicrobesNG Team</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
   <div class="container">
 
     <div class="row">
@@ -177,6 +224,14 @@
             </button>
           {% endbuttons %}
         </form>
+        <div class="col-md-12">
+          <div class="col-md-12 well" id="dangerWell">
+              <ul>
+                  <li>Cutoff date for recipt of samples: <b>15th December</b></li>
+                  <li>Last sequencing run for the year scheduled for early December.</li>
+              </ul>
+          </div>
+        </div>
       </div>
 
       {# Sidebar #}
