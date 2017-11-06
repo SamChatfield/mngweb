@@ -5,6 +5,12 @@
 
 {% block extra_js %}
   {% javascript 'mngweb_quote' %}
+
+  <script>
+    $(document).ready(function() {
+      $("#notificationModal").modal("show");
+    });
+  </script>
 {% endblock %}
 {% block extra_css %}
 <style>
