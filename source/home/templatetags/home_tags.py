@@ -37,7 +37,7 @@ def update_lims_sample_stats():
             return sample_stats
         else:
             return {}
-    except Exception:
+    except Exception as e:
         return {}
 
 
@@ -64,7 +64,9 @@ def update_lims_project_stats():
             return project_stats
         else:
             return {}
-    except Exception:
+    except Exception as e:
+        with open("project_stats_error.txt") as error_log_file:
+            error_log_file.write(e)
         return {}
 
 
