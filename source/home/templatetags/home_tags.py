@@ -65,8 +65,6 @@ def update_lims_project_stats():
         else:
             return {}
     except Exception as e:
-        with open("project_stats_error.txt") as error_log_file:
-            error_log_file.write(e)
         return {}
 
 
