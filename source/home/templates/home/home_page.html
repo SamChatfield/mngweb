@@ -2,7 +2,13 @@
 {% load static home_tags wagtailcore_tags projectmap_tags %}
 
 {% block body_class %}template-homepage{% endblock %}
-
+{% block extra_js %}
+  <script>
+    $(document).ready(function() {
+      $("#notificationModal").modal("show");
+    });
+</script>
+{% endblock %}
 {% block full_jumbo %}
   <div class="jumbotron bg-grey">
     <div class="container">
