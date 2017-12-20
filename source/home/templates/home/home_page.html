@@ -2,13 +2,7 @@
 {% load static home_tags wagtailcore_tags projectmap_tags %}
 
 {% block body_class %}template-homepage{% endblock %}
-{% block extra_js %}
-  <script>
-    $(document).ready(function() {
-      $("#notificationModal").modal("show");
-    });
-</script>
-{% endblock %}
+
 {% block full_jumbo %}
   <div class="jumbotron bg-grey">
     <div class="container">
@@ -49,34 +43,6 @@
 {% endblock %}
 
 {% block content %}
-
-
-<div id="notificationModal" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
-  <div class="modal-dialog">
-      <div class="modal-content">
-          <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal">&times;</button>
-              <h2 class="modal-title">Important Notice - Christmas Closure</h2>
-          </div>
-          <div class="modal-body">
-              <div class="container-fluid">
-                  <div class="container-fluid">
-                      <div class="col-md-12">
-                          Please note, MicrobesNG will be closed
-                          from <span class="dateText">22nd December</span> to the <span class="dateText">4th January</span>
-                          for the Christmas break.
-                          <div class="col-md-12"><hr></div>
-                          <div class="col-md-12" align="right">
-                              <p>Thank you, MicrobesNG Team</p>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-          </div>
-      </div>
-  </div>
-</div>
-
 
   {# Feture Panels #}
   {% if self.feature_panels.all %}
