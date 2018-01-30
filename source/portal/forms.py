@@ -185,7 +185,7 @@ class ProjectLineForm(forms.Form):
     host_taxon_id = forms.CharField(
         required=False,
         label="Host Taxon Id (EBI/NCBI)",
-        help_text="Start typing and choose the closest available",
+        help_text="Please enter the most specific taxon known then select the most appropriate",
         error_messages={
             'required': "'Host taxon id' is required."
         })
