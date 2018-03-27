@@ -195,26 +195,47 @@
               <div class="panel panel-warning"><div class="panel-body"><span class="flag-icon flag-icon-gb"></span> Strains can only be sent from UK addresses</div></div>
               {% bootstrap_field form.confirm_strain_bsl2 %}
             </div>
-            <div class="col-md-6">
-              <div class="panel panel-default">
-                <div class="panel-body">
-                  <table class="table">
-                    <tbody>
-                      <tr>
-                        <th>Total number of samples:</th>
-                        <td id="quote-total-qty"></td>
-                      </tr>
-                      <tr>
-                        <th>Price per sample:</th>
-                        <td id="quote-unit-price"></td>
-                      </tr>
-                      <tr>
-                        <th>Estimated total (ex. VAT):</th>
-                        <td id="quote-total-price"></td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
+            <div class="col-md-3">
+              {% bootstrap_field form.num_enhanced_strain_samples %}
+              <div class="panel panel-warning"><div class="panel-body"><span class="flag-icon flag-icon-gb"></span> Strains can only be sent from UK addresses</div></div>
+              {% bootstrap_field form.confirm_enhanced_strain_bsl2 %}
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <table class="table">
+                  <tbody>
+                    <tr>
+                      <th>Total number of samples:</th>
+                      <td id="quote-total-qty"></td>
+                    </tr>
+                    <tr>
+                      <th>Price per sample:</th>
+                      <td id="quote-unit-price"></td>
+                    </tr>
+                    <!-- <tr>
+                      <th>Estimated total (ex. VAT):</th>
+                      <td id="quote-total-price"></td>
+                    </tr> -->
+                    <tr>
+                      <th>Total number of enhanced samples:</th>
+                      <td id="quote-total-enhanced-qty"></td>
+                    </tr>
+                    <tr>
+                      <th>Price per enhanced sample:</th>
+                      <td id="quote-unit-enhanced-price"></td>
+                    </tr>
+                    <!-- <tr>
+                      <th>Estimated total for enhanced samples (ex. VAT):</th>
+                      <td id="quote-total-enhanced-price"></td>
+                    </tr> -->
+                    <tr>
+                      <th>Estimated Total (ex. VAT):</th>
+                      <td id="quote-grand-total-price"></td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
