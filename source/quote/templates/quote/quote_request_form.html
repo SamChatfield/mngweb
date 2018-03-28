@@ -24,6 +24,12 @@
     background-color: #ff8787;
     font-size: 16px;
   }
+
+  .enhancedServiceContainer {
+    background-color: #d6ecf1;
+    border-radius: 2px;
+  }
+
 </style>
 {% endblock %}
 {% block body_class %}template-quoterequestformpage{% endblock %}
@@ -195,71 +201,65 @@
               <div class="panel panel-warning"><div class="panel-body"><span class="flag-icon flag-icon-gb"></span> Strains can only be sent from UK addresses</div></div>
               {% bootstrap_field form.confirm_strain_bsl2 %}
             </div>
-            <!-- <div class="col-md-4">
+            <div class="col-md-4 enhancedServiceContainer">
               {% bootstrap_field form.num_enhanced_strain_samples %}
               <div class="panel panel-warning"><div class="panel-body"><span class="flag-icon flag-icon-gb"></span> Strains can only be sent from UK addresses</div></div>
-              {% bootstrap_field form.confirm_enhanced_strain_bsl2 %} -->
+              {% bootstrap_field form.confirm_enhanced_strain_bsl2 %}
             </div>
-          </div>
-          <div class="col-md-12">
-            <div class="panel panel-default">
-              <div class="panel-body">
-                <table class="table">
-                  <tbody>
-                    <tr>
-                      <th>Total number of samples:</th>
-                      <td id="quote-total-qty"></td>
-                    </tr>
-                    <tr>
-                      <th>Price per sample:</th>
-                      <td id="quote-unit-price"></td>
-                    </tr>
-                    <!-- <tr>
-                      <th>Estimated total (ex. VAT):</th>
-                      <td id="quote-total-price"></td>
-                    </tr> -->
-                    <tr>
-                      <th>Total number of enhanced samples:</th>
-                      <td id="quote-total-enhanced-qty"></td>
-                    </tr>
-                    <tr>
-                      <th>Price per enhanced sample:</th>
-                      <td id="quote-unit-enhanced-price"></td>
-                    </tr>
-                    <!-- <tr>
-                      <th>Estimated total for enhanced samples (ex. VAT):</th>
-                      <td id="quote-total-enhanced-price"></td>
-                    </tr> -->
-                    <tr>
-                      <th>Estimated Total (ex. VAT):</th>
-                      <td id="quote-grand-total-price"></td>
-                    </tr>
-                  </tbody>
-                </table>
+            <div class="col-md-12"><br></div>
+            <div class="col-md-12">
+              <div class="panel panel-default">
+                <div class="panel-body">
+                  <table class="table">
+                    <tbody>
+                      <tr>
+                        <th>Total number of samples:</th>
+                        <td id="quote-total-qty"></td>
+                      </tr>
+                      <tr>
+                        <th>Price per sample:</th>
+                        <td id="quote-unit-price"></td>
+                      </tr>
+                      <!-- <tr>
+                        <th>Estimated total (ex. VAT):</th>
+                        <td id="quote-total-price"></td>
+                      </tr> -->
+                      <!-- <tr>
+                        <th>Total number of enhanced samples:</th>
+                        <td id="quote-total-enhanced-qty"></td>
+                      </tr> -->
+                      <!-- <tr>
+                        <th>Price per enhanced sample:</th>
+                        <td id="quote-unit-enhanced-price"></td>
+                      </tr> -->
+                      <!-- <tr>
+                        <th>Estimated total for enhanced samples (ex. VAT):</th>
+                        <td id="quote-total-enhanced-price"></td>
+                      </tr> -->
+                      <tr>
+                        <th>Estimated Total (ex. VAT):</th>
+                        <td id="quote-grand-total-price"></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
+              <h3 class="section-header">Further details</h3>
+              {% bootstrap_field form.batch_type %}
+              {% bootstrap_field form.referral_type %}
+              {% bootstrap_field form.comments %}
+    
+              {% buttons %}
+                <button type="submit" class="btn btn-success button-lg">
+                  <i class="fa fa-envelope"></i> Request quote
+                </button>
+              {% endbuttons %}
+            </form>
           </div>
 
-          <h3 class="section-header">Further details</h3>
-          {% bootstrap_field form.batch_type %}
-          {% bootstrap_field form.referral_type %}
-          {% bootstrap_field form.comments %}
-
-          {% buttons %}
-            <button type="submit" class="btn btn-success button-lg">
-              <i class="fa fa-envelope"></i> Request quote
-            </button>
-          {% endbuttons %}
-        </form>
-        <!-- <div class="col-md-12">
-          <div class="col-md-12 well" id="dangerWell">
-              <ul>
-                  <li>Cutoff date for receipt of samples: <b>15th December</b></li>
-                  <li>Last sequencing run for the year scheduled for early December.</li>
-              </ul>
-          </div>
-        </div> -->
+        </div>
       </div>
+
 
       {# Sidebar #}
       <aside class="col-md-4">
