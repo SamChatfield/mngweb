@@ -53,7 +53,7 @@ $(function() {
           break;
       }
     }
-// "/     " + strainQty + " (strain)     /     " + enhancedStrainQty + " (enahnced) " + " = " + (totalQty + enhancedStrainQty));
+
     totalPrice = totalQty * unitPrice;
     totalEnhancedPrice = totalEnhancedQty * enhancedUnitPrice;
     $('#quote-total-qty').text(dnaQty + " (DNA)" + '\xa0\xa0\xa0' + "/" + "\xa0\xa0\xa0" + strainQty + " (strains)" + '\xa0\xa0\xa0' + "/" + '\xa0\xa0\xa0' + enhancedStrainQty + " (enhanced) = " + (totalQty + totalEnhancedQty))
@@ -61,42 +61,6 @@ $(function() {
     $('#quote-total-price').text('£' + totalPrice);
     $("#quote-grand-total-price").text('£' + (totalPrice + totalEnhancedPrice));
   }
-
-
-
-
-  // function setEnhancedQuoteEstimate() {
-  //   var isConfidential = $('#id_is_confidential').prop('checked');
-  //   var fundingType = $('#id_funding_type').val();
-  //   var strainQty = parseInt($('#id_num_enhanced_strain_samples').val());
-  //   var totalQty;
-  //   var unitPrice;
-  //   var totalPrice;
-
-  //   totalQty = strainQty;
-
-  //   if (isConfidential) {
-  //     unitPrice = "<CONFIDENTIAL_ENHANCED_RATE>";
-  //   } else {
-  //     switch(fundingType) {
-  //       case 'Industry':
-  //         unitPrice = "<INDUSTRY_ENHANCED_RATE>";
-  //         break;
-  //       case "Non-commercial":
-  //         unitPrice = "<NON-COMMERCIAL_ENHANCED_RATE>";
-  //         break;
-  //       default:
-  //         unitPrice = "<STANDARD_ENHANCED_RATE>";
-  //         break;
-  //     }
-  //   }
-
-  //   totalPrice = totalQty * unitPrice;
-  //   $('#quote-total-enhanced-qty').text(totalQty);
-  //   $('#quote-unit-enhanced-price').text('£' + unitPrice);
-  //   $('#quote-total-enhanced-price').text('£' + totalPrice);
-
-  // }
 
 
   setQuoteEstimate();
