@@ -1,5 +1,5 @@
 {% load wagtailcore_tags %}
-{% for service_price in service_prices %}
+{% for service_price in service_prices|slice:"3" %}
   <div class="col-sm-4">
     <div class="panel panel-prices text-center">
       <div class="panel-heading">
@@ -11,7 +11,45 @@
       <div class="panel-footer">
         <h3>£{{ service_price.price|floatformat:"0" }}</h3>
         <h4>per genome</h4>
-        <a class="btn" href="{% slugurl 'request-quote' %}"><i class="fa fa-envelope"></i>Get a quote</a>
+        {% if service_price.title|slice:"5" = "BBSRC" %}
+          <a class="btn" href="{% slugurl 'request-quote' %}BBSRC"><i class="fa fa-envelope"></i>Get a quote</a>
+        {% elif service_price.title|slice:"5" = "Non-c" %}
+          <a class="btn" href="{% slugurl 'request-quote' %}Non-Commerical"><i class="fa fa-envelope"></i>Get a quote</a>
+        {% elif service_price.title|slice:"5" = "Indus" %}
+          <a class="btn" href="{% slugurl 'request-quote' %}Industry"><i class="fa fa-envelope"></i>Get a quote</a>
+        {% else %}
+          <a class="btn" href="{% slugurl 'request-quote' %}"><i class="fa fa-envelope"></i>Get a quote</a>
+        {% endif %}
+      </div>
+    </div> 
+  </div>
+{% endfor %}
+<div class="col-md-12"><hr></div>
+<div class="row text-center">
+  <h2>Enhanced Service Pricing</h2>
+  <h4>Combined Illumina and Nanopore Sequencing</h4>
+</div>
+{% for service_price in service_prices %}
+  <div class="col-sm-4">
+    <div class="panel enhanced-panel-prices text-center enhancedServicePanel">
+      <div class="enhanced-panel-heading">
+        <h3 class="enhanced-panel-header-text">{{ service_price.title }}</h3>
+      </div>
+      <div class="enhanced-panel-body">
+        {{ service_price.body|richtext }}
+      </div>
+      <div class="enhanced-panel-footer">
+        <h3>£{{ service_price.price|floatformat:"0" }}</h3>
+        <h4>per genome</h4>
+        {% if service_price.title|slice:"5" = "BBSRC" %}
+          <a class="btn" href="{% slugurl 'request-quote' %}BBSRC"><i class="fa fa-envelope"></i>Get a quote</a>
+        {% elif service_price.title|slice:"5" = "Non-c" %}
+          <a class="btn" href="{% slugurl 'request-quote' %}Non-Commerical"><i class="fa fa-envelope"></i>Get a quote</a>
+        {% elif service_price.title|slice:"5" = "Indus" %}
+          <a class="btn" href="{% slugurl 'request-quote' %}Industry"><i class="fa fa-envelope"></i>Get a quote</a>
+        {% else %}
+          <a class="btn" href="{% slugurl 'request-quote' %}"><i class="fa fa-envelope"></i>Get a quote</a>
+        {% endif %}
       </div>
     </div> 
   </div>

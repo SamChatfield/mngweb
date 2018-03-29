@@ -1,4 +1,18 @@
 $(function() {
+
+  /*
+  Max Enhanced Stain Check
+  */
+ function checkEnhancedQuantity() {
+   var quantity = $("#id_num_enhanced_strain_samples").val();
+   if (quantity > 3) {
+    $("#enhancedQuantityAlertModal").modal("show");
+    $("#id_num_enhanced_strain_samples").val(3);
+   }
+ }
+
+
+
   /*
   Quote estimator
   */
@@ -70,8 +84,12 @@ $(function() {
   });
 
   $("#id_is_confidential,#id_num_enhanced_strain_samples").change(function() {
+    checkEnhancedQuantity();
     setQuoteEstimate();
   })
+  // $("#id_num_enhanced_strain_samples").change(function() {
+    
+  // })
   /*
   Show/hide principal investigator contact fields
   */

@@ -9,6 +9,20 @@
   <script>
     $(document).ready(function() {
       // $("#notificationModal").modal("show");
+      var initialFundingType = "{{service_string|safe}}";
+      switch (initialFundingType) {
+        case "BBSRC":
+          $("#id_funding_type option[value='BBSRC funded']").prop("selected", true);
+          break;
+        case "Non-c":
+          $("#id_funding_type option[value='Non-commercial']").prop("selected", true);
+          break;
+        case "Indus":
+          $("#id_funding_type option[value='Industry']").prop("selected", true);
+          break;
+        default:
+          break;
+      }
     });
   </script>
 {% endblock %}
@@ -43,6 +57,32 @@
 {% endblock %}
 
 {% block content %}
+
+<div id="enhancedQuantityAlertModal" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h2 class="modal-title">Exceeded Enhanced Strain Limit</h2>
+          </div>
+          <div class="modal-body">
+              <div class="container-fluid">
+                  <div class="container-fluid">
+                      <div class="col-md-12">
+                          Unfortunately, as our enhanced service is still in alpha testing, <b>we can only accept 3 strains at a time</b> for enhanced sequencing.
+                      </div>
+                      <div class="col-md-12"><hr></div>
+                      <div class="col-md-12" align="right">
+                        <button class="btn btn-default" data-dismiss="modal">OK</button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+
 
 <div id="notificationModal" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog">

@@ -11,17 +11,17 @@ from wagtail.wagtailadmin.edit_handlers import (FieldPanel, MultiFieldPanel,
                                                 PageChooserPanel)
 from wagtail.wagtailcore.models import Page
 from wagtail.wagtailcore.fields import RichTextField
-
+from wagtail.contrib.wagtailroutablepage.models import RoutablePageMixin, route
 from portal.services import limsfm_create_quote
 from .forms import QuoteRequestForm
 
 
-class QuoteRequestFormPage(Page):
+class QuoteRequestFormPage(RoutablePageMixin, Page):
     """
     A Quote Request Form Page that sends an email and calls LIMSfm API to create
     a draft quote.
     """
-
+    
     intro = RichTextField(blank=True)
     side_panel_title = models.CharField(max_length=255)
     side_panel_content = RichTextField(blank=True)
@@ -87,7 +87,9 @@ class QuoteRequestFormPage(Page):
             email.send(fail_silently=False)
 
 
-    def serve(self, request):
+    @route(r'^$')
+    @route(r'^(?P<service_string>[\w\-]+)/$')
+    def service_serve(self, request, service_string = None):
         if request.method == 'POST':
             # honeypot
             if len(request.POST.get('url_h', '')):
@@ -104,9 +106,11 @@ class QuoteRequestFormPage(Page):
                     messages.success(request, self.success_message)
                     return HttpResponseRedirect(self.url)
         else:
+
             form = QuoteRequestForm()
 
         return render(request, 'quote/quote_request_form.html', {
             'page': self,
             'form': form,
+            "service_string": service_string
         })
