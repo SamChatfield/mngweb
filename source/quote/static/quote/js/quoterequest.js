@@ -7,16 +7,16 @@ $(function() {
     var fundingType = $('#id_funding_type').val();
     var dnaQty = parseInt($('#id_num_dna_samples').val());
     var strainQty = parseInt($('#id_num_strain_samples').val());
-    var enhancedStrainQty = parseInt($("#id_num_enhanced_strain_samples").val())
+    // var enhancedStrainQty = parseInt($("#id_num_enhanced_strain_samples").val())
     var totalQty;
     var unitPrice;
     var totalPrice;
 
     if (dnaQty != dnaQty) { dnaQty = 0; }
     if (strainQty != strainQty) { strainQty = 0; }
-    if (enhancedStrainQty != enhancedStrainQty) { enhancedStrainQty = 0; }
+    // if (enhancedStrainQty != enhancedStrainQty) { enhancedStrainQty = 0; }
     totalQty = dnaQty + strainQty;
-    totalEnhancedQty = enhancedStrainQty;
+    // totalEnhancedQty = enhancedStrainQty;
 
     if (isConfidential) {
       unitPrice = 100;
@@ -33,28 +33,29 @@ $(function() {
       }
     }
 
-    if (isConfidential) {
-      enhancedUnitPrice = "<CONFIDENTIAL_ENHANCED_RATE>";
-    } else {
-      switch (fundingType) {
-        case 'Industry':
-          enhancedUnitPrice = "<ENHANCED_INDUSTRY_RATE>";
-          break;
-          case 'Non-commercial':
-          enhancedUnitPrice = "<ENHANCED_NON_COMMERCIAL_RATE>";
-          break;
-        default:
-          enhancedUnitPrice = "<STANDARD_ENHANCED_DATE>";
-          break;
-      }
+    // if (isConfidential) {
+    //   enhancedUnitPrice = "<CONFIDENTIAL_ENHANCED_RATE>";
+    // } else {
+    //   switch (fundingType) {
+    //     case 'Industry':
+    //       enhancedUnitPrice = "<ENHANCED_INDUSTRY_RATE>";
+    //       break;
+    //       case 'Non-commercial':
+    //       enhancedUnitPrice = "<ENHANCED_NON_COMMERCIAL_RATE>";
+    //       break;
+    //     default:
+    //       enhancedUnitPrice = "<STANDARD_ENHANCED_DATE>";
+    //       break;
+    //   }
     }
 
     totalPrice = totalQty * unitPrice;
-    totalEnhancedPrice = totalEnhancedQty * enhancedUnitPrice;
+    // totalEnhancedPrice = totalEnhancedQty * enhancedUnitPrice;
     $('#quote-total-qty').text(totalQty);
     $('#quote-unit-price').text('£' + unitPrice);
     $('#quote-total-price').text('£' + totalPrice);
-    $("#quote-grand-total-price").text('£' + (totalPrice + totalEnhancedPrice));
+    // $("#quote-grand-total-price").text('£' + (totalPrice + totalEnhancedPrice));
+    $("#quote-grand-total-price").text('£' + totalPrice);
   }
 
 
