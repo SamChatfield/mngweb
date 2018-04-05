@@ -30,6 +30,7 @@ $(function() {
           break;
         default:
           unitPrice = 50;
+          break;
       }
     }
 
@@ -47,7 +48,7 @@ $(function() {
     //       enhancedUnitPrice = "<STANDARD_ENHANCED_DATE>";
     //       break;
     //   }
-    }
+    // }
 
     totalPrice = totalQty * unitPrice;
     // totalEnhancedPrice = totalEnhancedQty * enhancedUnitPrice;
