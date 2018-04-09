@@ -1,5 +1,5 @@
 {% load wagtailcore_tags %}
-{% for service_price in service_prices %}
+{% for service_price in service_prices|slice:"3"" %}
   <div class="col-sm-4">
     <div class="panel panel-prices text-center">
       <div class="panel-heading">
