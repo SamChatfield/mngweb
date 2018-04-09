@@ -138,6 +138,73 @@
   padding: 0 0 10px 0;
 }
 
+
+
+
+
+/* --- ENHANCED SERVICE PRICE PANELS --- */
+
+.enhanced-panel-prices {
+  border: 1px solid #00638e; 
+}
+
+.enhanced-panel-prices .enhanced-panel-heading {
+  color: #fff;
+  background-color: #00638e;
+  border-bottom: 1px solid transparent;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+}
+
+.enhanced-panel-prices {
+  transition: box-shadow 0.5s;
+}
+
+.enhanced-panel-prices:hover {
+  box-shadow: 5px 0px 40px rgba(0,0,0, .2);
+}
+
+.enhanced-panel-prices .enhanced-panel-heading {
+  padding: 10px;
+}
+
+.enhanced-panel-prices .enhanced-panel-footer {
+  background-color: #fff;
+}
+
+.enhanced-panel-prices .enhanced-panel-footer h3 {
+  font-size: 32px;
+}
+
+.enhanced-panel-prices .enhanced-panel-footer h4 {
+  color: #aaa;
+  font-size: 14px;
+}
+
+.enhanced-panel-prices .enhanced-panel-footer .btn {
+  margin: 15px 0;
+  background-color: #00638e;
+  color: #fff;
+}
+
+.enhanced-panel-prices ul li {
+  text-align: left;
+  padding: 0 0 10px 0;
+}
+
+.enhanced-panel-header-text {
+  margin-top: 0px !important;
+  margin-bottom: 0px !important;
+}
+
+.enhanced-panel-body {
+  padding: 15px !important;
+}
+
+
+
 /* --- CAROUSEL --- */
 
 .carousel-control.right, .carousel-control.left {

@@ -123,7 +123,7 @@ class QuoteRequestForm(forms.Form):
         min_value=0,
         initial=0,
         required=False,
-        label=_("No. of strain samples for enhanced sequencing"))
+        label=_("No. strains for enhanced sequencing"))
     confirm_strain_bsl2 = forms.BooleanField(
         required=False,
         label=_("Confirm your strains are BSL2 or lower"))
