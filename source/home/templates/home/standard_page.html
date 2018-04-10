@@ -2,6 +2,18 @@
 {% load wagtailcore_tags %}
 {% block body_class %}template-standardpage{% endblock %}
 
+{% block extra_css %}
+<style>
+    /* center align the comparison image*/
+    .richtext-image {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 50%;
+    }
+</style>
+{% endblock %}
+
 {% block full_jumbo %}
   <div class="jumbotron bg-grey">
     <div class="container">
