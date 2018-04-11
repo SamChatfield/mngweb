@@ -2,9 +2,9 @@ $(function() {
 
   function checkEnhancedQuantity() {
     var quantity = $("#id_num_enhanced_strain_samples").val();
-    if (quantity > 3) {
+    if (quantity > 5) {
      $("#enhancedQuantityAlertModal").modal("show");
-     $("#id_num_enhanced_strain_samples").val(3);
+     $("#id_num_enhanced_strain_samples").val(5);
     }
   }
 
