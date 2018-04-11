@@ -82,6 +82,7 @@ $(function() {
   });
 
   $("#id_is_confidential,#id_num_enhanced_strain_samples").change(function() {
+    checkEnhancedQuantity();
     setQuoteEstimate();
   })
   /*
