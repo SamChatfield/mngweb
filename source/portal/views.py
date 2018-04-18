@@ -250,8 +250,10 @@ def projectline_update(request, project_uuid, projectline_uuid):
                                       form.cleaned_data)
         except requests.HTTPError as e:
             status = handle_limsfm_http_exception(request, e)
+            return JsonResponse(str(e))
         except requests.RequestException as e:
             status = handle_limsfm_request_exception(request, e)
+            return JsonResponse(str(e))
         else:
             slack_message('portal/slack/limsfm_projectline_update.slack',
                           {'form': form})
