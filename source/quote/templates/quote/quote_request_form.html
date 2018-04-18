@@ -6,9 +6,25 @@
 {% block extra_js %}
   {% javascript 'mngweb_quote' %}
 
+
   <script>
     $(document).ready(function() {
       // $("#notificationModal").modal("show");
+      var initialFundingType = "{{service_string|safe}}";
+      console.log(initialFundingType);
+      switch (initialFundingType) {
+        case "BBSRC":
+          $("#id_funding_type option[value='BBSRC funded']").prop("selected", true);
+          break;
+        case "Non-c":
+          $("#id_funding_type option[value='Non-commercial']").prop("selected", true);
+          break;
+        case "Indus":
+          $("#id_funding_type option[value='Industry']").prop("selected", true);
+          break;
+        default:
+          break;
+      }
     });
   </script>
 {% endblock %}
@@ -24,6 +40,7 @@
     background-color: #ff8787;
     font-size: 16px;
   }
+
 </style>
 {% endblock %}
 {% block body_class %}template-quoterequestformpage{% endblock %}
@@ -186,35 +203,41 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-md-3">
+            <div class="col-md-4">
               {% bootstrap_field form.num_dna_samples %}
               <div class="panel panel-success"><div class="panel-body"><i class="fa fa-globe text-success"></i> DNA samples can be sent from customers worldwide</div></div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
               {% bootstrap_field form.num_strain_samples %}
               <div class="panel panel-warning"><div class="panel-body"><span class="flag-icon flag-icon-gb"></span> Strains can only be sent from UK addresses</div></div>
               {% bootstrap_field form.confirm_strain_bsl2 %}
             </div>
-            <div class="col-md-6">
-              <div class="panel panel-default">
-                <div class="panel-body">
-                  <table class="table">
-                    <tbody>
-                      <tr>
-                        <th>Total number of samples:</th>
-                        <td id="quote-total-qty"></td>
-                      </tr>
-                      <tr>
-                        <th>Price per sample:</th>
-                        <td id="quote-unit-price"></td>
-                      </tr>
-                      <tr>
-                        <th>Estimated total (ex. VAT):</th>
-                        <td id="quote-total-price"></td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
+            <div class="col-md-4">
+              {% bootstrap_field form.num_enhanced_strain_samples %}
+              <div class="panel panel-warning"><div class="panel-body"><span class="flag-icon flag-icon-gb"></span> Strains can only be sent from UK addresses <b>(Max 5 samples)</b></div></div>
+              {% bootstrap_field form.confirm_enhanced_strain_bsl2 %}
+            </div>
+          </div>
+
+          <div class="col-md-12">
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <table class="table">
+                  <tbody>
+                    <tr>
+                      <th>Total number of samples:</th>
+                      <td id="quote-total-qty"></td>
+                    </tr>
+                    <tr>
+                      <th>Price per sample:</th>
+                      <td id="quote-unit-price"></td>
+                    </tr>
+                    <tr>
+                      <th>Estimated Total (ex. VAT):</th>
+                      <td id="quote-grand-total-price"></td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
@@ -241,7 +264,7 @@
       </div>
 
       {# Sidebar #}
-      <aside class="col-md-4">
+      <aside class="col-md-4 aside">
         <div class="panel panel-primary">
           <div class="panel-heading">
             <h4>{{ page.side_panel_title }}</h4>

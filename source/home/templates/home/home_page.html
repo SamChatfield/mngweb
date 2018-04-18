@@ -45,20 +45,19 @@
 {% block content %}
 
 
-<div id="notificationModal" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
+<div id="notificationModal" class="modal fade" role="dialog">
   <div class="modal-dialog">
       <div class="modal-content">
           <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal">&times;</button>
-              <h2 class="modal-title">Important Notice - Easter Closure</h2>
+              <h2 class="modal-title">Enhanced Genome Service</h2>
           </div>
           <div class="modal-body">
               <div class="container-fluid">
                   <div class="container-fluid">
                       <div class="col-md-12">
-                          Please note, MicrobesNG will be closed
-                          from <b>Friday 30th March</b> to <b>Wednesday 3rd April</b>
-                          for the Easter break. We will be open again as normal on the 4th April.
+                          <p>We are pleased to announce that our new <b>Enhanced Genome Service</b> is now live.</p>
+                          <p>Please find a comparison of our services <a href="https://microbesng.uk/our-services/"><b>here</b></a> and see our home page for pricing.</p>
                           <div class="col-md-12"><hr></div>
                           <div class="col-md-12" align="right">
                               <p>Thank you, MicrobesNG Team</p>
@@ -98,7 +97,8 @@
   <div class="container-fluid bg-grey">
     <div class="container">
         <div class="row text-center">
-          <h2>{{ self.pricing_title }}</h2>
+          <!-- <h2>{{ self.pricing_title }}</h2> -->
+          <h2>Standard Service Pricing</h2>
           <h4>{{ self.pricing_subtitle }}</h4>
         </div>
         <div class="row">

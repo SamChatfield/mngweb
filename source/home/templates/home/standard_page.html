@@ -1,6 +1,31 @@
 {% extends "home/base.html" %}
-
+{% load wagtailcore_tags %}
 {% block body_class %}template-standardpage{% endblock %}
 
+{% block extra_css %}
+<style>
+    /* center align the comparison image*/
+    .richtext-image {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 50%;
+    }
+</style>
+{% endblock %}
+
+{% block full_jumbo %}
+  <div class="jumbotron bg-grey">
+    <div class="container">
+      <h1>{{ page.title }}</h1>
+    </div>
+  </div>
+{% endblock %}
+
 {% block content %}
+<div class="container">
+    <div class="col-md-12">
+        {{page.body|richtext}}
+    </div>
+</div>
 {% endblock %}

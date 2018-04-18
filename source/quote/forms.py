@@ -119,9 +119,17 @@ class QuoteRequestForm(forms.Form):
         initial=0,
         required=False,
         label=_("No. of strain samples"))
+    num_enhanced_strain_samples = forms.IntegerField(
+        min_value=0,
+        initial=0,
+        required=False,
+        label=_("No. strains for enhanced sequencing"))
     confirm_strain_bsl2 = forms.BooleanField(
         required=False,
         label=_("Confirm your strains are BSL2 or lower"))
+    confirm_enhanced_strain_bsl2 = forms.BooleanField(
+        required=False,
+        label=_("Confirm your enhanced strains are BSL2 or lower"))
     batch_type = forms.ChoiceField(
         choices=BATCH_TYPE_CHOICES,
         initial='all together')
@@ -138,7 +146,9 @@ class QuoteRequestForm(forms.Form):
         bbsrc_code = cleaned_data.get('bbsrc_code')
         num_dna_samples = cleaned_data.get('num_dna_samples')
         num_strain_samples = cleaned_data.get('num_strain_samples')
+        num_enhanced_strain_samples = cleaned_data.get("num_enhanced_strain_samples")
         confirm_strain_bsl2 = cleaned_data.get('confirm_strain_bsl2')
+        confirm_enhanced_strain_bsl2 = cleaned_data.get('confirm_enhanced_strain_bsl2')
         country = cleaned_data.get('country')
         primary_contact_is_pi = cleaned_data.get('primary_contact_is_pi')
         pi_name_title = cleaned_data.get('pi_name_title')
@@ -148,6 +158,10 @@ class QuoteRequestForm(forms.Form):
 
         if num_strain_samples is None:
             num_strain_samples = 0
+        if num_dna_samples is None:
+            num_dna_samples = 0
+        if num_enhanced_strain_samples is None:
+            num_enhanced_strain_samples = 0
 
         if primary_contact_is_pi:
             cleaned_data['pi_name_title'] = ''
@@ -181,8 +195,14 @@ class QuoteRequestForm(forms.Form):
                 _("You must confirm that any strains are BSL2 or below."))
             self.add_error('confirm_strain_bsl2', bsl2_error)
             non_field_errors.append(bsl2_error)
+        
+        if (num_enhanced_strain_samples > 0 and not confirm_enhanced_strain_bsl2):
+            enhanced_bsl2_error = ValidationError(
+                _("You must confirm that any strains for enhanced sequencing are BSL2 or below."))
+            self.add_error('confirm_strain_bsl2', enhanced_bsl2_error)
+            non_field_errors.append(enhanced_bsl2_error)
 
-        if not (num_strain_samples or num_dna_samples):
+        if not (num_strain_samples or num_dna_samples or num_enhanced_strain_samples):
             non_field_errors.append(
                 ValidationError(
                     _("A total sample quantity of at least one (strain or DNA)"
@@ -190,6 +210,14 @@ class QuoteRequestForm(forms.Form):
             )
 
         if country and country.iso2 != 'GB' and num_strain_samples:
+            non_field_errors.append(
+                ValidationError(
+                    _("Unfortunately we cannot currently accept strains sent "
+                      "from outside the UK. Please use our DNA service as an "
+                      "alternative."))
+            )
+        
+        if country and country.iso2 != 'GB' and num_enhanced_strain_samples:
             non_field_errors.append(
                 ValidationError(
                     _("Unfortunately we cannot currently accept strains sent "
