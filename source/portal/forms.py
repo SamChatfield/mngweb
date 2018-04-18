@@ -12,7 +12,8 @@ from .models import EnvironmentalSampleType, HostSampleType
 
 ALIQUOTTYPE_NAME_CHOICES = [
     ('DNA', 'DNA'),
-    ('Strain', 'Strain')
+    ('Strain', 'Strain'),
+    ('EGS_Strain', 'EGS_Strain')
 ]
 
 ISOLATE_TYPE_CHOICES = [
