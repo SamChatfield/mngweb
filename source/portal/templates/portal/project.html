@@ -25,6 +25,12 @@
         });
       });
     </script>
+  {% else %}
+    <script>
+      $(document).ready(function() {
+        $("#notificationModal").modal("show");
+      });
+    </script>
   {% endif %}
 {% endblock %}
 
@@ -35,6 +41,31 @@
 {% endblock %}
 
 {% block content %}
+
+  <div id="notificationModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h2 class="modal-title">A notice to our customers</h2>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="container-fluid">
+                        <div class="col-md-12">
+                            <p>We would like to inform all customers that we cannot guarantee sequencing before the New Year for any samples received as of now (13th November).</p>
+                            <p>We are still happy to accept and store your samples before the Christmas break. If you are planning to send samples this year please get them to us before 14th December.</p>
+                            <div class="col-md-12"><hr></div>
+                            <div class="col-md-12" align="right">
+                                <p>Thank you, MicrobesNG Team</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
 
   <div class="container">
 
