@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 import datetime
+import requests
 
 from django.db import models
 from django.conf import settings
@@ -88,28 +89,40 @@ class FormPage(AbstractEmailForm):
             form = self.get_form(request.POST)
 
             if form.is_valid():
-                self.process_form_submission(form)
-                messages.success(request, self.success_message)
+                recaptcha_response = request.POST.get('g-recaptcha-response')
+                data = {
+                    'secret': settings.CAPTCHA_SECRET_KEY,
+                    'response': recaptcha_response
+                }
+                r = requests.post('https://www.google.com/recaptcha/api/siteverify',
+                                  data=data)
+                result = r.json()
 
-                if request.is_ajax():
-                    # Valid ajax post
-                    data = {'messages': []}
-                    for message in messages.get_messages(request):
-                        data['messages'].append({
-                            "level": message.level,
-                            "level_tag": message.level_tag,
-                            "message": message.message,
-                        })
-                    data['messages_html'] = render_to_string(
-                        'includes/messages.html',
-                        {'messages': messages.get_messages(request)})
-                    return JsonResponse(data)
-                else:
-                    # Valid (non-ajax) post
-                    if self.thank_you_page:
-                        return HttpResponseRedirect(self.thank_you_page.url)
+                if result['success']:
+                    self.process_form_submission(form)
+                    messages.success(request, self.success_message)
+
+                    if request.is_ajax():
+                        # Valid ajax post
+                        data = {'messages': []}
+                        for message in messages.get_messages(request):
+                            data['messages'].append({
+                                "level": message.level,
+                                "level_tag": message.level_tag,
+                                "message": message.message,
+                            })
+                        data['messages_html'] = render_to_string(
+                            'includes/messages.html',
+                            {'messages': messages.get_messages(request)})
+                        return JsonResponse(data)
                     else:
-                        return HttpResponseRedirect(self.url)
+                        # Valid (non-ajax) post
+                        if self.thank_you_page:
+                            return HttpResponseRedirect(self.thank_you_page.url)
+                        else:
+                            return HttpResponseRedirect(self.url)
+                else:
+                    messages.error(request, 'Invalid reCAPTCHA. Please try again.')
 
             elif request.is_ajax():
                 # Invalid ajax post
