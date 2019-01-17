@@ -53,6 +53,21 @@
       });
     });
 
+    // Cookie consent init
+    window.cookieconsent.initialise({
+      "palette": {
+        "popup": {
+          "background": "#575757",
+          "text": "#ffffff"
+        },
+        "button": {
+          "background": "#00bbe3",
+          "text": "#ffffff"
+        }
+      },
+      "theme": "classic"
+    });
+
   });
 
 })(window.mngweb = window.mngweb || {}, jQuery);
