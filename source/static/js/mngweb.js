@@ -60,12 +60,14 @@
           'background': '#575757',
           'text': '#ffffff'
         },
-        'button': {
-          'background': '#00bbe3',
-          'text': '#ffffff'
-        }
       },
-      'theme': 'classic'
+      'theme': 'classic',
+      'content': {
+        'message': 'We use cookies to ensure you get the best experience on our website.',
+        'dismiss': 'OK',
+        'link': 'Privacy policy',
+        'href': '/microbesng-faq#privacy-policy'
+      }
     });
 
   });

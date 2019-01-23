@@ -326,3 +326,22 @@ label {
 .row-gap-bottom {
   margin-bottom: 10px;
 }
+
+/* --- COOKIE CONSENT BAR --- */
+.cc-compliance {
+  background-color: #00bbe3;
+  border-radius: 5px;
+}
+
+.cc-btn {
+  color: #fff;
+  background-color: #00bbe3;
+  border-color: transparent;
+}
+
+.cc-btn:hover {
+  color: #000;
+  background-color: rgba(255,255,255,0.6);
+  border-color: transparent;
+  text-decoration: none;
+}
