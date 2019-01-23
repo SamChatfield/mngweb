@@ -1,5 +1,7 @@
 from __future__ import unicode_literals
 
+import re
+
 from django.db import models
 
 from wagtail.wagtailcore.models import Page, Orderable
@@ -27,6 +29,14 @@ class FaqIndexPage(Page):
 
 class FaqCategoryPage(Page):
     parent_page_types = ['faq.FaqIndexPage']
+
+    @property
+    def title_id(self):
+        """The title of the category formatted as an HTML ID for page anchoring"""
+        lower = self.title.lower()
+        no_brackets = re.sub(r'\s*\(.+\)', '', lower)
+        hyphens = no_brackets.replace(' ', '-')
+        return hyphens
 
     # exclude from sitemap
     def get_sitemap_urls(self):

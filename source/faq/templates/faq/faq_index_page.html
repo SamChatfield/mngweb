@@ -19,7 +19,7 @@
       {# Questions by category #}
       <div class="col-md-8">
         {% for category in page.categories %}
-          <h2 class="section-header">{{ category.title }}</h2>
+          <h2 class="section-header" id="{{ category.title_id }}">{{ category.title }}</h2>
           <dl class="faq-questions">
             {% for question in category.questions.all %}
               <dt>
