@@ -53,6 +53,23 @@
       });
     });
 
+    // Cookie consent init
+    window.cookieconsent.initialise({
+      'palette': {
+        'popup': {
+          'background': '#575757',
+          'text': '#ffffff'
+        },
+      },
+      'theme': 'classic',
+      'content': {
+        'message': 'We use cookies to ensure you get the best experience on our website.',
+        'dismiss': 'OK',
+        'link': 'Privacy policy',
+        'href': '/microbesng-faq#privacy-policy'
+      }
+    });
+
   });
 
 })(window.mngweb = window.mngweb || {}, jQuery);
