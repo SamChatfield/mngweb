@@ -3,7 +3,11 @@ from celery import shared_task
 
 @shared_task
 def run_subprocess():
-    return subprocess.call(['conda', '-h'])
+    # We can return a Python object which will be serialised and sent
+    obj = {}
+    # Note we must decode the return value of subprocess.check_output as UTF-8 string
+    obj['outstr'] = subprocess.check_output(['conda', '-h']).decode('utf-8')
+    return obj
 
 @shared_task
 def touch_file():
