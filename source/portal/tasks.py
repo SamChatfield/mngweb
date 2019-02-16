@@ -15,9 +15,13 @@ def touch_file():
 
 @shared_task
 def mngvariants(uuid, samples, reference):
-    return subprocess.call([
+    cmd = [
         'mngvariants',
-        '--uuid {}'.format(uuid),
-        '--samples {}'.format(' '.join(samples)),
-        '--reference {}'.format(reference)
-    ])
+        '--uuid',
+        '{}'.format(uuid),
+        '--samples'
+    ] + samples + [
+        '--reference',
+        '{}'.format(reference)
+    ]
+    return subprocess.check_output(cmd).decode('utf-8')
