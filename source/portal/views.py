@@ -16,8 +16,8 @@ from mngweb.decorators import require_ajax
 
 from .decorators import check_project_permissions
 from .forms import (ProjectAcceptTermsForm, EmailLinkForm, ProjectEnaForm,
-                    ProjectLineForm, ProjectPermissionsForm, UploadSampleSheetForm,
-                    ProjectAddCollaboratorForm)
+                    ProjectVariantCallingForm, ProjectLineForm, ProjectPermissionsForm,
+                    UploadSampleSheetForm, ProjectAddCollaboratorForm)
 from .models import EnvironmentalSampleType, HostSampleType
 from .sample_sheet import create_sample_sheet, parse_sample_sheet
 from .services import (limsfm_email_project_links, limsfm_get_project,
@@ -69,6 +69,7 @@ def project_detail(request, project_uuid):
         'project': project,
         'project_add_collaborator_form': ProjectAddCollaboratorForm(),
         'project_ena_form': ProjectEnaForm(initial=project),
+        'project_variant_calling_form': ProjectVariantCallingForm(initial=project),
         'upload_sample_sheet_form': UploadSampleSheetForm()
     }
 

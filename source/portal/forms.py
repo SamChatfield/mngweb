@@ -72,6 +72,12 @@ class ProjectEnaForm(forms.Form):
     ena_abstract = forms.CharField(widget=forms.Textarea, label="Project description (abstract)")
 
 
+class ProjectVariantCallingForm(forms.Form):
+    choices = ((x, x) for x in map(lambda x: 'sample{}'.format(x), range(20)))
+    reference_id = forms.CharField(label="Reference Genome ID", required=True)
+    samples_list = forms.MultipleChoiceField(label='Samples', choices=choices, required=True)
+
+
 class ProjectAddCollaboratorForm(forms.Form):
     email = forms.EmailField()
     first_name = forms.CharField()
