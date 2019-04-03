@@ -2,8 +2,7 @@
 
 <div class="row">
   <h2>Request Variant Calling</h2>
-  <!-- <form method="post" action="{% url 'project_ena_details' project.uuid %}" class="project-ena-form"> -->
-  <form method="post" action="" class="project-variant-calling-form">
+  <form method="post" action="{% url 'project_variant_calling' project.uuid %}" class="project-variant-calling-form">
     {% csrf_token %}
     {% bootstrap_form project_variant_calling_form %}
     {% buttons %}

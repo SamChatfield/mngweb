@@ -1,3 +1,4 @@
+import re
 from datetime import datetime
 
 from django import forms
@@ -73,9 +74,57 @@ class ProjectEnaForm(forms.Form):
 
 
 class ProjectVariantCallingForm(forms.Form):
-    choices = ((x, x) for x in map(lambda x: 'sample{}'.format(x), range(20)))
-    reference_id = forms.CharField(label="Reference Genome ID", required=True)
-    samples_list = forms.MultipleChoiceField(label='Samples', choices=choices, required=True)
+    def __init__(self, *args, **kwargs):
+        sample_ids = kwargs.pop('sample_ids')
+        super().__init__(*args, **kwargs)
+
+        sample_choices = ((sid, sid) for sid in sample_ids)
+
+        # Reference genome typeahead field
+        self.fields['reference_genome'] = forms.CharField(
+            label="Reference Genome",
+            help_text="Start typing and choose the required reference genome",
+            widget=forms.TextInput(attrs={
+                "class": "reference-genome-typeahead"
+            }),
+            required=True
+        )
+        # Reference genome ID hidden field
+        self.fields['reference_id'] = forms.CharField(
+            label="Reference Genome ID",
+            widget=forms.HiddenInput(),
+            required=False
+        )
+        # Samples list checkbox grid
+        self.fields['samples'] = forms.MultipleChoiceField(
+            label='Samples',
+            widget=forms.CheckboxSelectMultiple(),
+            choices=sample_choices,
+            required=True
+        )
+
+    def clean_reference_genome(self):
+        print('Clean reference genome')
+        regexp = r'GCF_\d{9}\.\d+'
+        data = self.cleaned_data['reference_genome']
+        match = re.search(regexp, data)
+        if match:
+            return match.group(0)
+        raise ValidationError('Invalid reference genome.')
+
+    def clean_reference_id(self):
+        print('Clean reference id')
+        data = self.cleaned_data['reference_id']
+        if data:
+            return data
+        return None
+
+    def clean_samples(self):
+        print('Clean samples')
+        data = self.cleaned_data['samples']
+        if data:
+            return data
+        return None
 
 
 class ProjectAddCollaboratorForm(forms.Form):

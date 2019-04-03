@@ -22,6 +22,9 @@ urlpatterns = [
     url(r'^projects/(?P<project_uuid>[-\w]{36})/ena_details/$',
         views.project_ena_details,
         name='project_ena_details'),
+    url(r'^projects/(?P<project_uuid>[-\w]{36})/variant_calling/$',
+        views.project_variant_calling,
+        name='project_variant_calling'),
     url(r'^projects/(?P<project_uuid>[-\w]{36})/permissions/$',
         views.project_permissions,
         name='project_permissions'),
@@ -43,6 +46,9 @@ urlpatterns = [
     url(r'^environmentalsampletype/typeahead/$',
         views.environmentalsampletype_typeahead,
         name='environmentalsampletype_typeahead'),
+    url(r'^referencegenome/typeahead/$',
+        views.referencegenome_typeahead,
+        name='referencegenome_typeahead'),
 
     # maintain legacy links
     url(r'^customers/(?P<customer_uuid>[-\w]{36})/projects/$',

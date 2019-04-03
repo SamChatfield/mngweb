@@ -1,4 +1,7 @@
 import requests
+import json
+import itertools
+import pathlib
 
 from django.conf import settings
 from django.contrib import messages
@@ -65,11 +68,15 @@ def project_detail(request, project_uuid):
             project['all_content_received_date']):  # Redirect to accept submission requirements
         return HttpResponseRedirect(reverse(project_accept_submission_requirements, args=[project_uuid]))
 
+    sample_ids = [
+        '{}_{}'.format(pl['sample_ref'], pl['customers_ref'])
+        for pl in project['projectlines']
+    ]
     context = {
         'project': project,
         'project_add_collaborator_form': ProjectAddCollaboratorForm(),
         'project_ena_form': ProjectEnaForm(initial=project),
-        'project_variant_calling_form': ProjectVariantCallingForm(initial=project),
+        'project_variant_calling_form': ProjectVariantCallingForm(sample_ids=sample_ids),
         'upload_sample_sheet_form': UploadSampleSheetForm()
     }
 
@@ -173,6 +180,40 @@ def project_remove_collaborator(request, project_uuid, contact_uuid):
         messages.success(request, "Project collaborator removed.")
     if request.is_ajax():
         return JsonResponse(messages_to_json(request), status=status)
+    return HttpResponseRedirect(reverse(project_detail, args=[project_uuid]))
+
+
+@require_POST
+@check_project_permissions
+def project_variant_calling(request, project_uuid):
+    print('REQUEST.POST:\n{}'.format(request.POST))
+    sample_ids = request.POST.getlist('samples')
+    form = ProjectVariantCallingForm(request.POST, sample_ids=sample_ids)
+
+    if form.is_valid():
+        if form.cleaned_data['reference_id']:
+            reference_id = form.cleaned_data['reference_id']
+            print('Reference ID: {}'.format(reference_id))
+        elif form.cleaned_data['reference_genome']:
+            reference_id = form.cleaned_data['reference_genome']
+            print('Reference ID (from genome): {}'.format(reference_id))
+        else:
+            raise Exception('Neither reference_id nor reference_genome was given, something went wrong')
+
+        print('CREATING VARIANT CALLING CELERY TASK WITH:\nuuid = {}\nsamples = {}\nreference = {}'.format(project_uuid, form.cleaned_data['samples'], reference_id))
+
+        messages.success(request, "Variant calling requested")
+        status = 200
+        if request.is_ajax():
+            return JsonResponse(messages_to_json(request), status=status)
+        else:
+            return HttpResponseRedirect(reverse(project_detail, args=[project_uuid]))
+    elif request.is_ajax():
+        return JsonResponse(form_errors_to_json(request, form), status=400)
+
+    # Display the form errors
+    for k, v in form.errors.items():
+        messages.error(request, '{}: {}'.format(k, v[0]))
     return HttpResponseRedirect(reverse(project_detail, args=[project_uuid]))
 
 
@@ -414,3 +455,18 @@ def environmentalsampletype_typeahead(request):
             values_list('name', flat=True)
     data = list(matches)
     return JsonResponse(data, safe=False)
+
+def referencegenome_typeahead(request):
+    data_path = pathlib.Path('~/.mngweb/refseq_typeahead_data.json').expanduser().resolve()
+    print(data_path.is_file())
+    q = request.GET.get('q', '')
+    print('Q: {}'.format(q))
+    with data_path.open() as typeahead_data:
+        data = json.load(typeahead_data)
+        if q:
+            filtered = (d for d in data if q.lower() in d['assembly_accession'].lower() or q.lower() in d['organism_name'].lower())
+            matches = list(itertools.islice(filtered, 6))
+            return JsonResponse(matches, safe=False)
+        else:
+            print('Return all')
+            return JsonResponse(data, safe=False)

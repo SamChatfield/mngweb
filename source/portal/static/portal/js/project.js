@@ -90,6 +90,55 @@
   });
 
   /*
+  'Reference genome' typeahead
+  */
+  portal.referenceGenomes = new Bloodhound({
+    datumTokenizer: function (datum) {
+      console.log(`DATUM: ${JSON.stringify(datum)}`);
+      const nameTokens = Bloodhound.tokenizers.nonword(datum.organism_name);
+      const accnTokens = Bloodhound.tokenizers.whitespace(datum.assembly_accession);
+      const allTokens = nameTokens.concat(accnTokens);
+      console.log(`ALL TOKENS: ${JSON.stringify(allTokens)}`);
+      return allTokens;
+    },
+    queryTokenizer: Bloodhound.tokenizers.nonword,
+    identify: function (obj) {
+      return obj.assembly_accession
+    },
+    remote: {
+      url: '/portal/referencegenome/typeahead/?q=%QUERY',
+      wildcard: '%QUERY',
+    },
+  });
+  portal.referenceGenomesWithDefaults = function (q, sync, async) {
+    console.log(`Q: ${JSON.stringify(q)}`);
+    if (q === '') {
+      sync(portal.referenceGenomes.index.all());
+    } else {
+      console.log(`search with q: ${q}`)
+      portal.referenceGenomes.search(q, sync, async)
+    }
+  };
+  $('input.reference-genome-typeahead').typeahead({
+    hint: true,
+    highlight: true,
+    minLength: 3,
+  }, {
+    name: 'referenceGenomes',
+    // limit: 5,
+    source: portal.referenceGenomesWithDefaults,
+    display: function (suggestion) {
+      console.log(`DISPLAY SUGGESTION: ${JSON.stringify(suggestion)}`);
+      return `${suggestion.organism_name} (${suggestion.assembly_accession})`;
+    },
+  });
+  $('input.reference-genome-typeahead')
+    .on('typeahead:selected typeahead:autocompleted', function (e, datum) {
+      $('#id_reference_id').val(datum.assembly_accession);
+      return;
+    });
+
+  /*
   EBI taxonomy selection
   */
   function ebiTaxonomyOnChange (event, nameField) {
