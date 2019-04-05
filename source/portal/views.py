@@ -464,8 +464,10 @@ def referencegenome_typeahead(request):
     with data_path.open() as typeahead_data:
         data = json.load(typeahead_data)
         if q:
-            filtered = (d for d in data if q.lower() in d['assembly_accession'].lower() or q.lower() in d['organism_name'].lower())
-            matches = list(itertools.islice(filtered, 6))
+            matches = [d for d in data if q.lower() in d['assembly_accession'].lower() or q.lower() in d['organism_name'].lower()]
+            print('referencegenome_typeahead: {} matches'.format(len(matches)))
+            # Sort the matches by organism name
+            matches.sort(key=lambda k: k['organism_name'])
             return JsonResponse(matches, safe=False)
         else:
             print('Return all')

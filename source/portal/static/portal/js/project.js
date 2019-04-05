@@ -125,10 +125,9 @@
     minLength: 3,
   }, {
     name: 'referenceGenomes',
-    // limit: 5,
+    limit: 20,
     source: portal.referenceGenomesWithDefaults,
     display: function (suggestion) {
-      console.log(`DISPLAY SUGGESTION: ${JSON.stringify(suggestion)}`);
       return `${suggestion.organism_name} (${suggestion.assembly_accession})`;
     },
   });
