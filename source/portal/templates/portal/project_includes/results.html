@@ -122,7 +122,24 @@
         </div>
         <div id="variants" class="panel-collapse collapse">
           <div class="panel-body">
-            <p>Variant calling has not been requested.</p>
+            {% if project.variant_status == "COMPLETE" %}
+
+              <h3>Sensitive Variants</h3>
+              <table id="sens_variants_table" class="table table-striped table-results-meta" style="width: 100%;"></table>
+
+              <h3>Specific Variants</h3>
+              <table id="spec_variants_table" class="table table-striped table-results-meta" style="width: 100%;"></table>
+
+              <div class="clearfix"></div>
+
+              <p><a class="btn btn-success" href="{{ project.results_url_secure }}variants_new.zip"><i class="fa fa-download"></i>  Download Variant Data</a></p>
+            {% elif project.variant_status == "IN_PROGRESS" %}
+              <p>Variant calling is in progress</p>
+            {% elif project.variant_status == "NOT_REQUESTED" %}
+              <p>Variant calling has not been requested.</p>
+            {% else %}
+              <p>Oops. Something went wrong.</p>
+            {% endif %}
           </div>
         </div>
       </div>

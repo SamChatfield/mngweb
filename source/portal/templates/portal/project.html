@@ -23,6 +23,40 @@
           ajax: "{{ project.results_url_secure }}json_cont.txt",
           responsive: true
         });
+        if ('{{ project.variant_status }}' === 'COMPLETE') {
+          // Sensitive variants
+          $.ajax({
+            url: '{{ project.results_url_secure }}sens_variants_annotated.json',
+            dataType: 'json',
+            success: function (json) {
+              var columnNames = Object.keys(json[0]);
+              var columns = columnNames.map(columnName => ({ data: columnName, title: columnName }));
+              $('#sens_variants_table').DataTable({
+                data: json,
+                columns: columns,
+                order: [[0, 'desc']],
+                responsive: true,
+                scrollX: true
+              });
+            }
+          });
+          // Specific variants
+          $.ajax({
+            url: '{{ project.results_url_secure }}spec_variants_annotated.json',
+            dataType: 'json',
+            success: function (json) {
+              var columnNames = Object.keys(json[0]);
+              var columns = columnNames.map(columnName => ({ data: columnName, title: columnName }));
+              $('#spec_variants_table').DataTable({
+                data: json,
+                columns: columns,
+                order: [[0, 'desc']],
+                responsive: true,
+                scrollX: true
+              });
+            }
+          });
+        }
       });
     </script>
   {% endif %}

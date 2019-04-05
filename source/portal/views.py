@@ -29,7 +29,8 @@ from .services import (limsfm_email_project_links, limsfm_get_project,
                        limsfm_project_remove_contact)
 from .utils import (messages_to_json, json_messages_or_redirect,
                     request_should_post_to_slack, form_errors_to_json,
-                    handle_limsfm_http_exception, handle_limsfm_request_exception)
+                    handle_limsfm_http_exception, handle_limsfm_request_exception,
+                    get_variant_calling_status)
 
 
 @require_GET
@@ -68,10 +69,15 @@ def project_detail(request, project_uuid):
             project['all_content_received_date']):  # Redirect to accept submission requirements
         return HttpResponseRedirect(reverse(project_accept_submission_requirements, args=[project_uuid]))
 
+    # Create a list of sample IDs for the project to populate the variant calling form
     sample_ids = [
         '{}_{}'.format(pl['sample_ref'], pl['customers_ref'])
         for pl in project['projectlines']
     ]
+
+    # Get the status of variant calling for the project
+    project['variant_status'] = get_variant_calling_status(project['results_url_secure'])
+
     context = {
         'project': project,
         'project_add_collaborator_form': ProjectAddCollaboratorForm(),

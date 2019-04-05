@@ -1,4 +1,5 @@
 import csv
+import requests
 
 from django.conf import settings
 from django.contrib import messages
@@ -103,3 +104,21 @@ def load_hostsampletype_data(file_path):
     for row in reader:
         obj = HostSampleType(name=row['name'])
         obj.save()
+
+
+def get_variant_calling_status(results_url_secure):
+    """
+    Check the status of the variant calling task for project_uuid
+
+    Return indication of whether it is:
+    - NOT_REQUESTED
+    - IN_PROGRESS
+    - COMPLETE
+    """
+    # For now just send a HEAD request to see if the new variants zip exists
+    variants_zip_url = '{}variants_new.zip'.format(results_url_secure)
+    res = requests.head(variants_zip_url)
+
+    if res.status_code == 200:
+        return 'COMPLETE'
+    return 'NOT_REQUESTED'
