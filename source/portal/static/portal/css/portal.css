@@ -61,7 +61,14 @@
   overflow-x: scroll;
 }
 
+#id_samples {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 160px);
+  column-gap: 0.5em;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
 #id_samples > .checkbox {
-  display: inline-block;
-  width: 20%;
+  margin-top: -5px;
 }

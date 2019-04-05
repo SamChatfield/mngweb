@@ -1,17 +1,19 @@
 {% load bootstrap3 static %}
 
 <div class="row">
-  <h2>Request Variant Calling</h2>
-  <form method="post" action="{% url 'project_variant_calling' project.uuid %}" class="project-variant-calling-form">
-    {% csrf_token %}
-    {% bootstrap_form project_variant_calling_form %}
-    {% buttons %}
-      <button type="submit" class="btn btn-success button-lg">
-        <i class="fa fa-floppy-o"></i> Submit
-      </button>
-    {% endbuttons %}
-    <div class="form-messages">
-      {# placeholder for ajax messages #}
-    </div>
-  </form>
+  <div class="col-md-12">
+    <h2>Request Variant Calling</h2>
+    <form method="post" action="{% url 'project_variant_calling' project.uuid %}" class="project-variant-calling-form">
+      {% csrf_token %}
+      {% bootstrap_form project_variant_calling_form %}
+      {% buttons %}
+        <button type="submit" class="btn btn-success button-lg">
+          <i class="fa fa-floppy-o"></i> Submit
+        </button>
+      {% endbuttons %}
+      <div class="form-messages">
+        {# placeholder for ajax messages #}
+      </div>
+    </form>
+  </div>
 </div>
