@@ -31,6 +31,7 @@ from .utils import (messages_to_json, json_messages_or_redirect,
                     request_should_post_to_slack, form_errors_to_json,
                     handle_limsfm_http_exception, handle_limsfm_request_exception,
                     get_variant_calling_status)
+from .tasks import mngvariants
 
 
 @require_GET
@@ -76,7 +77,7 @@ def project_detail(request, project_uuid):
     ]
 
     # Get the status of variant calling for the project
-    project['variant_status'] = get_variant_calling_status(project['results_url_secure'])
+    project['variant_status'] = get_variant_calling_status(project_uuid, project['results_url_secure'])
 
     context = {
         'project': project,
@@ -206,7 +207,11 @@ def project_variant_calling(request, project_uuid):
         else:
             raise Exception('Neither reference_id nor reference_genome was given, something went wrong')
 
-        print('CREATING VARIANT CALLING CELERY TASK WITH:\nuuid = {}\nsamples = {}\nreference = {}'.format(project_uuid, form.cleaned_data['samples'], reference_id))
+        samples = form.cleaned_data['samples']
+        print('CREATING VARIANT CALLING CELERY TASK WITH:\nuuid = {}\nsamples = {}\nreference = {}'.format(project_uuid, samples, reference_id))
+        variant_calling_args = (project_uuid, samples, reference_id)
+        res = mngvariants.apply_async(variant_calling_args, task_id=project_uuid)
+        print('CREATED CELERY TASK WITH ID: {}, STATE: {}'.format(res.id, res.state))
 
         messages.success(request, "Variant calling requested")
         status = 200

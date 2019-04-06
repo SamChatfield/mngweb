@@ -11,6 +11,7 @@ from netaddr import IPNetwork, IPAddress
 from django_slack import slack_message
 
 from .models import EnvironmentalSampleType, HostSampleType
+from .tasks import mngvariants
 
 def handle_limsfm_request_exception(request, e):
     ERROR_MESSAGE = ("The MicrobesNG customer portal is temporarily "
@@ -106,7 +107,7 @@ def load_hostsampletype_data(file_path):
         obj.save()
 
 
-def get_variant_calling_status(results_url_secure):
+def get_variant_calling_status(project_uuid, results_url_secure):
     """
     Check the status of the variant calling task for project_uuid
 
@@ -115,10 +116,25 @@ def get_variant_calling_status(results_url_secure):
     - IN_PROGRESS
     - COMPLETE
     """
-    # For now just send a HEAD request to see if the new variants zip exists
-    variants_zip_url = '{}variants_new.zip'.format(results_url_secure)
-    res = requests.head(variants_zip_url)
+    # Test celery interactions
+    task_res = mngvariants.AsyncResult(project_uuid)
+    task_state = task_res.state
+    print('Retrieved celery task with ID: {}, STATE: {}'.format(task_res.id, task_state))
 
-    if res.status_code == 200:
-        return 'COMPLETE'
-    return 'NOT_REQUESTED'
+    state_map = {
+        'PENDING': 'NOT_REQUESTED',
+        'STARTED': 'IN_PROGRESS',
+        'SUCCESS': 'COMPLETE',
+        'FAILURE': 'FAILED'
+    }
+
+    if task_state == 'SUCCESS':
+        print('RESULT:\n{}'.format(task_res.result))
+
+        # If the task reports success then double check that the variants zip exists in S3
+        variants_zip_url = '{}variants_new.zip'.format(results_url_secure)
+        res = requests.head(variants_zip_url)
+        if res.status_code != 200:
+            return 'FAILED'
+
+    return state_map[task_state]
