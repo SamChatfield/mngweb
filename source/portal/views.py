@@ -77,7 +77,12 @@ def project_detail(request, project_uuid):
     ]
 
     # Get the status of variant calling for the project
-    project['variant_status'] = get_variant_calling_status(project_uuid, project['results_url_secure'])
+    print('SHOW RESULTS: {}'.format(project['show_results']))
+    if project['show_results']:
+
+        project['variant_status'] = get_variant_calling_status(project_uuid, project['results_url_secure'])
+    else:
+        project['variant_status'] = 'NOT_REQUESTED'
 
     context = {
         'project': project,
@@ -468,6 +473,7 @@ def environmentalsampletype_typeahead(request):
     return JsonResponse(data, safe=False)
 
 def referencegenome_typeahead(request):
+    # TODO: Is this the best place to store this? Automation?
     data_path = pathlib.Path('~/.mngweb/refseq_typeahead_data.json').expanduser().resolve()
     print(data_path.is_file())
     q = request.GET.get('q', '')

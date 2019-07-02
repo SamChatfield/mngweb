@@ -107,6 +107,11 @@ def load_hostsampletype_data(file_path):
         obj.save()
 
 
+def variants_zip_exists(zip_url):
+    res = requests.head(zip_url)
+    return res.status_code == 200
+
+
 def get_variant_calling_status(project_uuid, results_url_secure):
     """
     Check the status of the variant calling task for project_uuid
@@ -115,26 +120,34 @@ def get_variant_calling_status(project_uuid, results_url_secure):
     - NOT_REQUESTED
     - IN_PROGRESS
     - COMPLETE
+    - FAILED
     """
-    # Test celery interactions
+    variants_zip_url = '{}variants_new.zip'.format(results_url_secure)
+    zip_exists = variants_zip_exists(variants_zip_url)
+
     task_res = mngvariants.AsyncResult(project_uuid)
     task_state = task_res.state
     print('Retrieved celery task with ID: {}, STATE: {}'.format(task_res.id, task_state))
-
-    state_map = {
-        'PENDING': 'NOT_REQUESTED',
-        'STARTED': 'IN_PROGRESS',
-        'SUCCESS': 'COMPLETE',
-        'FAILURE': 'FAILED'
-    }
+    print('Variants zip exists?: {}'.format(zip_exists))
 
     if task_state == 'SUCCESS':
-        print('RESULT:\n{}'.format(task_res.result))
-
         # If the task reports success then double check that the variants zip exists in S3
-        variants_zip_url = '{}variants_new.zip'.format(results_url_secure)
-        res = requests.head(variants_zip_url)
-        if res.status_code != 200:
+        if zip_exists:
+            return 'COMPLETE'
+        else:
             return 'FAILED'
-
-    return state_map[task_state]
+    elif task_state == 'PENDING':
+        # If the task reports pending but the results zip exists then it is complete
+        if zip_exists:
+            return 'COMPLETE'
+        else:
+            return 'NOT_REQUESTED'
+    else:
+        # Otherwise, use the mapping from task state mapping
+        state_map = {
+            'PENDING': 'NOT_REQUESTED',
+            'STARTED': 'IN_PROGRESS',
+            'SUCCESS': 'COMPLETE',
+            'FAILURE': 'FAILED'
+        }
+        return state_map[task_state]
