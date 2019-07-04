@@ -28,6 +28,7 @@
           $.ajax({
             url: '{{ project.results_url_secure }}sens_variants_annotated.json',
             dataType: 'json',
+            cache: false,
             success: function (json) {
               var columnNames = Object.keys(json[0]);
               var columns = columnNames.map(columnName => ({ data: columnName, title: columnName }));
@@ -44,6 +45,7 @@
           $.ajax({
             url: '{{ project.results_url_secure }}spec_variants_annotated.json',
             dataType: 'json',
+            cache: false,
             success: function (json) {
               var columnNames = Object.keys(json[0]);
               var columns = columnNames.map(columnName => ({ data: columnName, title: columnName }));
