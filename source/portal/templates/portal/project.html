@@ -32,12 +32,15 @@
             success: function (json) {
               var columnNames = Object.keys(json[0]);
               var columns = columnNames.map(columnName => ({ data: columnName, title: columnName }));
-              $('#sens_variants_table').DataTable({
+              var sensTable = $('#sens_variants_table').DataTable({
                 data: json,
                 columns: columns,
                 order: [[0, 'desc']],
                 responsive: true,
                 scrollX: true
+              });
+              $('#variants').on('shown.bs.collapse', function(e) {
+                sensTable.columns.adjust();
               });
             }
           });
@@ -49,12 +52,15 @@
             success: function (json) {
               var columnNames = Object.keys(json[0]);
               var columns = columnNames.map(columnName => ({ data: columnName, title: columnName }));
-              $('#spec_variants_table').DataTable({
+              var specTable = $('#spec_variants_table').DataTable({
                 data: json,
                 columns: columns,
                 order: [[0, 'desc']],
                 responsive: true,
                 scrollX: true
+              });
+              $('#variants').on('shown.bs.collapse', function(e) {
+                specTable.columns.adjust();
               });
             }
           });
