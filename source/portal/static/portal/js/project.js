@@ -255,6 +255,13 @@
   });
 
   /*
+  Variant calling form samples 'Select All' checkbox
+  */
+  $('#samples-select-all').click(function() {
+    $('#id_samples :checkbox').prop('checked', this.checked);
+  });
+
+  /*
   Expose mngweb.portal object
   */
   mngweb.portal = portal;
