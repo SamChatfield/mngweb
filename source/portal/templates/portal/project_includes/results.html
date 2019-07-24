@@ -124,11 +124,17 @@
           <div class="panel-body">
             {% if project.variant_status == "COMPLETE" %}
 
-              <h3>Sensitive Variants</h3>
-              <table id="sens_variants_table" class="table table-striped table-results-meta" style="width: 100%;"></table>
+              <div id="sens_variants_section">
+                <h3>Sensitive Variants</h3>
+                <p>Could contain false negatives, i.e. you don't catch all of your SNPs. At least 90% of reads have these variants.</p>
+                <table id="sens_variants_table" class="table table-striped table-results-meta" style="width: 100%;"></table>
+              </div>
 
-              <h3>Specific Variants</h3>
-              <table id="spec_variants_table" class="table table-striped table-results-meta" style="width: 100%;"></table>
+              <div id="spec_variants_section">
+                <h3>Specific Variants</h3>
+                <p>Could contain false positives, i.e. you will catch all of your true SNPs but some of the calls might be wrong. At least 10% of the reads have these variants.</p>
+                <table id="spec_variants_table" class="table table-striped table-results-meta" style="width: 100%;"></table>
+              </div>
 
               <div class="clearfix"></div>
 
