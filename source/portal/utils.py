@@ -1,4 +1,6 @@
 import csv
+from datetime import datetime
+from pathlib import Path
 import requests
 
 from django.conf import settings
@@ -151,3 +153,21 @@ def get_variant_calling_status(project_uuid, results_url_secure):
             'FAILURE': 'FAILED'
         }
         return state_map[task_state]
+
+
+def gmo_flag_to_file(project_reference, signer_name, gmo_flag):
+    """Write the reference, signer_name, timestamp and gmo_flag to a TSV file in ~/.mngweb_gmo/"""
+    # Directory in which all GMO flag files are placed, create it if it doesn't already exist
+    gmo_flag_dir = Path('~/.mngweb_gmo/').expanduser()
+    gmo_flag_dir.mkdir(exist_ok=True)
+
+    # The file for this project
+    gmo_flag_file = gmo_flag_dir / '{}.txt'.format(project_reference)
+
+    # Get current time in ISO 8601 format (UTC)
+    timestamp = datetime.utcnow().isoformat() + 'Z'
+
+    # Write a single tab-separated line with the reference and the flag to the file
+    with open(str(gmo_flag_file), 'a') as f:
+        line = '\t'.join([project_reference, signer_name, timestamp, gmo_flag])
+        f.write('{}\n'.format(line))

@@ -66,6 +66,15 @@ class ProjectAcceptTermsForm(forms.Form):
         required=True,
         label=("I declare that I have read and understood MicrobesNG sample submission requirements and that failure to"
                " follow them may result in my samples being disposed of appropriately."))
+    gmo_samples = forms.ChoiceField(
+        choices=[
+            ("", "Select a response"),
+            ("Y", "Yes"),
+            ("N", "No")
+        ],
+        required=True,
+        label="Are any of your samples genetically modified?"
+    )
 
 
 class ProjectEnaForm(forms.Form):
