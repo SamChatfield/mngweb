@@ -26,7 +26,8 @@ from .services import (limsfm_email_project_links, limsfm_get_project,
                        limsfm_project_remove_contact)
 from .utils import (messages_to_json, json_messages_or_redirect,
                     request_should_post_to_slack, form_errors_to_json,
-                    handle_limsfm_http_exception, handle_limsfm_request_exception)
+                    handle_limsfm_http_exception, handle_limsfm_request_exception,
+                    gmo_flag_to_file)
 
 
 @require_GET
@@ -93,6 +94,13 @@ def project_detail(request, project_uuid):
 
 @require_http_methods(['GET', 'POST'])
 def project_accept_submission_requirements(request, project_uuid):
+    try:
+        project = limsfm_get_project(project_uuid)
+    except requests.HTTPError as e:
+        handle_limsfm_http_exception(request, e)
+    except requests.RequestException as e:
+        handle_limsfm_request_exception(request, e)
+
     if request.method == 'POST':
         form = ProjectAcceptTermsForm(request.POST)
         if form.is_valid():
@@ -105,16 +113,15 @@ def project_accept_submission_requirements(request, project_uuid):
             else:
                 slack_message('portal/slack/limsfm_project_accepted_submission_requirements.slack',
                               {'uuid': project_uuid, 'form': form})
+                gmo_flag_to_file(
+                    project['reference'],
+                    form.cleaned_data['submission_requirements_name'],
+                    form.cleaned_data['gmo_samples']
+                )
                 return HttpResponseRedirect(reverse(project_detail, args=[project_uuid]))
     else:
         form = ProjectAcceptTermsForm()
     # GET request, or invalid/failed POST
-    try:
-        project = limsfm_get_project(project_uuid)
-    except requests.HTTPError as e:
-        handle_limsfm_http_exception(request, e)
-    except requests.RequestException as e:
-        handle_limsfm_request_exception(request, e)
     return render(
         request, 'portal/accept_submission_requirements.html',
         {

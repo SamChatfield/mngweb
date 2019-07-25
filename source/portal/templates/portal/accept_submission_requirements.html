@@ -31,12 +31,15 @@
           <div class="panel-body">
             <form method="post">
               {% csrf_token %}
-              <div class="col-md-7">
-                {% bootstrap_field terms_form.accepted %}
-              </div>
-              <div class="col-md-5 text-right">
-                {% bootstrap_field terms_form.submission_requirements_name show_label=False addon_before="Your full name" %}
-                <button class="btn btn-success"><i class="fa fa-handshake-o"></i> Accept &amp; Proceed</button>
+              {% bootstrap_field terms_form.gmo_samples layout='horizontal' form_group_class='form-group row' horizontal_label_class='col-md-7 text-right' horizontal_field_class='col-md-5' %}
+              <div class="row">
+                <div class="col-md-7">
+                  {% bootstrap_field terms_form.accepted %}
+                </div>
+                <div class="col-md-5 text-right">
+                  {% bootstrap_field terms_form.submission_requirements_name show_label=False addon_before="Your full name" %}
+                  <button class="btn btn-success"><i class="fa fa-handshake-o"></i> Accept &amp; Proceed</button>
+                </div>
               </div>
             </form>
           </div>
