@@ -77,9 +77,7 @@ def project_detail(request, project_uuid):
     ]
 
     # Get the status of variant calling for the project
-    print('SHOW RESULTS: {}'.format(project['show_results']))
     if project['show_results']:
-
         project['variant_status'] = get_variant_calling_status(project_uuid, project['results_url_secure'])
     else:
         project['variant_status'] = 'NOT_REQUESTED'
