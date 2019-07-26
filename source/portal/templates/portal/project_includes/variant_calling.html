@@ -3,6 +3,7 @@
 <div class="row">
   <div class="col-md-12">
     <h2>Request Variant Calling</h2>
+    <p>Choose a reference genome by searching for the strain, RefSeq assembly accession, organism name etc. in the box below. Then choose the required samples from this project and click Submit to request variant calling.</p>
     <form method="post" action="{% url 'project_variant_calling' project.uuid %}" class="project-variant-calling-form">
       {% csrf_token %}
       {% bootstrap_form project_variant_calling_form %}
