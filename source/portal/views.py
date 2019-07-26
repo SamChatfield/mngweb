@@ -227,7 +227,7 @@ def project_variant_calling(request, project_uuid):
         if request.is_ajax():
             return JsonResponse(messages_to_json(request), status=status)
         else:
-            return HttpResponseRedirect(reverse(project_detail, args=[project_uuid]))
+            return HttpResponseRedirect('{}#variants'.format(reverse(project_detail, args=[project_uuid])))
     elif request.is_ajax():
         return JsonResponse(form_errors_to_json(request, form), status=400)
 

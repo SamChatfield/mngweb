@@ -9,6 +9,11 @@
   {% if project.show_results %}
     <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
     <script>
+      if (location.hash != null && location.hash != '') {
+        $('.collapse').removeClass('in');
+        $(location.hash + '.collapse').collapse('show');
+      }
+
       $.fn.dataTableExt.sErrMode = '';
       $(document).ready(function() {
         $('#trimmed_reads_table').DataTable({
