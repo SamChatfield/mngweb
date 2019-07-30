@@ -19,9 +19,17 @@
         </div>
       </div>
       {% buttons %}
-        <button type="submit" class="btn btn-success button-lg">
-          <i class="fa fa-floppy-o"></i> Submit
-        </button>
+        {% if project.variant_status == "IN_PROGRESS" %}
+          <div class="tooltip-wrapper" data-toggle="tooltip" data-placement="right" title="Variant calling is already in progress">
+            <button type="submit" class="btn btn-success button-lg"  disabled>
+              <i class="fa fa-floppy-o"></i> Submit
+            </button>
+          </div>
+        {% else %}
+          <button type="submit" class="btn btn-success button-lg">
+            <i class="fa fa-floppy-o"></i> Submit
+          </button>
+        {% endif %}
       {% endbuttons %}
       <div class="form-messages">
         {# placeholder for ajax messages #}

@@ -72,3 +72,11 @@
 #id_samples > .checkbox {
   margin-top: -5px;
 }
+
+.tooltip-wrapper {
+  display: inline-block;
+}
+
+.tooltip-wrapper .btn[disabled] {
+  pointer-events: none;
+}
