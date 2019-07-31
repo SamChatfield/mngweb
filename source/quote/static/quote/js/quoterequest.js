@@ -93,6 +93,14 @@ $(function() {
   });
 
   /*
+  Strain submission criteria scrollIntoView link
+  */
+  $('.criteria-link').click(function () {
+    $('.aside')[0].scrollIntoView();
+    return false;
+  });
+
+  /*
   Scroll to first error on page
   */
   (function() {

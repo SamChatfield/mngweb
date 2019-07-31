@@ -1,6 +1,7 @@
 from django import forms
 
 from django.core.exceptions import ValidationError
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 from phonenumber_field.formfields import PhoneNumberField
 
@@ -126,10 +127,10 @@ class QuoteRequestForm(forms.Form):
         label=_("No. strains for enhanced sequencing"))
     confirm_strain_bsl2 = forms.BooleanField(
         required=False,
-        label=_("Confirm that your strains comply with the strain submission criteria described on this page"))
+        label=_(mark_safe("Confirm that your strains comply with the <a class='criteria-link'>strain submission criteria</a>")))
     confirm_enhanced_strain_bsl2 = forms.BooleanField(
         required=False,
-        label=_("Confirm that your enhanced strains comply with the strain submission criteria described on this page"))
+        label=_(mark_safe("Confirm that your enhanced strains comply with the <a class='criteria-link'>strain submission criteria</a>")))
     batch_type = forms.ChoiceField(
         choices=BATCH_TYPE_CHOICES,
         initial='all together')
