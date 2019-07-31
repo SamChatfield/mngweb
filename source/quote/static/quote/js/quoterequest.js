@@ -93,21 +93,6 @@ $(function() {
   });
 
   /*
-  Show/hide strain quantity, depending on country selection
-  */
-  $(".country-typeahead").on("typeahead:change", "input", function() {
-    if ($(this).val().toLowerCase() == 'united kingdom') {
-      $('#id_num_strain_samples').prop('disabled', false);
-      $('#id_confirm_strain_bsl2').prop('disabled', false);
-    } else {
-      $('#id_num_strain_samples').val(0);
-      $('#id_num_strain_samples').prop('disabled', true);
-      $('#id_confirm_strain_bsl2').prop('disabled', true);
-      setQuoteEstimate();
-    }
-  });
-
-  /*
   Scroll to first error on page
   */
   (function() {

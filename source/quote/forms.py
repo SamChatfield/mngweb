@@ -149,7 +149,6 @@ class QuoteRequestForm(forms.Form):
         num_enhanced_strain_samples = cleaned_data.get("num_enhanced_strain_samples")
         confirm_strain_bsl2 = cleaned_data.get('confirm_strain_bsl2')
         confirm_enhanced_strain_bsl2 = cleaned_data.get('confirm_enhanced_strain_bsl2')
-        country = cleaned_data.get('country')
         primary_contact_is_pi = cleaned_data.get('primary_contact_is_pi')
         pi_name_title = cleaned_data.get('pi_name_title')
         pi_name_first = cleaned_data.get('pi_name_first')
@@ -195,7 +194,7 @@ class QuoteRequestForm(forms.Form):
                 _("You must confirm that any strains are BSL2 or below."))
             self.add_error('confirm_strain_bsl2', bsl2_error)
             non_field_errors.append(bsl2_error)
-        
+
         if (num_enhanced_strain_samples > 0 and not confirm_enhanced_strain_bsl2):
             enhanced_bsl2_error = ValidationError(
                 _("You must confirm that any strains for enhanced sequencing are BSL2 or below."))
@@ -207,22 +206,6 @@ class QuoteRequestForm(forms.Form):
                 ValidationError(
                     _("A total sample quantity of at least one (strain or DNA)"
                       " is required."))
-            )
-
-        if country and country.iso2 != 'GB' and num_strain_samples:
-            non_field_errors.append(
-                ValidationError(
-                    _("Unfortunately we cannot currently accept strains sent "
-                      "from outside the UK. Please use our DNA service as an "
-                      "alternative."))
-            )
-        
-        if country and country.iso2 != 'GB' and num_enhanced_strain_samples:
-            non_field_errors.append(
-                ValidationError(
-                    _("Unfortunately we cannot currently accept strains sent "
-                      "from outside the UK. Please use our DNA service as an "
-                      "alternative."))
             )
 
         if non_field_errors:
