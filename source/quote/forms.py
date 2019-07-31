@@ -199,7 +199,7 @@ class QuoteRequestForm(forms.Form):
         if (num_enhanced_strain_samples > 0 and not confirm_enhanced_strain_bsl2):
             enhanced_bsl2_error = ValidationError(
                 _("You must confirm that your enhanced strains comply with the strain submission criteria."))
-            self.add_error('confirm_strain_bsl2', enhanced_bsl2_error)
+            self.add_error('confirm_enhanced_strain_bsl2', enhanced_bsl2_error)
             non_field_errors.append(enhanced_bsl2_error)
 
         if not (num_strain_samples or num_dna_samples or num_enhanced_strain_samples):
