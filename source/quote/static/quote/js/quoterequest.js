@@ -1,13 +1,5 @@
 $(function() {
 
-  function checkEnhancedQuantity() {
-    var quantity = $("#id_num_enhanced_strain_samples").val();
-    if (quantity > 5) {
-     $("#enhancedQuantityAlertModal").modal("show");
-     $("#id_num_enhanced_strain_samples").val(5);
-    }
-  }
-
   /*
   Quote estimator
   */
@@ -47,7 +39,6 @@ $(function() {
     var ENHANCED_NON_COMMERCIAL_RATE = 350;
     var STANDARD_ENHANCED_DATE = 250;
 
-
     if (isConfidential) {
       enhancedUnitPrice = CONFIDENTIAL_ENHANCED_RATE;
     } else {
@@ -55,7 +46,7 @@ $(function() {
         case 'Industry':
           enhancedUnitPrice = ENHANCED_INDUSTRY_RATE;
           break;
-          case 'Non-commercial':
+        case 'Non-commercial':
           enhancedUnitPrice = ENHANCED_NON_COMMERCIAL_RATE;
           break;
         default:
@@ -72,19 +63,11 @@ $(function() {
     $("#quote-grand-total-price").text('£' + (totalPrice + totalEnhancedPrice));
   }
 
-
-
-
-
   setQuoteEstimate();
-  $('#id_is_confidential,#id_num_dna_samples,#id_num_strain_samples').change(function() {
+  $('#id_is_confidential,#id_num_dna_samples,#id_num_strain_samples,#id_num_enhanced_strain_samples').change(function() {
     setQuoteEstimate();
   });
 
-  $("#id_is_confidential,#id_num_enhanced_strain_samples").change(function() {
-    checkEnhancedQuantity();
-    setQuoteEstimate();
-  })
   /*
   Show/hide principal investigator contact fields
   */
