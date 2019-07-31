@@ -126,10 +126,10 @@ class QuoteRequestForm(forms.Form):
         label=_("No. strains for enhanced sequencing"))
     confirm_strain_bsl2 = forms.BooleanField(
         required=False,
-        label=_("Confirm your strains are BSL2 or lower"))
+        label=_("Confirm that your strains comply with the strain submission criteria described on this page"))
     confirm_enhanced_strain_bsl2 = forms.BooleanField(
         required=False,
-        label=_("Confirm your enhanced strains are BSL2 or lower"))
+        label=_("Confirm that your enhanced strains comply with the strain submission criteria described on this page"))
     batch_type = forms.ChoiceField(
         choices=BATCH_TYPE_CHOICES,
         initial='all together')
@@ -154,6 +154,7 @@ class QuoteRequestForm(forms.Form):
         pi_name_first = cleaned_data.get('pi_name_first')
         pi_name_last = cleaned_data.get('pi_name_last')
         pi_email = cleaned_data.get('pi_email')
+        comments = cleaned_data.get('comments')
 
         if num_strain_samples is None:
             num_strain_samples = 0
@@ -191,13 +192,13 @@ class QuoteRequestForm(forms.Form):
 
         if (num_strain_samples > 0 and not confirm_strain_bsl2):
             bsl2_error = ValidationError(
-                _("You must confirm that any strains are BSL2 or below."))
+                _("You must confirm that your strains comply with the strain submission criteria."))
             self.add_error('confirm_strain_bsl2', bsl2_error)
             non_field_errors.append(bsl2_error)
 
         if (num_enhanced_strain_samples > 0 and not confirm_enhanced_strain_bsl2):
             enhanced_bsl2_error = ValidationError(
-                _("You must confirm that any strains for enhanced sequencing are BSL2 or below."))
+                _("You must confirm that your enhanced strains comply with the strain submission criteria."))
             self.add_error('confirm_strain_bsl2', enhanced_bsl2_error)
             non_field_errors.append(enhanced_bsl2_error)
 
@@ -210,5 +211,24 @@ class QuoteRequestForm(forms.Form):
 
         if non_field_errors:
             raise ValidationError(non_field_errors)
+
+
+        # If there were no validation errors
+        # Prepend <=BSL2 & non-GMM confirmation(s) to comments field for displaying in the LIMS
+
+        criteria_confirmations = []
+
+        if num_strain_samples > 0 and confirm_strain_bsl2:
+            criteria_confirmations.append('Confirmed that strains comply with strain submission criteria')
+        if num_enhanced_strain_samples > 0 and confirm_enhanced_strain_bsl2:
+            criteria_confirmations.append('Confirmed that enhanced strains comply with strain submission criteria')
+
+        # If there are confirmations to add, add them with CRLF line endings as given by the HTML textarea
+        if len(criteria_confirmations) > 0:
+            criteria_confirmations_str = '\r\n'.join(criteria_confirmations)
+            if not comments:
+                cleaned_data['comments'] = criteria_confirmations_str
+            else:
+                cleaned_data['comments'] = '{}\r\n\r\n{}'.format(criteria_confirmations_str, comments)
 
         return cleaned_data
