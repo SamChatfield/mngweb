@@ -48,6 +48,12 @@ LAB_EXPERIMENT_TYPE = [
     ('Other', 'Other'),
 ]
 
+GMO_SAMPLES_CHOICES = [
+    ('', 'Select a response'),
+    ('Y', 'Yes'),
+    ('N', 'No')
+]
+
 
 class EmailLinkForm(forms.Form):
     email = forms.EmailField(label='Email', max_length=254,
@@ -66,11 +72,7 @@ class ProjectAcceptTermsForm(forms.Form):
         label=("I declare that I have read and understood MicrobesNG sample submission requirements and that failure to"
                " follow them may result in my samples being disposed of appropriately."))
     gmo_samples = forms.ChoiceField(
-        choices=[
-            ("", "Select a response"),
-            ("Y", "Yes"),
-            ("N", "No")
-        ],
+        choices=GMO_SAMPLES_CHOICES,
         required=True,
         label="Are any of your samples genetically modified?"
     )
