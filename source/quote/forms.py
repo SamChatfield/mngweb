@@ -1,6 +1,7 @@
 from django import forms
 
 from django.core.exceptions import ValidationError
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 from phonenumber_field.formfields import PhoneNumberField
 
@@ -126,10 +127,10 @@ class QuoteRequestForm(forms.Form):
         label=_("No. strains for enhanced sequencing"))
     confirm_strain_bsl2 = forms.BooleanField(
         required=False,
-        label=_("Confirm your strains are BSL2 or lower"))
+        label=_(mark_safe("Confirm that your strains comply with the <a class='criteria-link'>strain submission criteria</a>")))
     confirm_enhanced_strain_bsl2 = forms.BooleanField(
         required=False,
-        label=_("Confirm your enhanced strains are BSL2 or lower"))
+        label=_(mark_safe("Confirm that your enhanced strains comply with the <a class='criteria-link'>strain submission criteria</a>")))
     batch_type = forms.ChoiceField(
         choices=BATCH_TYPE_CHOICES,
         initial='all together')
@@ -149,12 +150,12 @@ class QuoteRequestForm(forms.Form):
         num_enhanced_strain_samples = cleaned_data.get("num_enhanced_strain_samples")
         confirm_strain_bsl2 = cleaned_data.get('confirm_strain_bsl2')
         confirm_enhanced_strain_bsl2 = cleaned_data.get('confirm_enhanced_strain_bsl2')
-        country = cleaned_data.get('country')
         primary_contact_is_pi = cleaned_data.get('primary_contact_is_pi')
         pi_name_title = cleaned_data.get('pi_name_title')
         pi_name_first = cleaned_data.get('pi_name_first')
         pi_name_last = cleaned_data.get('pi_name_last')
         pi_email = cleaned_data.get('pi_email')
+        comments = cleaned_data.get('comments')
 
         if num_strain_samples is None:
             num_strain_samples = 0
@@ -192,14 +193,14 @@ class QuoteRequestForm(forms.Form):
 
         if (num_strain_samples > 0 and not confirm_strain_bsl2):
             bsl2_error = ValidationError(
-                _("You must confirm that any strains are BSL2 or below."))
+                _("You must confirm that your strains comply with the strain submission criteria."))
             self.add_error('confirm_strain_bsl2', bsl2_error)
             non_field_errors.append(bsl2_error)
-        
+
         if (num_enhanced_strain_samples > 0 and not confirm_enhanced_strain_bsl2):
             enhanced_bsl2_error = ValidationError(
-                _("You must confirm that any strains for enhanced sequencing are BSL2 or below."))
-            self.add_error('confirm_strain_bsl2', enhanced_bsl2_error)
+                _("You must confirm that your enhanced strains comply with the strain submission criteria."))
+            self.add_error('confirm_enhanced_strain_bsl2', enhanced_bsl2_error)
             non_field_errors.append(enhanced_bsl2_error)
 
         if not (num_strain_samples or num_dna_samples or num_enhanced_strain_samples):
@@ -209,23 +210,26 @@ class QuoteRequestForm(forms.Form):
                       " is required."))
             )
 
-        if country and country.iso2 != 'GB' and num_strain_samples:
-            non_field_errors.append(
-                ValidationError(
-                    _("Unfortunately we cannot currently accept strains sent "
-                      "from outside the UK. Please use our DNA service as an "
-                      "alternative."))
-            )
-        
-        if country and country.iso2 != 'GB' and num_enhanced_strain_samples:
-            non_field_errors.append(
-                ValidationError(
-                    _("Unfortunately we cannot currently accept strains sent "
-                      "from outside the UK. Please use our DNA service as an "
-                      "alternative."))
-            )
-
         if non_field_errors:
             raise ValidationError(non_field_errors)
+
+
+        # If there were no validation errors
+        # Prepend <=BSL2 & non-GMM confirmation(s) to comments field for displaying in the LIMS
+
+        criteria_confirmations = []
+
+        if num_strain_samples > 0 and confirm_strain_bsl2:
+            criteria_confirmations.append('Confirmed that strains comply with strain submission criteria')
+        if num_enhanced_strain_samples > 0 and confirm_enhanced_strain_bsl2:
+            criteria_confirmations.append('Confirmed that enhanced strains comply with strain submission criteria')
+
+        # If there are confirmations to add, add them with CRLF line endings as given by the HTML textarea
+        if len(criteria_confirmations) > 0:
+            criteria_confirmations_str = '\r\n'.join(criteria_confirmations)
+            if not comments:
+                cleaned_data['comments'] = criteria_confirmations_str
+            else:
+                cleaned_data['comments'] = '{}\r\n\r\n{}'.format(criteria_confirmations_str, comments)
 
         return cleaned_data
