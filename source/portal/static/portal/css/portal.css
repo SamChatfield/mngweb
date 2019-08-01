@@ -61,6 +61,10 @@
   overflow-x: scroll;
 }
 
+.popover {
+  max-width: 350px;
+}
+
 #id_samples {
   display: grid;
   grid-template-columns: repeat(auto-fit, 160px);
