@@ -2,6 +2,8 @@ from datetime import datetime
 
 from django import forms
 from django.core.exceptions import ValidationError
+from django.utils.html import escape
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 from requests import RequestException
 
@@ -54,6 +56,12 @@ GMO_SAMPLES_CHOICES = [
     ('N', 'No')
 ]
 
+GMO_DEFINITION = ("GMMs are organisms whose genes have been artificially altered to modify their characteristics in "
+                  "some way or another. A more detailed definition of what constitutes a genetic modification that "
+                  "makes a microorganism genetically modified can be found in UK's HSE \"The Genetically Modified "
+                  "Organisms (Contained Use) Regulations 2014\" (see Guidance 2 in Page 12, and Schedule 2 in pages "
+                  "59-60).")
+
 
 class EmailLinkForm(forms.Form):
     email = forms.EmailField(label='Email', max_length=254,
@@ -74,7 +82,11 @@ class ProjectAcceptTermsForm(forms.Form):
     gmo_samples = forms.ChoiceField(
         choices=GMO_SAMPLES_CHOICES,
         required=True,
-        label="Are any of your samples genetically modified?"
+        label=mark_safe(
+            "Are any of your samples "
+            "<a href='https://www.hse.gov.uk/pubns/priced/l29.pdf' target='_blank'>Genetically Modified Microorganisms (GMMs)</a>? "
+            "<i class='fa fa-question-circle' data-toggle='popover' data-trigger='hover' data-placement='top' data-content='{}'></i>".format(escape(GMO_DEFINITION))
+        )
     )
 
 
