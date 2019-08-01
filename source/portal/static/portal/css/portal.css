@@ -60,3 +60,7 @@
 .dataTables_wrapper {
   overflow-x: scroll;
 }
+
+.popover {
+  max-width: 350px;
+}
