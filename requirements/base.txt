@@ -15,4 +15,4 @@ gunicorn==19.6.0
 django-slack==5.7.0
 django-allauth==0.29.0
 wagtailtinymce==4.2.1.5
-
+djangrestframework==3.4.0
