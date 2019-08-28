@@ -2,4 +2,4 @@ User-Agent: *
 Disallow: 
 Disallow: /portal/
 
-Sitemap: https://microbesng.uk/sitemap.xml
+Sitemap: https://microbesng.com/sitemap.xml

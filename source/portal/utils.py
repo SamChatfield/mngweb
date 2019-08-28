@@ -25,7 +25,7 @@ def handle_limsfm_request_exception(request, e):
 
 def handle_limsfm_http_exception(request, e):
     ERROR_MESSAGE = ("An unexpected error has occured. "
-                     "Please contact info@microbesng.uk")
+                     "Please contact info@microbesng.com")
     if e.response.status_code == 404:
         raise Http404
     else:
