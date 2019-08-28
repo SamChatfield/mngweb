@@ -80,8 +80,7 @@ class QuoteRequestFormPage(RoutablePageMixin, Page):
 
             reply_to = ([form.data['email']] if 'email' in form.data else None)
             subject = '%s [%s %s]' % (self.subject, quote_ref, form.data['name_last'])
-            connection = get_connection(username=settings.EMAIL_HOST_USER_INTERNAL,
-                                        password=settings.EMAIL_HOST_PASSWORD_INTERNAL)
+            connection = get_connection()
             email = EmailMessage(subject, content, self.from_address, [self.to_address],
                                  connection=connection, reply_to=reply_to)
             email.send(fail_silently=False)
