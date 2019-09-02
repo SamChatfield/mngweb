@@ -13,6 +13,7 @@ from organisation import urls as organisation_urls
 from portal import urls as portal_urls
 from projectmap import urls as projectmap_urls
 from taxon import urls as taxon_urls
+from order import urls as order_urls
 
 from search import views as search_views
 
@@ -33,6 +34,8 @@ urlpatterns = [
     url(r'portal/', include(portal_urls)),
     url(r'projectmap/', include(projectmap_urls, namespace='projectmap')),
     url(r'taxon/', include(taxon_urls)),
+
+    url(r'order/', include(order_urls)),
 
     url(r'^accounts/', include('allauth.urls')),
 

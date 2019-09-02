@@ -1,0 +1,15 @@
+{% extends "order/base.html" %}
+
+{% block content %}
+
+{% if link %}
+The payment link is: {{ link }}
+{% endif %}
+
+<form action="{% url 'orders_create_order_link' %}" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Submit">
+</form>
+
+{% endblock %}

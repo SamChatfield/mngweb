@@ -1,0 +1,73 @@
+{% extends "order/base.html" %}
+
+{% block content %}
+
+  <div class="container">
+
+    <div class="row">
+      <div class="col-md-12">
+
+   <h2>Your quote</h2>
+
+<p> 
+  Your quote reference: <b>{{ quote.reference }}</b>
+</p>
+
+<p>
+  Issue date: {{ quote.issue_date }}
+</p>
+
+<p>
+  Expiry date: {{ quote.expiry_date }}
+
+<h2>Your product details</h2>
+
+<table class="table table-striped">
+
+ <tr>
+     <th>Description</th>
+     <th>Quantity</th>
+     <th>Price</th>
+ </tr>
+
+{% for q in quotelines %}
+
+ <tr>
+     <td>{{ q.description }}</td>
+     <td>{{ q.quantity }}</td>
+     <td>&pound; {{ q.price }}</td>
+ </tr>
+
+{% endfor %}
+
+ <tr>
+     <td>VAT at {{ quote.vat_rate_percent }} %</td>
+     <td></td>
+     <td></td>
+ </tr>
+
+ <tr>
+     <td><b>Total</b></td>
+     <td></td>
+     <td>&pound; {{ quote.s_grand_total_gross }}</td>
+ </tr>
+
+</table>
+
+<h2>Place your order</h2>
+
+<p>Please confirm your order below.</p>
+
+<table class="table table-striped">
+  <form action="?" method="post">
+      {% csrf_token %}
+      {{ form.as_table }}
+      <input type="submit" value=" Place your order ">
+  </form>
+</table>
+
+     </div>
+   </div>
+</div>
+
+{% endblock %}
