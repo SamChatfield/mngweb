@@ -114,7 +114,7 @@ def xero_post_invoice(contact_id, unique_reference_id, quote, lines):
         'IsDiscounted': False,
         'LineAmountTypes': 'Exclusive',
         'LineItems': [],
-        'Reference': quote['reference'],
+        'Reference': unique_reference_id,
         'Status': 'DRAFT',
         'Type': 'ACCREC'
     }
@@ -124,7 +124,8 @@ def xero_post_invoice(contact_id, unique_reference_id, quote, lines):
              "Description" : line['description'],
              "Quantity" : line['quantity'],
              "UnitAmount" : line['price'],
-             #"AccountCode" : line['service_id'],
+             "TaxType" : 'OUTPUT2',
+             "AccountCode" : "REV-STD", ## TODO: lookup for account codes
              #TODO ItemCode
          })
 
