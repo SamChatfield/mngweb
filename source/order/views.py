@@ -68,9 +68,13 @@ def create_order_link(request):
         form = QuoteForm()
         return render(request, 'order/create_order_link.html', {'form' : form})
 
-def xero_post_contact(cleaned_data):
+def xero_post_contact(cleaned_data, contact_number):
     credentials = PrivateCredentials(settings.XERO_CREDENTIALS, settings.XERO_PRIVATE_KEY)
     xero = Xero(credentials)
+
+    lookup_contact = xero.contacts.filter(ContactNumber=contact_number)
+    if lookup_contact:
+        return lookup_contact[0]['ContactID']
 
     name = "%s (%s %s)" % (cleaned_data['organisation'], cleaned_data['name_first'], cleaned_data['name_last'])
 
@@ -79,9 +83,14 @@ def xero_post_contact(cleaned_data):
                          'City': cleaned_data['city'],
                          'Country': cleaned_data['country'],
                          'PostalCode': cleaned_data['postcode'],
-                         'Region': cleaned_data['region']}],
+                         'Region': cleaned_data['region'],
+                         'AddressLine1' : cleaned_data['street_line_one'],
+                         'AddressLine2' : cleaned_data['street_line_two'],
+                         'AddressLine3' : cleaned_data['street_line_three'],
+                       } ],
         'EmailAddress':  cleaned_data['email'],
-        'Name':          name
+        'Name':          name,
+        'ContactNumber': contact_number
     }
     results = xero.contacts.put(contact)
     contact = results[0]
@@ -127,6 +136,9 @@ def xero_post_invoice(contact_id, unique_reference_id, quote, lines):
 def confirm_order(request, uuid):
     ul = get_object_or_404(UniqueLink, pk=uuid)
 
+    if ul.xero_invoice_id:
+         return render(request, 'order/order_already_processed.html')
+
     lq = get_lims_quote(ul.quote_code)
     if not lq:
         raise HttpResponse('Sorry this quote was not found!')
@@ -152,15 +164,16 @@ def confirm_order(request, uuid):
             'country' : 'Address::country_iso2'
         }
         form.populate_form(conversion, quote)
+
         return render(request, 'order/confirm_order.html', {'form' : form, 'quote' : quote, 'quotelines' : lql})
     else:
         form = ConfirmOrderForm(request.POST)
         if form.is_valid():
-            contact_id = xero_post_contact(form.cleaned_data)
+            contact_id = xero_post_contact(form.cleaned_data, quote['Contact::reference'])
             invoice_id = xero_post_invoice(contact_id, form.cleaned_data['unique_reference_id'], quote, lql)
             ul.xero_contact_id = contact_id
             ul.xero_invoice_id = invoice_id
             ul.save()            
-            return HttpResponse('Thanks for your order!')
+            return render(request, 'order/order_received.html')
         else:
             return render(request, 'order/confirm_order.html', {'form' : form, 'quote' : quote, 'quotelines' : lql}) 

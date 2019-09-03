@@ -3,7 +3,21 @@
 {% block content %}
 
 {% if link %}
-The payment link is: {{ link }}
+
+<script>
+function copyToClipboard(element) {
+  var $temp = $("<input>");
+  $("body").append($temp);
+  $temp.val($(element).text()).select();
+  document.execCommand("copy");
+  $temp.remove();
+}
+</script>
+
+The payment link is: <p id="linkurl">{{ link }}</p>
+
+<button onclick="copyToClipboard('#linkurl')">Copy link to clipboard</button>
+
 {% endif %}
 
 <form action="{% url 'orders_create_order_link' %}" method="post">
