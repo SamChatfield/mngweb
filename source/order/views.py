@@ -22,7 +22,6 @@ from xero.auth import PrivateCredentials
 from datetime import date, timedelta
 
 def get_lims_quote(quote_code):
-    print (quote_code)
     response = limsfm_request('layout/quote_display_api', 'get', {
       'RFMmax' : 0,
       'RFMsF1' : 'reference',
@@ -115,13 +114,14 @@ def xero_post_invoice(contact_id, unique_reference_id, quote, lines):
         'LineAmountTypes': 'Exclusive',
         'LineItems': [],
         'Reference': unique_reference_id,
-        'Status': 'DRAFT',
+        'Status': 'AUTHORISED',
         'Type': 'ACCREC'
     }
 
     for line in lines:
+         description = "%s (quote: %s)" % (line['description'], quote['reference'])
          invoice['LineItems'].append({
-             "Description" : line['description'],
+             "Description" : description,
              "Quantity" : line['quantity'],
              "UnitAmount" : line['price'],
              "TaxType" : 'OUTPUT2',
@@ -130,15 +130,25 @@ def xero_post_invoice(contact_id, unique_reference_id, quote, lines):
          })
 
     results = xero.invoices.put(invoice)
-    print (results)
     invoice = results[0]
     return invoice['InvoiceID']
+
+def xero_get_payment_gateway(invoice_uuid):
+    credentials = PrivateCredentials(settings.XERO_CREDENTIALS, settings.XERO_PRIVATE_KEY)
+    xero = Xero(credentials)
+
+    onlineinvoice_url = "%s/OnlineInvoice" % (invoice_uuid,)
+    invoice = xero.invoices.get(onlineinvoice_url)
+
+    href = "%s?utm_source=emailpaynowbutton#paynow" % (invoice['OnlineInvoices'][0]['OnlineInvoiceUrl'],)
+    return href
 
 def confirm_order(request, uuid):
     ul = get_object_or_404(UniqueLink, pk=uuid)
 
     if ul.xero_invoice_id:
-         return render(request, 'order/order_already_processed.html')
+         url = xero_get_payment_gateway(ul.xero_invoice_id)
+         return render(request, 'order/order_already_processed.html', {'link' : url})
 
     lq = get_lims_quote(ul.quote_code)
     if not lq:
@@ -174,7 +184,12 @@ def confirm_order(request, uuid):
             invoice_id = xero_post_invoice(contact_id, form.cleaned_data['unique_reference_id'], quote, lql)
             ul.xero_contact_id = contact_id
             ul.xero_invoice_id = invoice_id
-            ul.save()            
-            return render(request, 'order/order_received.html')
+            ul.save()
+
+            # payment gateway link
+            url = xero_get_payment_gateway(ul.xero_invoice_id)
+            return HttpResponseRedirect(url)
+
+            #return render(request, 'order/order_received.html')
         else:
             return render(request, 'order/confirm_order.html', {'form' : form, 'quote' : quote, 'quotelines' : lql}) 

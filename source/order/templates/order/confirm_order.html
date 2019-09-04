@@ -54,15 +54,15 @@
 
 </table>
 
-<h2>Place your order</h2>
+<h2>Make an online payment</h2>
 
-<p>Please confirm your order below.</p>
+<p>Please confirm your order details below and add an optional order reference for your files.</p>
 
 <table class="table table-striped">
   <form action="?" method="post">
       {% csrf_token %}
       {{ form.as_table }}
-      <input type="submit" value=" Place your order ">
+      <input type="submit" value=" Continue to card payment ">
   </form>
 </table>
 
