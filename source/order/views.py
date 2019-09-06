@@ -95,12 +95,25 @@ def xero_post_contact(cleaned_data, contact_number):
     contact = results[0]
     return contact['ContactID']
 
+european_country = ['AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK',
+                    'EE', 'FI', 'FR', 'DE', 'EL', 'HU', 'IE',
+                    'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL',
+                    'RO', 'SK', 'SI', 'ES', 'SE']
+
 def xero_post_invoice(contact_id, unique_reference_id, quote, lines):
     credentials = PrivateCredentials(settings.XERO_CREDENTIALS, settings.XERO_PRIVATE_KEY)
     xero = Xero(credentials)
 
     today = date.today()
     due = date.today() + timedelta(days=30)
+
+    if quote['vat_rate_percent'] == '0':
+        if quote['Address::country_iso2'] in european_country:
+            tax_type = 'ECZROUTPUTSERVICES'
+        else:
+            tax_type = 'ZERORATEDOUTPUT' 
+    else:
+        tax_type = 'OUTPUT2'
 
     invoice = {
         'Contact': {
@@ -115,7 +128,7 @@ def xero_post_invoice(contact_id, unique_reference_id, quote, lines):
         'LineItems': [],
         'Reference': unique_reference_id,
         'Status': 'AUTHORISED',
-        'Type': 'ACCREC'
+        'Type': 'ACCREC',
     }
 
     for line in lines:
@@ -126,6 +139,7 @@ def xero_post_invoice(contact_id, unique_reference_id, quote, lines):
              "UnitAmount" : line['price'],
              "TaxType" : 'OUTPUT2',
              "AccountCode" : "REV-STD", ## TODO: lookup for account codes
+             "TaxType" : tax_type
              #TODO ItemCode
          })
 

@@ -5,6 +5,8 @@ from django.core.exceptions import ValidationError
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
+
+from country.models import Country
 from requests import RequestException
 
 class QuoteForm(forms.Form):
@@ -26,7 +28,16 @@ class ConfirmOrderForm(forms.Form):
     city = forms.CharField(label='City', max_length=50, help_text="Town or city")
     region = forms.CharField(label='Region', max_length=50, help_text="Region", required=False)
     postcode = forms.CharField(label='Postal code', max_length=50, help_text="Postcode")
-    country = forms.CharField(label='Country')
+    country = forms.ModelChoiceField(
+        queryset=Country.objects.all(),
+        to_field_name='iso2',
+        label="collection country",
+        error_messages={
+            'required': "'Country' is required.",
+            'invalid_choice': "Please select a valid 'sample collection "
+                              "country' from the list."
+        })
+
 
     def populate_form(self, conversion_table, input):
         for key, val in conversion_table.items():

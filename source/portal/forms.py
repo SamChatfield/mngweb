@@ -7,7 +7,6 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 from requests import RequestException
 
-from country.models import Country
 from .ebi_services import ebi_search_taxonomy_by_id, NoTaxonFoundException
 from .models import EnvironmentalSampleType, HostSampleType
 
@@ -143,16 +142,16 @@ class ProjectLineForm(forms.Form):
         error_messages={
             'invalid': "'DNA concentration (ng/µl)' must be a number.",
         })
-    geo_country_name = forms.ModelChoiceField(
-        queryset=Country.objects.all(),
-        to_field_name='name',
-        label="Sample collection country",
-        widget=forms.TextInput(),
-        error_messages={
-            'required': "'Sample collection country' is required.",
-            'invalid_choice': "Please select a valid 'sample collection "
-                              "country' from the list."
-        })
+    #geo_country_name = forms.ModelChoiceField(
+    #    queryset=Country.objects.all(),
+    #    to_field_name='name',
+    #    label="Sample collection country",
+    #    widget=forms.TextInput(),
+    #    error_messages={
+    #        'required': "'Sample collection country' is required.",
+    #        'invalid_choice': "Please select a valid 'sample collection "
+    #                          "country' from the list."
+    #    })
     geo_specific_location = forms.CharField(
         label="Specific location",
         help_text="e.g. Royal Free Hospital, London",
