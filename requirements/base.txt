@@ -8,11 +8,12 @@ netaddr==0.7.18
 requests==2.10.0
 openpyxl==2.5.14
 django-excel==0.0.4
-pyexcel
-pyexcel-ods
-pyexcel-io
-pyexcel-xls
-pyexcel-xlsx
+pyexcel==0.5.15
+pyexcel-io==0.5.20
+pyexcel-ods==0.2.0
+pyexcel-webio==0.1.4
+pyexcel-xls==0.5.8
+pyexcel-xlsx==0.5.7
 gunicorn==19.6.0
 django-slack==5.7.0
 django-allauth==0.29.0
