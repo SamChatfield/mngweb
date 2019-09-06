@@ -7,6 +7,8 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 from requests import RequestException
 
+from country.models import Country
+
 from .ebi_services import ebi_search_taxonomy_by_id, NoTaxonFoundException
 from .models import EnvironmentalSampleType, HostSampleType
 
