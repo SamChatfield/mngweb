@@ -41,7 +41,7 @@ def create_sample_sheet(project_uuid):
     project = limsfm_get_project(project_uuid)
 
     ws['F1'] = project['reference']
-    data_rows = ws.rows[6:]
+    data_rows = list(ws.iter_rows(min_row=7))
 
     for i, pl in enumerate(project['projectlines']):
         row = data_rows[i]
@@ -81,7 +81,7 @@ def create_sample_sheet(project_uuid):
     country_validator.error = "Please select a country from the list"
     country_validator.errorTitle = "Invalid country"
     ws.add_data_validation(country_validator)
-    country_validator.ranges.append('J7:J1000')
+    country_validator.ranges.add('J7:J1000')
 
     # Environmental sample type list validation
     est_validator = DataValidation(
@@ -90,7 +90,7 @@ def create_sample_sheet(project_uuid):
                            "the list")
     est_validator.errorTitle = "Invalid environmental sample type"
     ws.add_data_validation(est_validator)
-    est_validator.ranges.append('Q7:Q1000')
+    est_validator.ranges.add('Q7:Q1000')
 
     # Lab experiment type list validation
     lab_validator = DataValidation(
@@ -98,7 +98,7 @@ def create_sample_sheet(project_uuid):
     lab_validator.error = "Please select a lab experiment type from the list"
     lab_validator.errorTitle = "Invalid lab experiment type"
     ws.add_data_validation(lab_validator)
-    lab_validator.ranges.append('L7:L1000')
+    lab_validator.ranges.add('L7:L1000')
 
     # Host sample type list validation
     hst_validator = DataValidation(
@@ -106,7 +106,7 @@ def create_sample_sheet(project_uuid):
     hst_validator.error = "Please select a host sample type from the list"
     hst_validator.errorTitle = "Invalid host sample type"
     ws.add_data_validation(hst_validator)
-    hst_validator.ranges.append('O7:O1000')
+    hst_validator.ranges.add('O7:O1000')
 
     return wb
 
