@@ -249,6 +249,7 @@ PIPELINE = {
         },
         'mngweb_portal': {
             'source_filenames': (
+                'portal/css/progress-tracker.css',
                 'portal/css/portal.css',
             ),
             'output_filename': 'portal/css/portal.min.css',

@@ -64,3 +64,20 @@
 .popover {
   max-width: 350px;
 }
+
+.progress-tracker {
+  margin: 40px auto 20px;
+}
+
+.progress-step:hover .progress-marker::before {
+  background-color: #b6b6b6;
+}
+
+.progress-step.is-complete .progress-marker::before, .progress-step.is-progress .progress-marker::before {
+  background-color: #337ab7;
+}
+
+.progress-step.is-active .progress-marker::before {
+ background-color: #00bbe3;
+
+}

@@ -65,6 +65,11 @@
         {# project-summary tab content #}
         <div id="project-summary" class="tab-pane fade {% if not project.show_results %}in active{% endif %}">
           <div class="row">
+            <div class="col-md-12">
+              {% include "portal/project_includes/progress_breadcrumbs.html" %}
+            </div>
+          </div>
+          <div class="row">
             <div class="col-md-6">
               {% include "portal/project_includes/summary.html" %}
             </div>
