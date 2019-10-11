@@ -34,6 +34,7 @@ PROJECT_DJANGO_TO_LIMSFM_MAP = {
     'sample_sheet_url': 'sample_sheet_url',
     'submission_requirements_name': 'submission_requirements_name',
     'wait_time_weeks': 'unstored_wait_time_weeks',
+    'url_template': 'DataLocation::url_template'
 }
 
 PROJECT_LIMSFM_TO_DJANGO_MAP = {
@@ -124,12 +125,12 @@ def project_from_limsfm(limsfm_project):
     else:
         project['barcodes_sent_date'] = project['creation_datetime'].date()
 
-    if project['results_path']:
+    if project['results_path'] and project['url_template']:
         project['results_url'] = urljoin(
-            settings.MNGRESULTS_BASE_URL,
+            project['url_template'],
             project['results_path'] + '/')
         project['results_url_secure'] = urljoin(
-            settings.MNGRESULTS_BASE_URL_SECURE,
+            project['url_template'],
             project['results_path'] + '/')
 
     return project
