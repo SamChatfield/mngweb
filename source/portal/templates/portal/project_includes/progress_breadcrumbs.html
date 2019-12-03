@@ -2,16 +2,16 @@
   <li class="progress-step is-complete">
     <div class="progress-marker"></div>
     <div class="progress-text">
-      <h4 class="progress-title">Step 1</h4>
-      Summary text
+      <h4 class="progress-title">Sequencing</h4>
+      {{project.stage_counts.on_sequencer}}/{{project.projectline_count}} samples
     </div>
   </li>
 
   <li class="progress-step is-complete">
     <div class="progress-marker"></div>
     <div class="progress-text">
-      <h4 class="progress-title">Step 2</h4>
-      Summary text
+      <h4 class="progress-title">Bioinformatics</h4>
+      {{project.stage_counts.bioinformatics}}/{{project.projectline_count}} samples
     </div>
   </li>
 

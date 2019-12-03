@@ -66,6 +66,38 @@ def project_detail(request, project_uuid):
             project['all_content_received_date']):  # Redirect to accept submission requirements
         return HttpResponseRedirect(reverse(project_accept_submission_requirements, args=[project_uuid]))
 
+    # TODO: Some kind of mapping between stages and numbers to allow comparisons?
+    # TODO: Work out the number of samples in each stage here and store them in project dict for access in Django templates
+    # TODO: Move to services.py?
+
+    stages = [
+        {
+            'name': 'On sequencer',
+            'id': 'on_sequencer'
+        },
+        {
+            'name': 'Bioinformatics',
+            'id': 'bioinformatics'
+        },
+        {
+            'name': 'Complete',
+            'id': 'complete'
+        }
+    ]
+    # stage_map = {s: i for i, s in enumerate(stages)}
+    stage_counts = {s['id']: 0 for s in stages}
+    for pl in project['projectlines']:
+        stage_name = pl['queue_name']
+        # stage_index = stages.index(stage_name)
+        stage_index = stages.index(next(s for s in stages if s['name'] == stage_name))
+        print('Stage: {} - {}'.format(stage_index, stage_name))
+        for i in range(0, stage_index):
+            s = stages[i]
+            stage_counts[s['id']] += 1
+
+    print('Stage counts:\n{}\n'.format(stage_counts))
+    project['stage_counts'] = stage_counts
+
     context = {
         'project': project,
         'project_add_collaborator_form': ProjectAddCollaboratorForm(),
