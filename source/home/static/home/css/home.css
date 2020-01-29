@@ -14,9 +14,6 @@
 .stats-jumbo-block {
   padding: 10px;
   text-align: center;
-}
-
-.stats-jumbo-block:nth-child(2) {
   border: 1px solid #fff;
   border-width: 0 1px;
 }
