@@ -102,6 +102,17 @@ $(function() {
   });
 
   /*
+  Comment box scrollIntoView link
+  */
+  $('#comments-link').click(function (e) {
+    e.preventDefault();
+    var commentBox = $('textarea#id_comments')[0]
+    commentBox.scrollIntoView();
+    commentBox.focus();
+    return false;
+  });
+
+  /*
   Scroll to first error on page
   */
   (function() {
