@@ -86,14 +86,13 @@ $(function() {
   $('#id_funding_type').change(function() {
     if ($(this).val() == 'BBSRC funded') {
       $('#id_bbsrc_code').parent().show();
-      $('input#id_is_confidential').prop('checked', false);
-    }
-    else if ($(this).val() == 'Industry') {
+      $('#id_is_confidential').prop('checked', false);
+    } else if ($(this).val() == 'Industry') {
       $('#id_bbsrc_code').parent().hide();
-      $('input#id_is_confidential').prop('checked', true);
+      $('#id_is_confidential').prop('checked', true);
     } else {
       $('#id_bbsrc_code').parent().hide();
-      $('input#id_is_confidential').prop('checked', false);
+      $('#id_is_confidential').prop('checked', false);
     }
     setQuoteEstimate();
   });
@@ -112,7 +111,7 @@ $(function() {
   */
   $('#comments-link').click(function (e) {
     e.preventDefault();
-    var commentBox = $('textarea#id_comments')[0]
+    var commentBox = $('#id_comments')[0]
     commentBox.scrollIntoView();
     commentBox.focus();
     return false;
