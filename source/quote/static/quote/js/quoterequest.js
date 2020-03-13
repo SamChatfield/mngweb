@@ -95,7 +95,8 @@ $(function() {
   /*
   Strain submission criteria scrollIntoView link
   */
-  $('.criteria-link').click(function () {
+  $('.criteria-link').click(function (e) {
+    e.preventDefault();
     $('.aside')[0].scrollIntoView();
     return false;
   });
