@@ -109,7 +109,15 @@ class QuoteRequestForm(forms.Form):
         })
     funding_type = forms.ChoiceField(choices=FUNDING_TYPE_CHOICES)
     bbsrc_code = forms.CharField(required=False, label=_("BBSRC grant code"))
-    is_confidential = forms.BooleanField(required=False)
+    is_confidential = forms.BooleanField(
+        required=False,
+        label=_(mark_safe((
+            "Is confidential "
+            "<span data-toggle='tooltip' title='Your data will never be uploaded into a public repository by MicrobesNG. See FAQ - Samples for more information.'>"
+            "<i class='fa fa-question-circle'></i>"
+            "</span>"
+        )))
+    )
     num_dna_samples = forms.IntegerField(
         min_value=0,
         initial=0,
