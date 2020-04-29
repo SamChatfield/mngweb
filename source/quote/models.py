@@ -75,7 +75,12 @@ class QuoteRequestFormPage(RoutablePageMixin, Page):
                 value = field.value()
                 if isinstance(value, list):
                     value = ', '.join(value)
-                content.append('{}: {}'.format(field.label, value))
+                # Only add the Conference (other) value if the referral type was also Conference (other)
+                if field.id_for_label == 'id_conference_other':
+                    if form.data['referral_type'] == 'Conference (other)':
+                        content.append('{}: {}'.format(field.label, value))
+                else:
+                    content.append('{}: {}'.format(field.label, value))
             content = '\n'.join(content)
 
             reply_to = ([form.data['email']] if 'email' in form.data else None)

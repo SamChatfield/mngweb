@@ -17,13 +17,13 @@ FUNDING_TYPE_CHOICES = [
 
 REFERRAL_TYPE_CHOICES = [
     ('', '---'),
-    ('SGM 2016', 'SGM Conference 2016'),
-    ('Internal UoB', 'Internal UoB'),
-    ('Word of mouth', 'Word of mouth'),
-    ('Google', 'Google'),
-    ('Twitter', 'Twitter'),
-    ('Publication', 'Publication'),
-    ('Other conference', 'Other conference')
+    ('University of Birmingham', 'University of Birmingham'),
+    ('Microbiology Society Conference', 'Microbiology Society Conference'),
+    ('Conference (other)', 'Conference (other)'),
+    ('Word of Mouth / Recommendation', 'Word of Mouth / Recommendation'),
+    ('Search Engine', 'Search Engine'),
+    ('Social Media', 'Social Media'),
+    ('Publication / Academic Acknowledgement', 'Publication / Academic Acknowledgement'),
 ]
 
 BATCH_TYPE_CHOICES = [
@@ -137,6 +137,7 @@ class QuoteRequestForm(forms.Form):
     referral_type = forms.ChoiceField(
         choices=REFERRAL_TYPE_CHOICES,
         label=_("Where did you hear about us?"))
+    conference_other = forms.CharField(required=False, label=_("Conference (other)"))
     comments = forms.CharField(required=False, widget=forms.Textarea())
 
     def clean(self):
@@ -155,6 +156,8 @@ class QuoteRequestForm(forms.Form):
         pi_name_first = cleaned_data.get('pi_name_first')
         pi_name_last = cleaned_data.get('pi_name_last')
         pi_email = cleaned_data.get('pi_email')
+        referral_type = cleaned_data.get('referral_type')
+        conference_other = cleaned_data.get('conference_other')
         comments = cleaned_data.get('comments')
 
         if num_strain_samples is None:
@@ -209,6 +212,14 @@ class QuoteRequestForm(forms.Form):
                     _("A total sample quantity of at least one (strain or DNA)"
                       " is required."))
             )
+
+        # Validate Referral Type and Conference (other) fields
+
+        if referral_type == 'Conference (other)' and not conference_other:
+            conference_other_error = ValidationError(
+                _('Please enter the name of the conference at which you heard about us.'))
+            self.add_error('conference_other', conference_other_error)
+            non_field_errors.append(conference_other_error)
 
         if non_field_errors:
             raise ValidationError(non_field_errors)

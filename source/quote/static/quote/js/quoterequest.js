@@ -118,6 +118,21 @@ $(function() {
   });
 
   /*
+  Show input for Conference (other) for where did you hear about us
+  */
+  $('#id_conference_other').parent().hide();
+  $('#id_referral_type').change(function() {
+    if ($(this).val() == 'Conference (other)') {
+      // Show text field for conference (other)
+      console.log('Referral: Other');
+      $('#id_conference_other').parent().show();
+    } else {
+      // Hide text field for conference (other)
+      $('#id_conference_other').parent().hide();
+    }
+  });
+
+  /*
   Scroll to first error on page
   */
   (function() {
