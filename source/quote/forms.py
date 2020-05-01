@@ -109,15 +109,7 @@ class QuoteRequestForm(forms.Form):
         })
     funding_type = forms.ChoiceField(choices=FUNDING_TYPE_CHOICES)
     bbsrc_code = forms.CharField(required=False, label=_("BBSRC grant code"))
-    is_confidential = forms.BooleanField(
-        required=False,
-        label=_(mark_safe((
-            "Is confidential "
-            "<span data-toggle='tooltip' title='Your data will never be uploaded into a public repository by MicrobesNG. See FAQ - Samples for more information.'>"
-            "<i class='fa fa-question-circle'></i>"
-            "</span>"
-        )))
-    )
+    is_confidential = forms.BooleanField(required=False, label=_("Is confidential"))
     num_dna_samples = forms.IntegerField(
         min_value=0,
         initial=0,
@@ -135,10 +127,10 @@ class QuoteRequestForm(forms.Form):
         label=_("No. strains for enhanced sequencing"))
     confirm_strain_bsl2 = forms.BooleanField(
         required=False,
-        label=_(mark_safe("Confirm that your strains comply with the <a class='criteria-link'>strain submission criteria</a>")))
+        label=_("Confirm that your strains comply with the strain submission criteria"))
     confirm_enhanced_strain_bsl2 = forms.BooleanField(
         required=False,
-        label=_(mark_safe("Confirm that your enhanced strains comply with the <a class='criteria-link'>strain submission criteria</a>")))
+        label=_("Confirm that your enhanced strains comply with the strain submission criteria"))
     batch_type = forms.ChoiceField(
         choices=BATCH_TYPE_CHOICES,
         initial='all together')

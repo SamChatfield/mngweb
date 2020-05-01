@@ -98,6 +98,19 @@ $(function() {
   });
 
   /*
+  Replace plain label text with HTML versions for certain fields to increase usability
+  */
+  function replaceLabelText(field_sel, new_label) {
+    $(field_sel).parent().contents().filter(function() {
+      return this.nodeType === 3;
+    }).first().replaceWith(new_label);
+  }
+  replaceLabelText('#id_is_confidential', 'Is confidential <span data-toggle="tooltip" title="Your data will never be uploaded into a public repository by MicrobesNG. See FAQ - Samples for more information."><i class="fa fa-question-circle"></i></span>');
+  replaceLabelText('#id_confirm_strain_bsl2', 'Confirm that your strains comply with the <a class="criteria-link">strain submission criteria</a>');
+  replaceLabelText('#id_confirm_enhanced_strain_bsl2', 'Confirm that your enhanced strains comply with the <a class="criteria-link">strain submission criteria</a>');
+  $('[data-toggle="tooltip"]').tooltip();
+
+  /*
   Strain submission criteria scrollIntoView link
   */
   $('.criteria-link').click(function (e) {
