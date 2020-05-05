@@ -138,7 +138,6 @@ $(function() {
   $('#id_referral_type').change(function() {
     if ($(this).val() == 'Conference (other)') {
       // Show text field for conference (other)
-      console.log('Referral: Other');
       $('#id_conference_other').parent().show();
     } else {
       // Hide text field for conference (other)
