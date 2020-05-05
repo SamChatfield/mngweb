@@ -99,6 +99,27 @@ $(function() {
   });
 
   /*
+  Disable strains and enhanced strains if samples are viral or fungal
+  */
+  $('#id_sample_types').change(function() {
+    // Enable or disable strains and enhanced strains inputs and the note explaining this
+    var disable = ($(this).val().includes('Viral') || $(this).val().includes('Fungi'))
+    $('#id_num_strain_samples').prop('disabled', disable);
+    $('#id_confirm_strain_bsl2').prop('disabled', disable);
+    $('#id_num_enhanced_strain_samples').prop('disabled', disable);
+    $('#id_confirm_enhanced_strain_bsl2').prop('disabled', disable);
+    $('#viral_fungal_note').prop('hidden', !disable);
+
+    // If inputs are disabled, also zero and uncheck them
+    if (disable) {
+      $('#id_num_strain_samples').val(0);
+      $('#id_confirm_strain_bsl2').prop('checked', false);
+      $('#id_num_enhanced_strain_samples').val(0);
+      $('#id_confirm_enhanced_strain_bsl2').prop('checked', false);
+    }
+  });
+
+  /*
   Replace plain label text with HTML versions for certain fields to increase usability
   */
   function replaceLabelText(field_sel, new_label) {

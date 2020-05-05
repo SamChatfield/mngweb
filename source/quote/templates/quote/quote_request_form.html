@@ -210,6 +210,16 @@
             </div>
           </div>
           <div class="row">
+            <div class="col-md-12">
+              {% bootstrap_field form.sample_types %}
+            </div>
+          </div>
+          <div id="viral_fungal_note" class="panel panel-warning" hidden>
+            <div class="panel-body">
+              Please note, we only accept fungi and viruses as DNA as per our <a class="criteria-link" style="cursor: pointer;">strain submission criteria</a>
+            </div>
+          </div>
+          <div class="row">
             <div class="col-md-4">
               {% bootstrap_field form.num_dna_samples %}
               <div class="panel panel-success"><div class="panel-body"><i class="fa fa-globe text-success"></i> DNA samples can be sent from customers worldwide</div></div>
@@ -223,11 +233,6 @@
               {% bootstrap_field form.num_enhanced_strain_samples %}
               <div class="panel panel-success"><div class="panel-body"><i class="fa fa-globe text-success"></i> Enhanced strains can be sent from customers worldwide</div></div>
               {% bootstrap_field form.confirm_enhanced_strain_bsl2 %}
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-12">
-              {% bootstrap_field form.sample_types %}
             </div>
           </div>
 
