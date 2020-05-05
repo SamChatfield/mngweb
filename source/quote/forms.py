@@ -26,6 +26,14 @@ REFERRAL_TYPE_CHOICES = [
     ('Publication / Academic Acknowledgement', 'Publication / Academic Acknowledgement'),
 ]
 
+SAMPLE_TYPE_CHOICES = [
+    ('Viral', 'Viral (including phages)'),
+    ('Bacteria', 'Bacteria'),
+    ('Fungi', 'Fungi'),
+    ('> Biosafety 2', '> Biosafety 2'),
+    ('GMM', 'GMM')
+]
+
 BATCH_TYPE_CHOICES = [
     ('all together', 'Sending all samples together'),
     ('batches', 'Sending in multiple batches')
@@ -131,6 +139,12 @@ class QuoteRequestForm(forms.Form):
     confirm_enhanced_strain_bsl2 = forms.BooleanField(
         required=False,
         label=_("Confirm that your enhanced strains comply with the strain submission criteria"))
+    sample_types = forms.MultipleChoiceField(
+        label=_("Which of the following apply to your samples?"),
+        help_text=_("Select all that apply"),
+        widget=forms.SelectMultiple(attrs={"size": len(SAMPLE_TYPE_CHOICES)}),
+        choices=SAMPLE_TYPE_CHOICES,
+    )
     batch_type = forms.ChoiceField(
         choices=BATCH_TYPE_CHOICES,
         initial='all together')
@@ -151,6 +165,7 @@ class QuoteRequestForm(forms.Form):
         num_enhanced_strain_samples = cleaned_data.get("num_enhanced_strain_samples")
         confirm_strain_bsl2 = cleaned_data.get('confirm_strain_bsl2')
         confirm_enhanced_strain_bsl2 = cleaned_data.get('confirm_enhanced_strain_bsl2')
+        sample_types = cleaned_data.get('sample_types')
         primary_contact_is_pi = cleaned_data.get('primary_contact_is_pi')
         pi_name_title = cleaned_data.get('pi_name_title')
         pi_name_first = cleaned_data.get('pi_name_first')
@@ -242,5 +257,13 @@ class QuoteRequestForm(forms.Form):
                 cleaned_data['comments'] = criteria_confirmations_str
             else:
                 cleaned_data['comments'] = '{}\r\n\r\n{}'.format(criteria_confirmations_str, comments)
+
+        # Prepend selected sample types to comments if selected
+        if sample_types:
+            sample_types_str = 'Selected sample types: {}'.format(', '.join(sample_types))
+            if not comments:
+                cleaned_data['comments'] = sample_types_str
+            else:
+                cleaned_data['comments'] = '{}\r\n\r\n{}'.format(sample_types_str, comments)
 
         return cleaned_data
