@@ -45,6 +45,15 @@
     padding-left: 1.2em;
   }
 
+  .panel-body > .table {
+    margin-bottom: 0;
+  }
+
+  .panel-body .table ul {
+    padding-left: 1rem;
+    margin-bottom: 0;
+  }
+
 </style>
 {% endblock %}
 {% block body_class %}template-quoterequestformpage{% endblock %}
@@ -252,6 +261,17 @@
                     <tr>
                       <th>Estimated Total (ex. VAT):</th>
                       <td id="quote-grand-total-price"></td>
+                    </tr>
+                    <tr>
+                      <th>What's included?</th>
+                      <td>
+                        <ul>
+                          <li>DNA extraction (strains only)</li>
+                          <li>Library preparation</li>
+                          <li>Sequencing</li>
+                          <li>Basic bioinformatics (annotation, assembly, variant calling)</li>
+                        </ul>
+                      </td>
                     </tr>
                   </tbody>
                 </table>
