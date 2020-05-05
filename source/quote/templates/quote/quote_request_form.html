@@ -54,6 +54,10 @@
     margin-bottom: 0;
   }
 
+  .comments-link, .criteria-link {
+    cursor: pointer;
+  }
+
 </style>
 {% endblock %}
 {% block body_class %}template-quoterequestformpage{% endblock %}
@@ -203,7 +207,7 @@
             </div>
           </div>
           <p><strong>Will payment be made by a different company or institution?</strong></p>
-          <p>If yes, please enter the address of the paying company or institution to the <a id="comments-link" style="cursor: pointer;">comment box below</a>.</p>
+          <p>If yes, please enter the address of the paying company or institution to the <a class="comments-link">comment box below</a>.</p>
 
           <h3 class="section-header">Sample information</h3>
           <p>Please note: the confidential service costs £100 regardless of funding type.
@@ -225,7 +229,7 @@
           </div>
           <div id="viral_fungal_note" class="panel panel-warning" hidden>
             <div class="panel-body">
-              Please note, we only accept fungi and viruses as DNA as per our <a class="criteria-link" style="cursor: pointer;">strain submission criteria</a>
+              Please note, we only accept fungi and viruses as DNA as per our <a class="criteria-link">strain submission criteria</a>.
             </div>
           </div>
           <div class="row">

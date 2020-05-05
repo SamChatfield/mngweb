@@ -144,7 +144,7 @@ $(function() {
   /*
   Comment box scrollIntoView link
   */
-  $('#comments-link').click(function (e) {
+  $('.comments-link').click(function (e) {
     e.preventDefault();
     var commentBox = $('#id_comments')[0]
     commentBox.scrollIntoView();
