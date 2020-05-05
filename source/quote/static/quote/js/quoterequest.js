@@ -83,6 +83,7 @@ $(function() {
   /*
   Show/hide BBSRC grant code field
   */
+  $('#id_bbsrc_code').parent().hide();
   $('#id_funding_type').change(function() {
     if ($(this).val() == 'BBSRC funded') {
       $('#id_bbsrc_code').parent().show();
