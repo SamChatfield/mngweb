@@ -118,6 +118,12 @@ class QuoteRequestForm(forms.Form):
     funding_type = forms.ChoiceField(choices=FUNDING_TYPE_CHOICES)
     bbsrc_code = forms.CharField(required=False, label=_("BBSRC grant code"))
     is_confidential = forms.BooleanField(required=False, label=_("Is confidential"))
+    sample_types = forms.MultipleChoiceField(
+        label=_("Which of the following apply to your samples?"),
+        help_text=_("Select all that apply"),
+        widget=forms.SelectMultiple(attrs={"size": len(SAMPLE_TYPE_CHOICES)}),
+        choices=SAMPLE_TYPE_CHOICES,
+    )
     num_dna_samples = forms.IntegerField(
         min_value=0,
         initial=0,
@@ -139,12 +145,6 @@ class QuoteRequestForm(forms.Form):
     confirm_enhanced_strain_bsl2 = forms.BooleanField(
         required=False,
         label=_("Confirm that your enhanced strains comply with the strain submission criteria"))
-    sample_types = forms.MultipleChoiceField(
-        label=_("Which of the following apply to your samples?"),
-        help_text=_("Select all that apply"),
-        widget=forms.SelectMultiple(attrs={"size": len(SAMPLE_TYPE_CHOICES)}),
-        choices=SAMPLE_TYPE_CHOICES,
-    )
     batch_type = forms.ChoiceField(
         choices=BATCH_TYPE_CHOICES,
         initial='all together')
@@ -160,12 +160,12 @@ class QuoteRequestForm(forms.Form):
 
         funding_type = cleaned_data.get('funding_type')
         bbsrc_code = cleaned_data.get('bbsrc_code')
+        sample_types = cleaned_data.get('sample_types')
         num_dna_samples = cleaned_data.get('num_dna_samples')
         num_strain_samples = cleaned_data.get('num_strain_samples')
         num_enhanced_strain_samples = cleaned_data.get("num_enhanced_strain_samples")
         confirm_strain_bsl2 = cleaned_data.get('confirm_strain_bsl2')
         confirm_enhanced_strain_bsl2 = cleaned_data.get('confirm_enhanced_strain_bsl2')
-        sample_types = cleaned_data.get('sample_types')
         primary_contact_is_pi = cleaned_data.get('primary_contact_is_pi')
         pi_name_title = cleaned_data.get('pi_name_title')
         pi_name_first = cleaned_data.get('pi_name_first')
@@ -239,10 +239,17 @@ class QuoteRequestForm(forms.Form):
         if non_field_errors:
             raise ValidationError(non_field_errors)
 
-
         # If there were no validation errors
-        # Prepend <=BSL2 & non-GMM confirmation(s) to comments field for displaying in the LIMS
 
+        # Prepend selected sample types to comments if selected
+        if sample_types:
+            sample_types_str = 'Selected sample types: {}'.format(', '.join(sample_types))
+            if not comments:
+                cleaned_data['comments'] = sample_types_str
+            else:
+                cleaned_data['comments'] = '{}\r\n\r\n{}'.format(sample_types_str, comments)
+
+        # Prepend <=BSL2 & non-GMM confirmation(s) to comments field for displaying in the LIMS
         criteria_confirmations = []
 
         if num_strain_samples > 0 and confirm_strain_bsl2:
@@ -258,12 +265,5 @@ class QuoteRequestForm(forms.Form):
             else:
                 cleaned_data['comments'] = '{}\r\n\r\n{}'.format(criteria_confirmations_str, comments)
 
-        # Prepend selected sample types to comments if selected
-        if sample_types:
-            sample_types_str = 'Selected sample types: {}'.format(', '.join(sample_types))
-            if not comments:
-                cleaned_data['comments'] = sample_types_str
-            else:
-                cleaned_data['comments'] = '{}\r\n\r\n{}'.format(sample_types_str, comments)
 
         return cleaned_data
