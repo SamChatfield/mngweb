@@ -31,7 +31,8 @@ SAMPLE_TYPE_CHOICES = [
     ('Bacteria', 'Bacteria'),
     ('Fungi', 'Fungi'),
     ('> Biosafety 2', '> Biosafety 2'),
-    ('GMM', 'GMM')
+    ('GMM', 'GMM'),
+    ('Other', 'Other - please specify in comments box at end of form')
 ]
 
 BATCH_TYPE_CHOICES = [
@@ -123,6 +124,7 @@ class QuoteRequestForm(forms.Form):
         help_text=_("Select all that apply"),
         widget=forms.SelectMultiple(attrs={"size": len(SAMPLE_TYPE_CHOICES)}),
         choices=SAMPLE_TYPE_CHOICES,
+        required=True,
     )
     num_dna_samples = forms.IntegerField(
         min_value=0,
