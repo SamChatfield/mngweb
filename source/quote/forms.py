@@ -12,7 +12,7 @@ FUNDING_TYPE_CHOICES = [
     ('BBSRC funded', 'BBSRC funded'),
     ('Non-commercial', 'Other non-commercial (Academic/Charity)'),
     ('Industry', 'Industry'),
-    ('Internal UoB', 'Internal, University of Birmingham')
+    ('University of Birmingham', 'University of Birmingham'),
 ]
 
 REFERRAL_TYPE_CHOICES = [
