@@ -118,13 +118,13 @@ class QuoteRequestForm(forms.Form):
         })
     funding_type = forms.ChoiceField(choices=FUNDING_TYPE_CHOICES)
     bbsrc_code = forms.CharField(required=False, label=_("BBSRC grant code"))
+    is_grant_application = forms.ChoiceField
     is_confidential = forms.BooleanField(required=False, label=_("Is confidential"))
     sample_types = forms.MultipleChoiceField(
         label=_("Which of the following apply to your samples?"),
         help_text=_("Select all that apply"),
         widget=forms.SelectMultiple(attrs={"size": len(SAMPLE_TYPE_CHOICES)}),
         choices=SAMPLE_TYPE_CHOICES,
-        required=True,
     )
     num_dna_samples = forms.IntegerField(
         min_value=0,
