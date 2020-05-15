@@ -118,7 +118,7 @@ class QuoteRequestForm(forms.Form):
         })
     funding_type = forms.ChoiceField(choices=FUNDING_TYPE_CHOICES)
     bbsrc_code = forms.CharField(required=False, label=_("BBSRC grant code"))
-    is_grant_application = forms.ChoiceField
+    is_grant_application = forms.BooleanField(required=False, label=_("This quote is for a grant application"))
     is_confidential = forms.BooleanField(required=False, label=_("Is confidential"))
     sample_types = forms.MultipleChoiceField(
         label=_("Which of the following apply to your samples?"),
@@ -162,6 +162,7 @@ class QuoteRequestForm(forms.Form):
 
         funding_type = cleaned_data.get('funding_type')
         bbsrc_code = cleaned_data.get('bbsrc_code')
+        is_grant_application = cleaned_data.get('is_grant_application')
         sample_types = cleaned_data.get('sample_types')
         num_dna_samples = cleaned_data.get('num_dna_samples')
         num_strain_samples = cleaned_data.get('num_strain_samples')
@@ -243,15 +244,21 @@ class QuoteRequestForm(forms.Form):
 
         # If there were no validation errors
 
-        # Prepend selected sample types to comments if selected
+        ## PREPEND EXTRA FIELDS TO COMMENTS (for displaying in the LIMS):
+
+        # Whether quote is for a grant application or not
+        is_grant_application_str = 'Is quote for grant application: {}'.format(is_grant_application)
+        if not comments:
+            cleaned_data['comments'] = is_grant_application_str
+        else:
+            cleaned_data['comments'] = '{}\r\n\r\n{}'.format(is_grant_application_str, comments)
+
+        # Selected sample types if selected
         if sample_types:
             sample_types_str = 'Selected sample types: {}'.format(', '.join(sample_types))
-            if not comments:
-                cleaned_data['comments'] = sample_types_str
-            else:
-                cleaned_data['comments'] = '{}\r\n\r\n{}'.format(sample_types_str, comments)
+            cleaned_data['comments'] = '{}\r\n\r\n{}'.format(sample_types_str, cleaned_data['comments'])
 
-        # Prepend <=BSL2 & non-GMM confirmation(s) to comments field for displaying in the LIMS
+        # <=BSL2 & non-GMM confirmation(s)
         criteria_confirmations = []
 
         if num_strain_samples > 0 and confirm_strain_bsl2:
@@ -262,10 +269,7 @@ class QuoteRequestForm(forms.Form):
         # If there are confirmations to add, add them with CRLF line endings as given by the HTML textarea
         if len(criteria_confirmations) > 0:
             criteria_confirmations_str = '\r\n'.join(criteria_confirmations)
-            if not comments:
-                cleaned_data['comments'] = criteria_confirmations_str
-            else:
-                cleaned_data['comments'] = '{}\r\n\r\n{}'.format(criteria_confirmations_str, comments)
+            cleaned_data['comments'] = '{}\r\n\r\n{}'.format(criteria_confirmations_str, cleaned_data['comments'])
 
 
         return cleaned_data
