@@ -32,7 +32,8 @@ SAMPLE_TYPE_CHOICES = [
     ('Fungi', 'Fungi'),
     ('> Biosafety 2', '> Biosafety 2'),
     ('GMM', 'GMM'),
-    ('Other', 'Other - please specify in comments box at end of form')
+    ('> 10 MB', '> 10 MB (please note that we only sequence organisms < 50 MB)'),
+    ('Other', 'Other - please specify in comments box at end of form'),
 ]
 
 BATCH_TYPE_CHOICES = [
