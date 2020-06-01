@@ -58,7 +58,7 @@ $(function() {
     totalPrice = totalQty * unitPrice;
     totalEnhancedPrice = totalEnhancedQty * enhancedUnitPrice;
     $('#quote-total-qty').text(dnaQty + " (DNA)" + '\xa0\xa0\xa0' + "/" + "\xa0\xa0\xa0" + strainQty + " (strains)" + '\xa0\xa0\xa0' + "/" + '\xa0\xa0\xa0' + enhancedStrainQty + " (enhanced) = " + (totalQty + totalEnhancedQty))
-    $('#quote-unit-price').text('£' + unitPrice + " (standard)" + " / " + "£" + enhancedUnitPrice + "(enhanced)");
+    $('#quote-unit-price').text('£' + unitPrice + " (standard)" + " / " + "£" + enhancedUnitPrice + " (enhanced)");
     $('#quote-total-price').text('£' + totalPrice);
     $("#quote-grand-total-price").text('£' + (totalPrice + totalEnhancedPrice));
   }
